@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
-import type { ComponentChildren } from 'preact';
 import { Registrar } from './Registrar';
-
-export type Ruta = '#/' | '#/registrar' | '#/historial' | '#/ajustes';
+import { Inicio } from './Inicio';
+import { Historial } from './Historial';
+import { Ajustes } from './Ajustes';
+import { estado } from '../store/estado';
 
 function rutaActual(): string {
   return typeof location === 'undefined' || !location.hash ? '#/' : location.hash;
@@ -18,25 +19,16 @@ export function usarRuta(): string {
   return ruta;
 }
 
-function Inicio() {
-  return (
-    <main class="pagina">
-      <a class="boton-grande" href="#/registrar">＋ Registrar</a>
-    </main>
-  );
-}
-
-function Pagina({ titulo }: { titulo: string; children?: ComponentChildren }) {
-  return <main class="pagina"><h1>{titulo}</h1></main>;
-}
-
 export function App() {
   const ruta = usarRuta();
-  const base = ruta.split('?')[0];
+  const [base, query = ''] = ruta.split('?');
   let pagina;
-  if (base === '#/registrar') pagina = <Registrar />;
-  else if (base === '#/historial') pagina = <Pagina titulo="Historial" />;
-  else if (base === '#/ajustes') pagina = <Pagina titulo="Ajustes" />;
+  if (base === '#/registrar') {
+    const id = new URLSearchParams(query).get('id');
+    const s = id ? estado.datos.value.sesiones.find((x) => x.id === id) : undefined;
+    pagina = <Registrar key={`${ruta}-${s?.id ?? "nueva"}`} sesionInicial={s} />;
+  } else if (base === '#/historial') pagina = <Historial />;
+  else if (base === '#/ajustes') pagina = <Ajustes />;
   else pagina = <Inicio />;
   return (
     <>
