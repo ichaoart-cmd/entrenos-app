@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
+import { Registrar } from './Registrar';
 
 export type Ruta = '#/' | '#/registrar' | '#/historial' | '#/ajustes';
 
@@ -33,7 +34,7 @@ export function App() {
   const ruta = usarRuta();
   const base = ruta.split('?')[0];
   let pagina;
-  if (base === '#/registrar') pagina = <Pagina titulo="Registrar" />;
+  if (base === '#/registrar') pagina = <Registrar />;
   else if (base === '#/historial') pagina = <Pagina titulo="Historial" />;
   else if (base === '#/ajustes') pagina = <Pagina titulo="Ajustes" />;
   else pagina = <Inicio />;
