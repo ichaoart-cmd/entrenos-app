@@ -100,3 +100,10 @@ test('se puede quitar la fuerza y guardar solo Metcon', async () => {
     expect(s.metcon?.formato).toBe('AMRAP');
   });
 });
+
+test('un tempo previo fuera de la lista aparece como botón seleccionado', () => {
+  estado.datos.value = datosCon([{ ...sesion('f', '2026-04-27', 'front-squat', 3, [75, 85, 95]), fuerza: [{ ejercicio: 'front-squat', reps: 3, series: [75, 85, 95], tempo: '4s' }] }]);
+  render(<Registrar />);
+  fireEvent.change(screen.getByLabelText('Ejercicio'), { target: { value: 'front-squat' } });
+  expect(screen.getByRole('button', { name: '4s' }).getAttribute('aria-pressed')).toBe('true');
+});

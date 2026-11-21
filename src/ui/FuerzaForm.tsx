@@ -26,6 +26,7 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar }:
 }) {
   const top = fuerza.series.length ? fuerza.series[fuerza.series.length - 1] : 0;
   const anterior = ultimaFuerza(sesiones, fuerza.ejercicio)?.series;
+  const tempos: string[] = fuerza.tempo && !(TEMPOS as readonly string[]).includes(fuerza.tempo) ? [...TEMPOS, fuerza.tempo] : [...TEMPOS];
   const variantes = VARIANTES.includes(fuerza.variante as any) || !fuerza.variante ? VARIANTES : [...VARIANTES, fuerza.variante];
   return (
     <section class="tarjeta">
@@ -40,7 +41,7 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar }:
       <Chips etiqueta="Variante" opciones={variantes.map((v) => ({ valor: v, texto: v }))} valor={fuerza.variante}
         onCambio={(v) => onCambio({ ...fuerza, variante: v })} />
       <h2>Tempo</h2>
-      <Chips etiqueta="Tempo" opciones={TEMPOS.map((v) => ({ valor: v, texto: v }))} valor={fuerza.tempo as any}
+      <Chips etiqueta="Tempo" opciones={tempos.map((v) => ({ valor: v, texto: v }))} valor={fuerza.tempo}
         onCambio={(v) => onCambio({ ...fuerza, tempo: v })} />
       <Stepper etiqueta="Serie top (kg)" valor={top} paso={0.5}
         onCambio={(v) => onCambio({ ...fuerza, series: generarRampa(v, anterior) })} />
