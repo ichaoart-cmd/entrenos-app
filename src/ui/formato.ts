@@ -34,7 +34,7 @@ export function textoSync(estadoSync: EstadoSync, r: ResultadoSync | null): stri
   if (r && !r.ok) {
     if (r.motivo === 'token') return 'Sin sincronizar: revisa el token';
     if (r.motivo === 'sin-token') return 'Sin sincronizar: añade tu token en Ajustes';
-    return 'Pendiente de subir (sin conexión)';
+    return estadoSync === 'ok' ? 'Sin conexión · todo está subido' : 'Pendiente de subir (sin conexión)';
   }
   return estadoSync === 'ok' ? 'Sincronizado ✓' : 'Pendiente de subir';
 }

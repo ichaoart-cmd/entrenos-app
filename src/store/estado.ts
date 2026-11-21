@@ -22,7 +22,9 @@ export async function sincronizarAhora(): Promise<ResultadoSync> {
   const r = await sincronizar();
   estado.ultimoResultado.value = r;
   await recargar();
-  estado.estadoSync.value = r.ok ? (estado.ajustes.value.pendiente ? 'pendiente' : 'ok') : estado.ajustes.value.pendiente || r.motivo === 'token' ? 'error' : 'pendiente';
+  const pendiente = estado.ajustes.value.pendiente;
+  estado.estadoSync.value =
+    !r.ok && (r.motivo === 'token' || r.motivo === 'sin-token') ? 'error' : pendiente ? 'pendiente' : 'ok';
   return r;
 }
 
@@ -31,6 +33,9 @@ export async function iniciar(): Promise<void> {
   estado.estadoSync.value = estado.ajustes.value.pendiente ? 'pendiente' : 'ok';
   void sincronizarAhora();
   addEventListener('online', () => void sincronizarAhora());
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') void sincronizarAhora();
+  });
 }
 
 /** Guarda la sesión, lanza la sincronización sin esperarla y devuelve el PR de la primera fuerza, si lo hay. */

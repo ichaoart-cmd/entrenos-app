@@ -37,7 +37,7 @@ export function Ajustes() {
         <input type="password" aria-label="Token de GitHub" placeholder="github_pat_…" style="width:100%"
           value={token} onInput={(e) => setToken((e.target as HTMLInputElement).value.trim())} />
         <div class="fila">
-          <button type="button" onClick={async () => { await guardarAjustes({ token }); estado.ajustes.value = await cargarAjustes(); setMensaje('Token guardado'); }}>Guardar token</button>
+          <button type="button" onClick={async () => { await guardarAjustes({ token }); estado.ajustes.value = await cargarAjustes(); setMensaje('Token guardado'); void sync(); }}>Guardar token</button>
           <button type="button" disabled={ocupado} onClick={sync}>Sincronizar ahora</button>
         </div>
         {mensaje && <p class="sync" role="status">{mensaje}</p>}

@@ -1,6 +1,6 @@
 import { fusionar } from '../domain/fusion';
 import { ErrorGitHub, escribirRemoto, leerRemoto } from './github';
-import { cargarAjustes, cargarLocal, guardarAjustes, reemplazarDatos } from './local';
+import { cargarAjustes, cargarLocal, conBloqueo, guardarAjustes, reemplazarDatos } from './local';
 
 export type ResultadoSync = { ok: true } | { ok: false; motivo: 'sin-token' | 'token' | 'red' | 'conflicto' };
 
@@ -15,15 +15,17 @@ async function intento(token: string): Promise<void> {
   if (!remoto || canon(fusion) !== canon(fusionar(remoto.datos, remoto.datos))) {
     sha = await escribirRemoto(token, fusion, remoto?.sha, `Registro ${new Date().toISOString().slice(0, 16)}`);
   }
-  // Solo reemplaza si el local no cambió mientras tanto (si cambió, queda pendiente para la próxima).
-  const actual = await cargarLocal();
-  if (canon(actual) === canon(local)) {
-    await reemplazarDatos(fusion);
-    await guardarAjustes({ pendiente: false, ultimoSha: sha, ultimaSync: new Date().toISOString() });
-  } else {
-    await reemplazarDatos(fusionar(actual, fusion));
-    await guardarAjustes({ pendiente: true, ultimoSha: sha });
-  }
+  // Bajo bloqueo: si el local cambió mientras tanto, se fusiona y queda pendiente para la próxima.
+  await conBloqueo(async () => {
+    const actual = await cargarLocal();
+    if (canon(actual) === canon(local)) {
+      await reemplazarDatos(fusion);
+      await guardarAjustes({ pendiente: false, ultimoSha: sha, ultimaSync: new Date().toISOString() });
+    } else {
+      await reemplazarDatos(fusionar(actual, fusion));
+      await guardarAjustes({ pendiente: true, ultimoSha: sha });
+    }
+  });
 }
 
 export async function sincronizar(): Promise<ResultadoSync> {
@@ -35,7 +37,8 @@ export async function sincronizar(): Promise<ResultadoSync> {
       return { ok: true };
     } catch (e) {
       if (e instanceof ErrorGitHub) {
-        if (e.status === 401 || e.status === 403) return { ok: false, motivo: 'token' };
+        // 404 aquí = el token no tiene acceso al repo de datos (el GET 404 ya se trata como "archivo nuevo").
+        if (e.status === 401 || e.status === 403 || e.status === 404) return { ok: false, motivo: 'token' };
         if (e.status === 409 || e.status === 422) continue;
         return { ok: false, motivo: 'red' };
       }

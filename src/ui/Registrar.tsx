@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import type { Fuerza, Lugar, Metcon, Sesion } from '../domain/types';
 import { ejercicioSugerido, ROTACION, type PR } from '../domain/records';
 import { nuevoId } from '../domain/ids';
@@ -8,6 +8,17 @@ import { FuerzaForm, fuerzaInicial } from './FuerzaForm';
 import { MetconForm } from './MetconForm';
 import { Chips } from './componentes/Chips';
 import { Aviso } from './componentes/Aviso';
+import { resumenFuerza } from './formato';
+
+const CLAVE_BORRADOR = 'borrador-registro';
+interface Borrador { fecha: string; lugar: Lugar; fuerza: Fuerza | null; metcon: Metcon | null; nota: string }
+
+function leerBorrador(): Borrador | null {
+  try { const t = localStorage.getItem(CLAVE_BORRADOR); return t ? JSON.parse(t) : null; } catch { return null; }
+}
+function escribirBorrador(b: Borrador | null): void {
+  try { b ? localStorage.setItem(CLAVE_BORRADOR, JSON.stringify(b)) : localStorage.removeItem(CLAVE_BORRADOR); } catch { /* sin almacenamiento */ }
+}
 
 export function hoy(): string {
   const d = new Date();
@@ -23,25 +34,36 @@ export function textoPR(pr: PR): string {
 
 export function Registrar({ sesionInicial }: { sesionInicial?: Sesion }) {
   const datos = estado.datos.value;
+  // Solo las sesiones nuevas usan borrador; al editar se parte de la sesión guardada.
+  const [borrador] = useState(() => (sesionInicial ? null : leerBorrador()));
+  // Bloques de fuerza adicionales (p. ej. sesiones importadas con varios levantamientos): se conservan siempre.
+  const extras = sesionInicial?.fuerza.slice(1) ?? [];
   const ejercicios = [...EJERCICIOS_BASE, ...datos.ejercicios.filter((e) => !EJERCICIOS_BASE.some((b) => b.id === e.id))];
-  const [fecha, setFecha] = useState(sesionInicial?.fecha ?? hoy());
-  const [lugar, setLugar] = useState<Lugar>(sesionInicial?.lugar ?? 'box');
+  const [fecha, setFecha] = useState(sesionInicial?.fecha ?? borrador?.fecha ?? hoy());
+  const [lugar, setLugar] = useState<Lugar>(sesionInicial?.lugar ?? borrador?.lugar ?? 'box');
   const [fuerza, setFuerza] = useState<Fuerza | null>(() =>
-    sesionInicial ? sesionInicial.fuerza[0] ?? null : fuerzaInicial(ejercicioSugerido(datos.sesiones, ROTACION), datos.sesiones));
-  const [metcon, setMetcon] = useState<Metcon | null>(sesionInicial?.metcon ?? null);
-  const [nota, setNota] = useState(sesionInicial?.nota ?? '');
+    sesionInicial ? sesionInicial.fuerza[0] ?? null
+      : borrador ? borrador.fuerza
+      : fuerzaInicial(ejercicioSugerido(datos.sesiones, ROTACION), datos.sesiones));
+  const [metcon, setMetcon] = useState<Metcon | null>(sesionInicial?.metcon ?? borrador?.metcon ?? null);
+  const [nota, setNota] = useState(sesionInicial?.nota ?? borrador?.nota ?? '');
   const [aviso, setAviso] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
+
+  useEffect(() => {
+    if (!sesionInicial && !guardando) escribirBorrador({ fecha, lugar, fuerza, metcon, nota });
+  }, [fecha, lugar, fuerza, metcon, nota]);
 
   const guardar = async () => {
     if (guardando) return;
     setGuardando(true);
     const s: Sesion = {
       id: sesionInicial?.id ?? nuevoId(), actualizado: new Date().toISOString(), fecha, lugar,
-      fuerza: fuerza ? [fuerza, ...(sesionInicial?.fuerza.slice(1) ?? [])] : [],
+      fuerza: [...(fuerza ? [fuerza] : []), ...extras],
       ...(metcon ? { metcon } : {}), ...(nota.trim() ? { nota: nota.trim() } : {}),
     };
     const pr = await registrar(s);
+    if (!sesionInicial) escribirBorrador(null);
     setAviso(pr ? textoPR(pr) : 'Guardado ✓');
     setTimeout(() => { location.hash = '#/'; }, 1800);
   };
@@ -57,11 +79,17 @@ export function Registrar({ sesionInicial }: { sesionInicial?: Sesion }) {
       {fuerza
         ? <FuerzaForm fuerza={fuerza} onCambio={setFuerza} ejercicios={ejercicios} sesiones={datos.sesiones.filter((x) => x.id !== sesionInicial?.id)} onQuitar={() => setFuerza(null)} />
         : <button type="button" class="boton" onClick={() => setFuerza(fuerzaInicial(ejercicioSugerido(datos.sesiones, ROTACION), datos.sesiones))}>＋ Fuerza</button>}
+      {extras.length > 0 && (
+        <section class="tarjeta">
+          <div class="suave">También en esta sesión</div>
+          <div>{resumenFuerza({ ...sesionInicial!, fuerza: extras })}</div>
+        </section>
+      )}
       {metcon
         ? <MetconForm metcon={metcon} onCambio={setMetcon} onQuitar={() => setMetcon(null)} />
         : <button type="button" class="boton" style="margin-left:8px" onClick={() => setMetcon({ formato: 'AMRAP', rx: true })}>＋ Metcon</button>}
       <textarea aria-label="Nota" placeholder="Nota (opcional)" style="margin-top:12px" value={nota} onInput={(e) => setNota((e.target as HTMLTextAreaElement).value)} />
-      <div class="fila"><button type="button" class="primario" disabled={guardando || (!fuerza && !metcon)} onClick={guardar}>Guardar</button></div>
+      <div class="fila"><button type="button" class="primario" disabled={guardando || (!fuerza && !metcon && extras.length === 0)} onClick={guardar}>Guardar</button></div>
     </main>
   );
 }
