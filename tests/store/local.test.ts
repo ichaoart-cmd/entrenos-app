@@ -21,9 +21,9 @@ test('persiste-y-marca-pendiente', async () => {
 });
 
 test('guardar actualiza la marca de tiempo', async () => {
-  await guardarSesion(sesion('a', '2026-11-21', 'back-squat', 5, [94]));
+  await guardarSesion(sesion('a', '2024-01-08', 'back-squat', 5, [94]));
   const s = (await cargarLocal()).sesiones[0];
-  expect(s.actualizado > '2026-11-21T20:00:00.000Z').toBe(true);
+  expect(s.actualizado > '2024-01-08T20:00:00.000Z').toBe(true);
 });
 
 test('upsert-no-duplica', async () => {
