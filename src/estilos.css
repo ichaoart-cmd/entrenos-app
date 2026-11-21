@@ -29,7 +29,7 @@ button, .boton, .boton-grande { min-height: 44px; border-radius: 12px; border: 1
 .stepper input { width: 96px; text-align: center; }
 input, select, textarea { min-height: 44px; border-radius: 10px; border: 1px solid var(--borde); background: #000; color: var(--texto);
   font-size: 1.05rem; padding: 0 10px; }
-textarea { width: 100%; min-height: 80px; padding: 10px; }
+textarea { width: 100%; min-height: 80px; padding: 10px; font-family: inherit; }
 .rampa { display: flex; gap: 6px; }
 .rampa input { width: 100%; min-width: 0; text-align: center; padding: 0 2px; }
 .fila { display: flex; gap: 12px; align-items: center; margin: 10px 0; flex-wrap: wrap; }
