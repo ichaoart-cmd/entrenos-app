@@ -189,3 +189,9 @@ img.ilustracion { display: block; object-fit: contain; }
 .tema-pop .wod li b { font-family: var(--ancha); font-weight: 800; text-align: right; }
 .tema-pop .wod li small { grid-column: 1 / -1; font-family: var(--mono); font-size: 0.72rem; color: var(--suave); }
 .tema-pop .wod li.es-mejor b { background: var(--amarillo); padding: 0 6px; border-radius: 6px; }
+.tema-pop .peso-corporal h3 { margin: 0 0 4px; }
+.tema-pop .peso-corporal .fila { margin-top: 10px; }
+.tema-pop .hist-peso { list-style: none; padding: 0; margin: 10px 0 0; }
+.tema-pop .hist-peso li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1.5px dashed var(--negro); }
+.tema-pop .hist-peso li:last-child { border-bottom: 0; }
+.tema-pop .resumen-rm .relativa { display: inline-block; margin-top: 6px; font-family: var(--mono); font-weight: 700; font-size: 0.8rem; background: var(--blanco); border: 2px solid var(--negro); border-radius: 999px; padding: 1px 10px; }

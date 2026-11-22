@@ -29,4 +29,5 @@ export interface Carrera extends Base {
   /** Sensación de esfuerzo: 1 suave … 5 al límite. */
   esfuerzo?: number;
 }
-export interface Datos { version: 1; ejercicios: Ejercicio[]; sesiones: Sesion[]; carreras: Carrera[] }
+export interface PesoCorporal extends Base { fecha: string; kg: number }
+export interface Datos { version: 1; ejercicios: Ejercicio[]; sesiones: Sesion[]; carreras: Carrera[]; pesos?: PesoCorporal[] }

@@ -13,10 +13,12 @@ function unirPorId<T extends { id: string; actualizado?: string }>(a: T[], b: T[
 export function fusionar(local: Datos, remoto: Datos): Datos {
   const porFecha = <T extends { fecha: string; id: string }>(xs: T[]) =>
     xs.sort((x, y) => (x.fecha === y.fecha ? x.id.localeCompare(y.id) : x.fecha.localeCompare(y.fecha)));
+  const pesos = porFecha(unirPorId(remoto.pesos ?? [], local.pesos ?? []));
   return {
     version: 1,
     ejercicios: unirPorId(remoto.ejercicios, local.ejercicios).sort((x, y) => x.id.localeCompare(y.id)),
     sesiones: porFecha(unirPorId(remoto.sesiones, local.sesiones)),
     carreras: porFecha(unirPorId(remoto.carreras, local.carreras)),
+    ...(pesos.length ? { pesos } : {}),
   };
 }

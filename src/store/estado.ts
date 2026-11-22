@@ -1,8 +1,8 @@
 import { signal } from '@preact/signals';
-import type { Carrera, Datos, Sesion } from '../domain/types';
+import type { Carrera, Datos, PesoCorporal, Sesion } from '../domain/types';
 import { DISTANCIAS, mejoresTiempos } from '../domain/carrera';
 import { detectarPR, recordsPorReps, type PR } from '../domain/records';
-import { borrarCarrera, guardarCarrera, borrarSesion, cargarAjustes, cargarLocal, datosVacios, guardarSesion, type Ajustes } from './local';
+import { borrarPeso, guardarPeso, borrarCarrera, guardarCarrera, borrarSesion, cargarAjustes, cargarLocal, datosVacios, guardarSesion, type Ajustes } from './local';
 import { sincronizar, type ResultadoSync } from './sync';
 
 export type EstadoSync = 'ok' | 'pendiente' | 'error';
@@ -81,4 +81,11 @@ export async function quitarCarrera(id: string): Promise<void> {
   await recargar();
   estado.estadoSync.value = 'pendiente';
   void sincronizarAhora();
+}
+
+export async function registrarPeso(p: PesoCorporal): Promise<void> {
+  await guardarPeso(p); await recargar(); estado.estadoSync.value = 'pendiente'; void sincronizarAhora();
+}
+export async function quitarPeso(id: string): Promise<void> {
+  await borrarPeso(id); await recargar(); estado.estadoSync.value = 'pendiente'; void sincronizarAhora();
 }

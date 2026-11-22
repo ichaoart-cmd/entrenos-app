@@ -5,6 +5,8 @@ import { e1rm, esFiable, rmEstimado } from '../domain/rm';
 import { filtrarPorTempo, serieProgreso, type FiltroTempo } from '../domain/progreso';
 import { FichaCarrera, TarjetaCarrera } from './ProgresoCarrera';
 import { FichaMetcon, TarjetaMetcon } from './ProgresoMetcon';
+import { TarjetaPeso } from './PesoCorporal';
+import { fuerzaRelativa, pesoEn } from '../domain/peso';
 import { CATALOGO, entrada } from '../domain/catalogo';
 import { fechaLarga } from './formato';
 import { IconoEjercicio } from './iconos';
@@ -37,6 +39,7 @@ function Lista() {
       <h1>Progreso</h1>
       <TarjetaCarrera />
       <TarjetaMetcon />
+      <TarjetaPeso />
       {filas.length === 0 && <p class='suave'>Registra tu primera sesión de fuerza para ver aquí tus marcas.</p>}
       {filas.map(({ e, n, rm }) => (
         <a class='ejercicio-progreso enlace-ficha' href={`#/progreso?ej=${e.id}`} aria-label={e.nombre}>
@@ -55,6 +58,7 @@ function Ficha({ id }: { id: string }) {
   const [periodo, setPeriodo] = useState<Periodo>('1a');
   const [tabla, setTabla] = useState(false);
   const [tempo, setTempo] = useState<FiltroTempo>('todas');
+  const peso = pesoEn(estado.datos.value.pesos ?? [], new Date().toISOString().slice(0, 10));
   const todas = estado.datos.value.sesiones;
   const sesiones = filtrarPorTempo(todas, id, tempo);
   const nombre = entrada(id)?.nombre ?? id;
@@ -72,7 +76,8 @@ function Ficha({ id }: { id: string }) {
       </div>
       {rm != null && (
         <div class='tarjeta resumen-rm'>
-          <div><b>{Math.round(rm)} kg</b><span>1RM estimado{tempo === 'sin' ? ' sin tempo' : tempo === 'con' ? ' con tempo' : ''}</span></div>
+          <div><b>{Math.round(rm)} kg</b><span>1RM estimado{tempo === 'sin' ? ' sin tempo' : tempo === 'con' ? ' con tempo' : ''}</span>
+            {peso != null && <span class='relativa'>{String(fuerzaRelativa(rm, peso)).replace('.', ',')} × tu peso</span>}</div>
           <div class='estimados'>
             {[3, 5, 8, 10].map((r) => <span><small>{r}RM</small>{kg(rmEstimado(rm, r))}</span>)}
           </div>
