@@ -23,9 +23,9 @@ export default defineConfig(({ mode }) => mode === 'vista-previa' ? {
         background_color: '#faf3e3',
         start_url: '/entrenos-app/',
         icons: [
-          { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: 'icono-pop-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'icono-pop-512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'icono-pop-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
     }),
