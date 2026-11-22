@@ -2,7 +2,11 @@ import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => mode === 'vista-previa' ? {
+  base: './',
+  plugins: [preact()],
+  build: { outDir: 'dist-vista-previa', rollupOptions: { input: 'vista-previa.html' } },
+} : {
   base: '/entrenos-app/',
   plugins: [
     preact(),
