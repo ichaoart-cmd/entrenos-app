@@ -41,3 +41,28 @@ textarea { width: 100%; min-height: 80px; padding: 10px; font-family: inherit; }
 .lista { list-style: none; padding: 0; margin: 0; }
 .lista li { padding: 12px 0; border-bottom: 1px solid var(--borde); }
 .suave { color: var(--suave); }
+.rejilla-ejercicios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tarjeta-ejercicio { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px; min-height: 104px;
+  border-radius: 14px; border: 2px solid var(--borde); background: #000; }
+.tarjeta-ejercicio .nombre { font-size: 0.85rem; font-weight: 600; text-align: center; line-height: 1.1; }
+.tarjeta-ejercicio .suave { font-size: 0.8rem; }
+.enlace { background: none; border: 0; color: var(--acento); padding: 8px 0; min-height: 40px; }
+.chip:disabled { opacity: 0.35; }
+.rampa-barras { display: flex; gap: 8px; align-items: flex-end; height: 150px; margin: 12px 0 4px; }
+.rampa-barra { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; gap: 6px; min-width: 0; }
+.rampa-barra .hueco { flex: 1; display: flex; align-items: flex-end; }
+.rampa-barra .relleno { width: 100%; border-radius: 8px 8px 3px 3px; }
+.rampa-barra input { width: 100%; min-width: 0; text-align: center; padding: 0 2px; }
+.cal-cabecera { display: flex; align-items: center; justify-content: space-between; }
+.cal-cabecera button { width: 44px; font-size: 1.4rem; }
+.cal-resumen { display: flex; justify-content: space-between; color: var(--suave); font-size: 0.85rem; margin: 10px 0; gap: 8px; flex-wrap: wrap; }
+.cal-resumen b { color: var(--texto); }
+.cal-rejilla { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-dia-nombre { text-align: center; color: var(--suave); font-size: 0.75rem; padding: 2px 0; }
+.cal-dia { aspect-ratio: 1; border-radius: 10px; border: 1.5px solid transparent; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; color: var(--texto); text-decoration: none; font-size: 0.9rem; gap: 2px; }
+.cal-dia.futuro { color: #555; }
+.cal-dia.hoy { outline: 2px solid var(--texto); outline-offset: -2px; }
+.cal-dia.entrenado { font-weight: 700; }
+.cal-dia .puntos { display: flex; gap: 2px; }
+.cal-dia .puntos i { width: 5px; height: 5px; border-radius: 50%; display: block; }

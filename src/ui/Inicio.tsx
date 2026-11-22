@@ -1,5 +1,6 @@
 import { estado } from '../store/estado';
 import { fechaLarga, resumenFuerza, resumenMetcon, textoSync } from './formato';
+import { Calendario } from './Calendario';
 
 export function Inicio() {
   const vivas = estado.datos.value.sesiones.filter((s) => !s.borrado);
@@ -9,12 +10,13 @@ export function Inicio() {
     <main class="pagina">
       <h1>Entrenos</h1>
       <a class="boton-grande" href="#/registrar">＋ Registrar</a>
+      <Calendario sesiones={vivas} minSemana={estado.ajustes.value.minSesionesSemana} />
       {ultima && (
-        <section class="tarjeta">
+        <a class="tarjeta" href={`#/registrar?id=${encodeURIComponent(ultima.id)}`} style="display:block;color:inherit;text-decoration:none">
           <div class="suave">Última sesión · {fechaLarga(ultima.fecha)}</div>
           {ultima.fuerza.length > 0 && <div>{resumenFuerza(ultima)}</div>}
           {ultima.metcon && <div>{resumenMetcon(ultima)}</div>}
-        </section>
+        </a>
       )}
       <p class={`sync${error ? ' error' : ''}`}>{textoSync(estado.estadoSync.value, estado.ultimoResultado.value)}</p>
     </main>

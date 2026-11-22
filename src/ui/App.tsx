@@ -24,9 +24,11 @@ export function App() {
   const [base, query = ''] = ruta.split('?');
   let pagina;
   if (base === '#/registrar') {
-    const id = new URLSearchParams(query).get('id');
+    const q = new URLSearchParams(query);
+    const id = q.get('id');
+    const fecha = q.get('fecha');
     const s = id ? estado.datos.value.sesiones.find((x) => x.id === id) : undefined;
-    pagina = <Registrar key={`${ruta}-${s?.id ?? "nueva"}`} sesionInicial={s} />;
+    pagina = <Registrar key={`${ruta}-${s?.id ?? 'nueva'}`} sesionInicial={s} fechaInicial={fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : undefined} />;
   } else if (base === '#/historial') pagina = <Historial />;
   else if (base === '#/ajustes') pagina = <Ajustes />;
   else pagina = <Inicio />;

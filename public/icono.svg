@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#f5c518"/>
+  <!-- flecha de progreso -->
+  <polyline points="132,226 200,170 252,204 352,112" fill="none" stroke="#111" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="384,84 384,170 302,108" fill="#111" stroke="#111" stroke-width="10" stroke-linejoin="round"/>
+  <!-- barra -->
+  <rect x="88" y="300" width="336" height="22" rx="11" fill="#111"/>
+  <rect x="120" y="244" width="40" height="134" rx="12" fill="#111"/>
+  <rect x="168" y="266" width="28" height="90" rx="10" fill="#111"/>
+  <rect x="352" y="244" width="40" height="134" rx="12" fill="#111"/>
+  <rect x="316" y="266" width="28" height="90" rx="10" fill="#111"/>
+</svg>

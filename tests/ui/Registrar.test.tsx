@@ -18,23 +18,24 @@ beforeEach(async () => {
 
 test('preselecciona el ejercicio sugerido y genera la rampa', () => {
   render(<Registrar />);
-  expect((screen.getByLabelText('Ejercicio') as HTMLSelectElement).value).toBe('press-banca');
+  expect(screen.getByRole('button', { name: /Press Banca/ }).getAttribute('aria-pressed')).toBe('true');
   expect(rampa()).toHaveLength(5);
 });
 
 test('con historial usa la última serie top, reps y tempo', () => {
   estado.datos.value = datosCon([sesion('b', '2026-06-18', 'back-squat', 5, [74, 79, 84, 89, 94])]);
   render(<Registrar />);
-  fireEvent.change(screen.getByLabelText('Ejercicio'), { target: { value: 'back-squat' } });
+  fireEvent.click(screen.getByRole('button', { name: /Back Squat/ }));
   expect((screen.getByLabelText('Serie top (kg)') as HTMLInputElement).value).toBe('94');
   expect((screen.getByLabelText('Reps') as HTMLInputElement).value).toBe('5');
-  expect(screen.getByRole('button', { name: '4s+pausa' }).getAttribute('aria-pressed')).toBe('true');
+  expect(screen.getByRole('button', { name: 'Bajada 4 s' }).getAttribute('aria-pressed')).toBe('true');
+  expect(screen.getByRole('button', { name: 'Con pausa' }).getAttribute('aria-pressed')).toBe('true');
 });
 
 test('cambiar la serie top recalcula la rampa', () => {
   estado.datos.value = datosCon([sesion('b', '2026-06-18', 'back-squat', 5, [74, 79, 84, 89, 94])]);
   render(<Registrar />);
-  fireEvent.change(screen.getByLabelText('Ejercicio'), { target: { value: 'back-squat' } });
+  fireEvent.click(screen.getByRole('button', { name: /Back Squat/ }));
   fireEvent.click(screen.getByRole('button', { name: 'Subir Serie top (kg)' }));
   fireEvent.click(screen.getByRole('button', { name: 'Subir Serie top (kg)' }));
   fireEvent.click(screen.getByRole('button', { name: 'Subir Serie top (kg)' }));
@@ -83,7 +84,7 @@ test('guardar sin red guarda en local y muestra Guardado', async () => {
 test('muestra aviso de PR', async () => {
   estado.datos.value = datosCon([sesion('b', '2026-06-18', 'back-squat', 5, [74, 79, 84, 89, 94])]);
   render(<Registrar />);
-  fireEvent.change(screen.getByLabelText('Ejercicio'), { target: { value: 'back-squat' } });
+  fireEvent.click(screen.getByRole('button', { name: /Back Squat/ }));
   fireEvent.input(screen.getByLabelText('Serie top (kg)'), { target: { value: '96' } });
   fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
   await screen.findByText('Nuevo 5RM: 96 kg (+2 kg)');
@@ -101,9 +102,10 @@ test('se puede quitar la fuerza y guardar solo Metcon', async () => {
   });
 });
 
-test('un tempo previo fuera de la lista aparece como botón seleccionado', () => {
+test('un tempo previo sin pausa se marca como bajada + sin pausa', () => {
   estado.datos.value = datosCon([{ ...sesion('f', '2026-04-27', 'front-squat', 3, [75, 85, 95]), fuerza: [{ ejercicio: 'front-squat', reps: 3, series: [75, 85, 95], tempo: '4s' }] }]);
   render(<Registrar />);
-  fireEvent.change(screen.getByLabelText('Ejercicio'), { target: { value: 'front-squat' } });
-  expect(screen.getByRole('button', { name: '4s' }).getAttribute('aria-pressed')).toBe('true');
+  fireEvent.click(screen.getByRole('button', { name: /Front Squat/ }));
+  expect(screen.getByRole('button', { name: 'Bajada 4 s' }).getAttribute('aria-pressed')).toBe('true');
+  expect(screen.getByRole('button', { name: 'Sin pausa' }).getAttribute('aria-pressed')).toBe('true');
 });

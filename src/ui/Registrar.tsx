@@ -32,14 +32,14 @@ export function textoPR(pr: PR): string {
   return pr.anteriorKg == null ? base : `${base} (+${num(Math.round((pr.kg - pr.anteriorKg) * 10) / 10)} kg)`;
 }
 
-export function Registrar({ sesionInicial }: { sesionInicial?: Sesion }) {
+export function Registrar({ sesionInicial, fechaInicial }: { sesionInicial?: Sesion; fechaInicial?: string }) {
   const datos = estado.datos.value;
   // Solo las sesiones nuevas usan borrador; al editar se parte de la sesión guardada.
-  const [borrador] = useState(() => (sesionInicial ? null : leerBorrador()));
+  const [borrador] = useState(() => (sesionInicial || fechaInicial ? null : leerBorrador()));
   // Bloques de fuerza adicionales (p. ej. sesiones importadas con varios levantamientos): se conservan siempre.
   const extras = sesionInicial?.fuerza.slice(1) ?? [];
   const ejercicios = [...EJERCICIOS_BASE, ...datos.ejercicios.filter((e) => !EJERCICIOS_BASE.some((b) => b.id === e.id))];
-  const [fecha, setFecha] = useState(sesionInicial?.fecha ?? borrador?.fecha ?? hoy());
+  const [fecha, setFecha] = useState(sesionInicial?.fecha ?? fechaInicial ?? borrador?.fecha ?? hoy());
   const [lugar, setLugar] = useState<Lugar>(sesionInicial?.lugar ?? borrador?.lugar ?? 'box');
   const [fuerza, setFuerza] = useState<Fuerza | null>(() =>
     sesionInicial ? sesionInicial.fuerza[0] ?? null

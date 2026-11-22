@@ -14,11 +14,12 @@ export default defineConfig({
         lang: 'es',
         display: 'standalone',
         theme_color: '#111111',
+        description: 'Registro de entrenamientos de CrossFit y carrera',
         background_color: '#111111',
         start_url: '/entrenos-app/',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+          { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
         ],
       },
     }),
