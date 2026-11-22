@@ -132,3 +132,14 @@ html.tema-pop {
 .tema-pop .cal-resumen { gap: 16px; font-size: 0.72rem; }
 .tema-pop .cal-resumen b { font-size: 1.4rem; }
 .tema-pop .barra a { min-width: 0; }
+
+/* Gráficas */
+.tema-pop .grafica .leyenda { font-family: var(--mono); color: var(--negro); font-size: 0.75rem; }
+.tema-pop .grafica .leyenda i.l { height: 4px; width: 18px; border-radius: 2px; }
+.tema-pop .grafica .leyenda i.p { width: 11px; height: 11px; border: 2px solid var(--negro); }
+.tema-pop .grafica .detalle { margin-top: 10px; padding: 8px 12px; border: 2px solid var(--negro); border-radius: 10px; background: var(--crema); font-size: 0.82rem; }
+.tema-pop .grafica .detalle b { font-family: var(--ancha); font-stretch: 112%; font-weight: 800; }
+.tema-pop .enlace { font-family: var(--mono); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
+.tema-pop table.datos { font-family: var(--mono); font-size: 0.78rem; }
+.tema-pop table.datos th { color: var(--negro); text-transform: uppercase; font-size: 0.7rem; }
+.tema-pop .tabla-carrera > div:last-child { border-bottom: 0; }

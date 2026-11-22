@@ -2,7 +2,8 @@ import { useState } from 'preact/hooks';
 import { estado } from '../store/estado';
 import type { Carrera } from '../domain/types';
 import { DISTANCIAS, formatearRitmo, formatearTiempo, kmPorSemana, mejoresTiempos, prediccion, ritmoSegKm } from '../domain/carrera';
-import { COLOR_E1RM } from './Grafica';
+import { Etiqueta } from './Grafica';
+import { AMARILLO, CIELO, MENTA, MONO, REJILLA, TEXTO, TINTA } from './coloresGrafica';
 import { IconoEjercicio } from './iconos';
 import { fechaLarga, resumenCarrera } from './formato';
 import { hoy } from './Registrar';
@@ -29,24 +30,26 @@ export function TarjetaCarrera() {
 
 function BarrasKm({ semanas }: { semanas: { lunes: string; km: number }[] }) {
   const [activa, setActiva] = useState<number | null>(null);
-  const W = 340, H = 150, abajo = 20, arriba = 18, hueco = 4;
+  const W = 340, H = 160, abajo = 22, arriba = 26, hueco = 5;
   const max = Math.max(...semanas.map((s) => s.km), 1);
   const ancho = (W - hueco * (semanas.length - 1)) / semanas.length;
   const a = activa != null ? semanas[activa] : semanas[semanas.length - 1];
   return (
     <figure class='grafica'>
       <svg viewBox={`0 0 ${W} ${H}`} role='img' aria-label={`Km por semana, últimas ${semanas.length} semanas`}>
-        <line x1='0' x2={W} y1={H - abajo} y2={H - abajo} stroke='#ddd5c7' />
+
         {semanas.map((s, i) => {
           const h = (s.km / max) * (H - abajo - arriba), x = i * (ancho + hueco), y = H - abajo - h;
           return (
             <g onPointerDown={() => setActiva(i)} onPointerEnter={() => setActiva(i)} style={{ cursor: 'pointer' }}>
               <rect x={x} y={arriba} width={ancho} height={H - abajo - arriba} fill='transparent' />
-              {s.km > 0 && <path d={`M${x} ${H - abajo}V${y + 4}q0 -4 4 -4h${ancho - 8}q4 0 4 4V${H - abajo}z`} fill={COLOR_E1RM} opacity={a === s ? 1 : 0.55} />}
-              {(i === semanas.length - 1 || i % 4 === 0) && <text x={i === 0 ? x : i === semanas.length - 1 ? x + ancho : x + ancho / 2} y={H - 5} text-anchor={i === 0 ? 'start' : i === semanas.length - 1 ? 'end' : 'middle'} font-size='10' fill='#6f7266'>{corta(s.lunes)}</text>}
+              {s.km > 0 && <path d={`M${x + 1} ${H - abajo}V${y + 4}q0 -4 4 -4h${ancho - 10}q4 0 4 4V${H - abajo}`} fill={a === s ? AMARILLO : CIELO} stroke={TINTA} stroke-width='2' stroke-linejoin='round' />}
+              {a === s && s.km > 0 && <Etiqueta x={x + ancho / 2} y={y - 14} texto={coma(s.km)} max={W} />}
+              {(i === semanas.length - 1 || i % 4 === 0) && <text x={i === 0 ? x : i === semanas.length - 1 ? x + ancho : x + ancho / 2} y={H - 5} text-anchor={i === 0 ? 'start' : i === semanas.length - 1 ? 'end' : 'middle'} font-size='10' font-family={MONO} fill={TEXTO}>{corta(s.lunes)}</text>}
             </g>
           );
         })}
+        <line x1='0' x2={W} y1={H - abajo} y2={H - abajo} stroke={TINTA} stroke-width='2.5' />
       </svg>
       <figcaption class='detalle' aria-live='polite'>
         <b>{coma(a.km)} km</b> la semana del {corta(a.lunes)}{activa == null ? ' (esta semana)' : ''}
@@ -58,7 +61,7 @@ function BarrasKm({ semanas }: { semanas: { lunes: string; km: number }[] }) {
 function GraficaRitmo({ carreras }: { carreras: Carrera[] }) {
   const [activo, setActivo] = useState<number | null>(null);
   if (carreras.length < 2) return <p class='suave'>Con dos carreras aparecerá aquí tu ritmo a lo largo del tiempo.</p>;
-  const W = 340, H = 180, izq = 34, der = 10, arriba = 12, abajo = 22;
+  const W = 340, H = 190, izq = 38, der = 12, arriba = 24, abajo = 24;
   const rs = carreras.map(ritmoSegKm);
   const min = Math.floor(Math.min(...rs) / 15) * 15, max = Math.ceil(Math.max(...rs) / 15) * 15 || min + 15;
   const d = (f: string) => Date.parse(f) / 864e5;
@@ -78,11 +81,14 @@ function GraficaRitmo({ carreras }: { carreras: Carrera[] }) {
     <figure class='grafica'>
       <svg viewBox={`0 0 ${W} ${H}`} role='img' aria-label='Ritmo medio de cada carrera; más arriba es más rápido'
         onPointerMove={mover} onPointerDown={mover} onPointerLeave={() => setActivo(null)} style={{ touchAction: 'pan-y' }}>
-        {ticks.map((r) => <g><line x1={izq} x2={W - der} y1={Y(r)} y2={Y(r)} stroke='#e3dccf' /><text x={izq - 6} y={Y(r) + 3.5} text-anchor='end' font-size='10' fill='#6f7266'>{formatearRitmo(r)}</text></g>)}
-        <path d={carreras.map((c, i) => `${i ? 'L' : 'M'}${X(c.fecha).toFixed(1)} ${Y(rs[i]).toFixed(1)}`).join(' ')} fill='none' stroke={COLOR_E1RM} stroke-width='2' stroke-linejoin='round' />
-        {carreras.map((c, i) => <circle cx={X(c.fecha)} cy={Y(rs[i])} r={a === c ? 5 : 3.5} fill={COLOR_E1RM} stroke='#f8f4ec' stroke-width='2' />)}
-        <text x={izq} y={H - 6} font-size='10' fill='#6f7266'>{corta(carreras[0].fecha)}</text>
-        <text x={W - der} y={H - 6} text-anchor='end' font-size='10' fill='#6f7266'>{corta(carreras[carreras.length - 1].fecha)}</text>
+        {ticks.map((r) => <g><line x1={izq} x2={W - der} y1={Y(r)} y2={Y(r)} stroke={REJILLA} stroke-dasharray='3 4' /><text x={izq - 6} y={Y(r) + 3.5} text-anchor='end' font-size='10' font-family={MONO} fill={TEXTO}>{formatearRitmo(r)}</text></g>)}
+        <line x1={izq} x2={W - der} y1={H - abajo} y2={H - abajo} stroke={TINTA} stroke-width='2.5' />
+        {a && <line x1={X(a.fecha)} x2={X(a.fecha)} y1={arriba} y2={H - abajo} stroke={TINTA} stroke-width='1.5' stroke-dasharray='4 3' />}
+        <path d={carreras.map((c, i) => `${i ? 'L' : 'M'}${X(c.fecha).toFixed(1)} ${Y(rs[i]).toFixed(1)}`).join(' ')} fill='none' stroke={TINTA} stroke-width='3' stroke-linejoin='round' stroke-linecap='round' />
+        {carreras.map((c, i) => <circle cx={X(c.fecha)} cy={Y(rs[i])} r={a === c ? 6.5 : 4.5} fill={a === c ? AMARILLO : MENTA} stroke={TINTA} stroke-width='2' />)}
+        {a && <Etiqueta x={X(a.fecha)} y={Y(rs[activo!]) - 18} texto={formatearRitmo(rs[activo!])} max={W} />}
+        <text x={izq} y={H - 6} font-size='10' font-family={MONO} fill={TEXTO}>{corta(carreras[0].fecha)}</text>
+        <text x={W - der} y={H - 6} text-anchor='end' font-size='10' font-family={MONO} fill={TEXTO}>{corta(carreras[carreras.length - 1].fecha)}</text>
       </svg>
       <figcaption class='detalle' aria-live='polite'>
         {a ? <><b>{fechaLarga(a.fecha)}</b> · {resumenCarrera(a)}</> : <span class='suave'>Más arriba = más rápido. Toca para ver cada carrera.</span>}

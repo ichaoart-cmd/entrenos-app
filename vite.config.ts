@@ -18,9 +18,9 @@ export default defineConfig(({ mode }) => mode === 'vista-previa' ? {
         short_name: 'Entrenos',
         lang: 'es',
         display: 'standalone',
-        theme_color: '#2f3d2e',
+        theme_color: '#faf3e3',
         description: 'Registro de entrenamientos de CrossFit y carrera',
-        background_color: '#eee8dd',
+        background_color: '#faf3e3',
         start_url: '/entrenos-app/',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },

@@ -1,9 +1,11 @@
 import { useState } from 'preact/hooks';
 import type { Punto } from '../domain/progreso';
 
-/** Colores validados para la gráfica (dataviz: banda de luminosidad, croma y contraste OK; CVD 7,7 → con codificación doble: línea vs puntos + leyenda). */
-export const COLOR_E1RM = '#2f7d4f';
-export const COLOR_TOP = '#c4791d';
+import { AMARILLO, FONDO, MONO, REJILLA, ROSA, TEXTO, TINTA } from './coloresGrafica';
+
+/** 1RM estimado = línea negra gruesa; serie top = puntos rosa con contorno (doble codificación: línea vs punto + leyenda). */
+export const COLOR_E1RM = TINTA;
+export const COLOR_TOP = ROSA;
 
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 const dia = (f: string) => Date.parse(f) / 864e5;
@@ -17,7 +19,7 @@ function pasoBonito(rango: number): number {
 
 export function Grafica({ puntos, nombre }: { puntos: Punto[]; nombre: string }) {
   const [activo, setActivo] = useState<number | null>(null);
-  const W = 340, H = 210, izq = 34, der = 12, arriba = 14, abajo = 26;
+  const W = 340, H = 220, izq = 34, der = 14, arriba = 20, abajo = 28;
   if (puntos.length < 2) {
     return <p class='suave'>Con un registro más aparecerá aquí la gráfica de {nombre}.</p>;
   }
@@ -61,20 +63,21 @@ export function Grafica({ puntos, nombre }: { puntos: Punto[]; nombre: string })
         onPointerMove={mover} onPointerDown={mover} onPointerLeave={() => setActivo(null)} style={{ touchAction: 'pan-y' }}>
         {ticks.map((v) => (
           <g>
-            <line x1={izq} x2={W - der} y1={Y(v)} y2={Y(v)} stroke='#e3dccf' stroke-width='1' />
-            <text x={izq - 6} y={Y(v) + 3.5} text-anchor='end' font-size='10' fill='#6f7266'>{v}</text>
+            <line x1={izq} x2={W - der} y1={Y(v)} y2={Y(v)} stroke={v === yMin ? TINTA : REJILLA} stroke-width={v === yMin ? 2.5 : 1} stroke-dasharray={v === yMin ? undefined : '3 4'} />
+            <text x={izq - 6} y={Y(v) + 3.5} text-anchor='end' font-size='10' font-family={MONO} fill={TEXTO}>{v}</text>
           </g>
         ))}
         {marcas.map((m) => (
-          <text x={X(m)} y={H - 8} text-anchor='middle' font-size='10' fill='#6f7266'>
+          <text x={X(m)} y={H - 8} text-anchor='middle' font-size='10' font-family={MONO} fill={TEXTO}>
             {salto >= 12 ? m.slice(0, 4) : `${MESES[Number(m.slice(5, 7)) - 1]} ${m.slice(2, 4)}`}
           </text>
         ))}
-        <path d={linea} fill='none' stroke={COLOR_E1RM} stroke-width='2' stroke-linejoin='round' stroke-linecap='round' />
-        {puntos.map((p) => <circle cx={X(p.fecha)} cy={Y(p.kg)} r='4' fill={COLOR_TOP} stroke='#f8f4ec' stroke-width='2' />)}
-        <text x={X(ultimo.fecha) - 6} y={Y(ultimo.e1rm) - 12} text-anchor='end' font-size='11' font-weight='700' fill='#1e241d'>{kg(ultimo.e1rm)}</text>
-        {a && <line x1={X(a.fecha)} x2={X(a.fecha)} y1={arriba} y2={H - abajo} stroke='#6f7266' stroke-width='1' />}
-        {a && <circle cx={X(a.fecha)} cy={Y(a.e1rm)} r='4.5' fill={COLOR_E1RM} stroke='#f8f4ec' stroke-width='2' />}
+        {a && <line x1={X(a.fecha)} x2={X(a.fecha)} y1={arriba} y2={H - abajo} stroke={TINTA} stroke-width='1.5' stroke-dasharray='4 3' />}
+        {puntos.map((p) => <circle cx={X(p.fecha)} cy={Y(p.kg)} r='4.5' fill={COLOR_TOP} stroke={TINTA} stroke-width='2' />)}
+        <path d={linea} fill='none' stroke={COLOR_E1RM} stroke-width='3' stroke-linejoin='round' stroke-linecap='round' />
+        {!a && <Etiqueta x={X(ultimo.fecha)} y={Y(ultimo.e1rm) - 18} texto={kg(ultimo.e1rm)} max={W} />}
+        {a && <circle cx={X(a.fecha)} cy={Y(a.e1rm)} r='6.5' fill={AMARILLO} stroke={TINTA} stroke-width='2.5' />}
+        {a && <Etiqueta x={X(a.fecha)} y={Y(a.e1rm) - 20} texto={kg(a.e1rm)} max={W} />}
       </svg>
       <figcaption class='detalle' aria-live='polite'>
         {a ? <><b>{fechaCorta(a.fecha)}</b> · {a.reps} × {kg(a.kg)} kg · 1RM est. {kg(a.e1rm)} kg</>
@@ -85,3 +88,14 @@ export function Grafica({ puntos, nombre }: { puntos: Punto[]; nombre: string })
 }
 
 function iso(d: Date) { return d.toISOString().slice(0, 10); }
+
+/** Pastilla negra con la cifra, como una pegatina; no se sale del gráfico. */
+export function Etiqueta({ x, y, texto, max, fondo = TINTA, color = FONDO }: { x: number; y: number; texto: string; max: number; fondo?: string; color?: string }) {
+  const ancho = texto.length * 7 + 14, cx = Math.min(Math.max(x, ancho / 2 + 2), max - ancho / 2 - 2), cy = Math.max(y, 10);
+  return (
+    <g>
+      <rect x={cx - ancho / 2} y={cy - 9} width={ancho} height='18' rx='5' fill={fondo} />
+      <text x={cx} y={cy + 4} text-anchor='middle' font-size='11' font-weight='700' font-family={MONO} fill={color}>{texto}</text>
+    </g>
+  );
+}

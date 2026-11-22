@@ -7,7 +7,6 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "build:vista-previa": "vite build --mode vista-previa",
-    "build:vista-pop": "VITE_TEMA=pop vite build --mode vista-previa --outDir dist-vista-pop",
     "test": "vitest run",
     "importar": "tsx scripts/importar-notion.ts"
   },
