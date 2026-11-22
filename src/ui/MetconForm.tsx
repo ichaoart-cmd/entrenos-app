@@ -1,5 +1,8 @@
 import type { FormatoMetcon, Metcon } from '../domain/types';
+import { useState } from 'preact/hooks';
 import { Chips } from './componentes/Chips';
+import { BENCHMARKS, MOVIMIENTOS, mejorBenchmark } from '../domain/benchmarks';
+import { estado } from '../store/estado';
 
 const FORMATOS: { valor: FormatoMetcon; texto: string }[] = [
   { valor: 'AMRAP', texto: 'AMRAP' }, { valor: 'ForTime', texto: 'For Time' }, { valor: 'EMOM', texto: 'EMOM' },
@@ -11,7 +14,24 @@ function partes(m: Metcon): string[] {
 }
 
 export function MetconForm({ metcon, onCambio, onQuitar }: { metcon: Metcon; onCambio: (m: Metcon) => void; onQuitar: () => void }) {
-  const set = (cambios: Partial<Metcon>) => onCambio({ ...metcon, ...cambios });
+  const set = (cambios: Partial<Metcon>) => {
+    const m = { ...metcon, ...cambios };
+    for (const k of Object.keys(m) as (keyof Metcon)[]) if (m[k] === undefined) delete m[k];
+    onCambio(m);
+  };
+  const [lista, setLista] = useState(false);
+  const bm = BENCHMARKS.find((b) => b.id === metcon.benchmark);
+  const mejor = bm ? mejorBenchmark(estado.datos.value.sesiones, bm.id) : null;
+  const elegir = (id: string) => {
+    const b = BENCHMARKS.find((x) => x.id === id)!;
+    set({ benchmark: b.id, formato: b.formato, duracionMin: b.duracionMin, descripcion: b.descripcion, movimientos: [...b.movimientos], resultado: undefined });
+    setLista(false);
+  };
+  const alternar = (id: string) => {
+    const ms = metcon.movimientos ?? [];
+    const nuevos = ms.includes(id) ? ms.filter((x) => x !== id) : [...ms, id];
+    set({ movimientos: nuevos.length ? nuevos : undefined });
+  };
   const p = partes(metcon);
   const val = (id: string) => (e: Event) => (e.target as HTMLInputElement).value.trim();
   let resultado;
@@ -52,6 +72,25 @@ export function MetconForm({ metcon, onCambio, onQuitar }: { metcon: Metcon; onC
   return (
     <section class="tarjeta">
       <h2>Metcon</h2>
+      <div class='wod-ref'>
+        {bm ? (
+          <div class='wod-elegido'>
+            <b>{bm.nombre}</b>
+            <span>{mejor ? `Tu mejor: ${mejor.valor}${mejor.rx ? ' RX' : ''} (${mejor.fecha.split('-').reverse().join('/')})` : 'Primera vez: hoy marcas tu referencia'}</span>
+            <button type='button' class='enlace' onClick={() => set({ benchmark: undefined })}>Quitar</button>
+          </div>
+        ) : (
+          <button type='button' class='boton' aria-expanded={lista} onClick={() => setLista(!lista)}>WOD de referencia</button>
+        )}
+        {lista && !bm && (
+          <div class='lista-wods' role='group' aria-label='WODs de referencia'>
+            {BENCHMARKS.map((b) => {
+              const mb = mejorBenchmark(estado.datos.value.sesiones, b.id);
+              return <button type='button' onClick={() => elegir(b.id)}><b>{b.nombre}</b><small>{mb ? `Tu mejor: ${mb.valor}` : b.descripcion}</small></button>;
+            })}
+          </div>
+        )}
+      </div>
       <Chips etiqueta="Formato" opciones={FORMATOS} valor={metcon.formato} onCambio={(f) => set({ formato: f, resultado: undefined })} />
       {resultado}
       <div class="fila">
@@ -63,6 +102,15 @@ export function MetconForm({ metcon, onCambio, onQuitar }: { metcon: Metcon; onC
           valor={metcon.rx === false ? 'esc' : 'rx'} onCambio={(v) => set({ rx: v === 'rx' })} />
         <Chips etiqueta="Equipo" opciones={[{ valor: 'si', texto: 'En equipo' }]}
           valor={metcon.equipo ? 'si' : undefined} onCambio={() => set({ equipo: !metcon.equipo })} />
+      </div>
+      <div class='etiq'>Movimientos</div>
+      <div class='movimientos' role='group' aria-label='Movimientos'>
+        {MOVIMIENTOS.map((m) => (
+          <button type='button' aria-pressed={(metcon.movimientos ?? []).includes(m.id)} aria-label={m.nombre} onClick={() => alternar(m.id)}>
+            <img src={`${import.meta.env.BASE_URL}ilustraciones/${m.ilustracion}.webp`} width={44} height={44} alt='' loading='lazy' />
+            <span aria-hidden='true'>{m.nombre}</span>
+          </button>
+        ))}
       </div>
       <textarea aria-label="Descripción" placeholder="Descripción (opcional)" value={metcon.descripcion ?? ''}
         onInput={(e) => set({ descripcion: (e.target as HTMLTextAreaElement).value || undefined })} />

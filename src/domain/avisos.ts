@@ -7,6 +7,7 @@ import { DISTANCIAS, formatearTiempo, kmPorSemana, mejoresTiempos } from './carr
 import { tiposDeSesion } from './tipos';
 import { entrada } from './catalogo';
 import { conTempo } from './progreso';
+import { BENCHMARKS, esMejor, historialBenchmark } from './benchmarks';
 
 export interface AvisoEntreno { tipo: 'logro' | 'alerta' | 'info'; titulo: string; texto?: string; href?: string }
 
@@ -48,6 +49,17 @@ export function generarAvisos(d: Datos, hoy: string, minSemana: number, max = 5)
       if (a && m.seg < a.seg) logros.push({ tipo: 'logro', titulo: `Mejor ${DISTANCIAS.find((x) => x.km === m.km)!.nombre}: ${formatearTiempo(m.seg)}`, href: '#/progreso?ej=carrera' });
     }
   });
+
+  // WODs de referencia mejorados en las últimas 2 semanas.
+  for (const b of BENCHMARKS) {
+    const h = historialBenchmark(d.sesiones, b.id);
+    h.forEach((x, i) => {
+      if (x.fecha < hace14 || !x.rx) return;
+      const previas = h.slice(0, i).filter((y) => y.rx);
+      if (previas.length && previas.every((y) => esMejor(x.tipo, x.n, y.n)))
+        logros.push({ tipo: 'logro', titulo: `Mejor ${b.nombre}: ${x.valor}`, href: '#/progreso?ej=metcon' });
+    });
+  }
 
   const porEjercicio = new Map<string, typeof hist>();
   for (const h of hist) porEjercicio.set(h.f.ejercicio, [...(porEjercicio.get(h.f.ejercicio) ?? []), h]);

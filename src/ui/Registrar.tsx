@@ -5,6 +5,7 @@ import { nuevoId } from '../domain/ids';
 import { EJERCICIOS_BASE } from '../store/local';
 import { borrar, estado, registrar } from '../store/estado';
 import { BotonBorrar } from './componentes/BotonBorrar';
+import { BENCHMARKS, esMejor, mejorBenchmark } from '../domain/benchmarks';
 import { usarPantallaEncendida } from './pantalla';
 import { FuerzaForm, fuerzaInicial } from './FuerzaForm';
 import { MetconForm } from './MetconForm';
@@ -28,6 +29,15 @@ export function hoy(): string {
 }
 
 const num = (n: number) => String(n).replace('.', ',');
+
+/** «Mejor Fran: 5:10» si el WOD de referencia mejora una marca que ya existía. */
+function mejoraBenchmark(s: Sesion, previas: Sesion[]): string | null {
+  const m = s.metcon;
+  if (!m?.benchmark || !m.resultado) return null;
+  const antes = mejorBenchmark(previas, m.benchmark), ahora = mejorBenchmark([...previas, s], m.benchmark);
+  if (!antes || !ahora || ahora.fecha !== s.fecha || ahora.valor !== m.resultado.valor || !esMejor(ahora.tipo, ahora.n, antes.n)) return null;
+  return `¡Mejor ${BENCHMARKS.find((b) => b.id === m.benchmark)?.nombre ?? m.benchmark}: ${ahora.valor}!`;
+}
 
 export function textoPR(pr: PR): string {
   const base = `Nuevo ${pr.reps}RM: ${num(pr.kg)} kg`;
@@ -67,6 +77,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
       fuerza: [...(fuerza ? [fuerza] : []), ...extras],
       ...(metcon ? { metcon } : {}), ...(nota.trim() ? { nota: nota.trim() } : {}),
     };
+    const previas = estado.datos.value.sesiones.filter((x) => x.id !== s.id);
     let pr;
     try {
       pr = await registrar(s);
@@ -78,8 +89,9 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
       return;
     }
     if (!sesionInicial) escribirBorrador(null);
-    setAviso(pr ? textoPR(pr) : 'Guardado ✓');
-    setEsRecord(!!pr);
+    const wod = mejoraBenchmark(s, previas);
+    setAviso(wod ?? (pr ? textoPR(pr) : 'Guardado ✓'));
+    setEsRecord(!!pr || !!wod);
     setTimeout(() => { location.hash = '#/'; }, 1800);
   };
 

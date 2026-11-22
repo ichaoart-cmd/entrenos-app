@@ -4,6 +4,7 @@ import { ROTACION, recordsPorReps } from '../domain/records';
 import { e1rm, esFiable, rmEstimado } from '../domain/rm';
 import { filtrarPorTempo, serieProgreso, type FiltroTempo } from '../domain/progreso';
 import { FichaCarrera, TarjetaCarrera } from './ProgresoCarrera';
+import { FichaMetcon, TarjetaMetcon } from './ProgresoMetcon';
 import { CATALOGO, entrada } from '../domain/catalogo';
 import { fechaLarga } from './formato';
 import { IconoEjercicio } from './iconos';
@@ -20,6 +21,7 @@ function mejor1RM(sesiones: any, id: string) {
 
 export function Progreso({ ejercicio }: { ejercicio?: string }) {
   if (ejercicio === 'carrera') return <FichaCarrera />;
+  if (ejercicio === 'metcon') return <FichaMetcon />;
   return ejercicio ? <Ficha id={ejercicio} /> : <Lista />;
 }
 
@@ -34,6 +36,7 @@ function Lista() {
     <main class='pagina'>
       <h1>Progreso</h1>
       <TarjetaCarrera />
+      <TarjetaMetcon />
       {filas.length === 0 && <p class='suave'>Registra tu primera sesión de fuerza para ver aquí tus marcas.</p>}
       {filas.map(({ e, n, rm }) => (
         <a class='ejercicio-progreso enlace-ficha' href={`#/progreso?ej=${e.id}`} aria-label={e.nombre}>

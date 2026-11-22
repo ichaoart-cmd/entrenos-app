@@ -15,6 +15,10 @@ export interface Fuerza {
 export interface Metcon {
   formato: FormatoMetcon; duracionMin?: number; equipo?: boolean;
   resultado?: { tipo: TipoResultado; valor: string }; rx?: boolean; descripcion?: string;
+  /** WOD de referencia (Fran, Cindy…), por id de BENCHMARKS. */
+  benchmark?: string;
+  /** Movimientos del WOD, por id de MOVIMIENTOS. */
+  movimientos?: string[];
 }
 export interface Sesion extends Base {
   fecha: string; lugar: Lugar; fuerza: Fuerza[]; metcon?: Metcon; nota?: string;

@@ -166,3 +166,26 @@ img.ilustracion { display: block; object-fit: contain; }
 .tema-pop .descanso.acabado b { font-size: 1.15rem; text-transform: uppercase; }
 .tema-pop .repetir { display: flex; align-items: baseline; gap: 8px; margin: 8px 0 4px; background: var(--lila); font-weight: 700; padding: 8px 14px; }
 .tema-pop .repetir small { font-family: var(--mono); font-weight: 400; font-size: 0.75rem; }
+
+/* Metcon */
+.tema-pop .wod-ref { margin: 4px 0 12px; }
+.tema-pop .wod-elegido { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 12px; background: var(--rosa); border: var(--borde); border-radius: 12px; box-shadow: var(--sombra-p); }
+.tema-pop .wod-elegido b { font-family: var(--ancha); font-stretch: 125%; font-weight: 850; text-transform: uppercase; font-size: 1.2rem; }
+.tema-pop .wod-elegido span { flex: 1; font-family: var(--mono); font-size: 0.78rem; }
+.tema-pop .lista-wods { display: grid; gap: 8px; margin-top: 10px; }
+.tema-pop .lista-wods button { display: flex; flex-direction: column; align-items: flex-start; text-align: left; padding: 10px 12px; min-height: 0; }
+.tema-pop .lista-wods b { font-family: var(--ancha); font-stretch: 112%; font-weight: 800; text-transform: uppercase; }
+.tema-pop .lista-wods small { font-size: 0.78rem; color: var(--suave); font-weight: 400; }
+.tema-pop .movimientos { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; margin: 6px 0 14px; }
+.tema-pop .movimientos button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 4px; min-height: 0; background: var(--blanco); }
+.tema-pop .movimientos button span { font-size: 0.68rem; font-family: var(--mono); line-height: 1.1; text-align: center; }
+.tema-pop .movimientos button[aria-pressed='true'] { background: var(--menta); box-shadow: var(--sombra); }
+.tema-pop .wod header { display: flex; justify-content: space-between; align-items: baseline; }
+.tema-pop .wod h2 { margin: 0; }
+.tema-pop .wod .mejor { font-family: var(--ancha); font-stretch: 112%; font-weight: 850; font-size: 1.5rem; background: var(--amarillo); border: 2px solid var(--negro); border-radius: 10px; padding: 0 8px; }
+.tema-pop .wod ul { list-style: none; padding: 0; margin: 8px 0 0; }
+.tema-pop .wod li { display: grid; grid-template-columns: 1fr auto; padding: 6px 0; border-bottom: 1.5px dashed var(--negro); }
+.tema-pop .wod li:last-child { border-bottom: 0; }
+.tema-pop .wod li b { font-family: var(--ancha); font-weight: 800; text-align: right; }
+.tema-pop .wod li small { grid-column: 1 / -1; font-family: var(--mono); font-size: 0.72rem; color: var(--suave); }
+.tema-pop .wod li.es-mejor b { background: var(--amarillo); padding: 0 6px; border-radius: 6px; }

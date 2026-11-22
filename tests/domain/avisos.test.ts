@@ -62,3 +62,8 @@ test('estancamiento: solo compara con sesiones del mismo tempo y avisa de uno so
   const s = [ft('2026-06-01', 100), ...['07', '08', '09', '10'].map((m) => ft(`2026-${m}-05`, 80, '4s+pausa')), ft('2026-11-05', 98)];
   expect(textos(datos(s)).some((x) => x.includes('sin mejorar'))).toBe(false);
 });
+
+test('mejor marca en un WOD de referencia reciente', () => {
+  const m = (fecha: string, valor: string): Sesion => ({ id: fecha, actualizado: '', fecha, lugar: 'box', fuerza: [], metcon: { formato: 'ForTime', benchmark: 'fran', rx: true, resultado: { tipo: 'tiempo', valor } } });
+  expect(textos(datos([m('2026-09-01', '6:00'), m('2026-11-20', '5:30')]))).toContain('logro: Mejor Fran: 5:30');
+});
