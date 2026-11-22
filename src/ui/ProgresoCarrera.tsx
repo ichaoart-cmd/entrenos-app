@@ -7,6 +7,7 @@ import { AMARILLO, CIELO, FONDO, MONO, REJILLA, TEXTO, TINTA } from './coloresGr
 import { IconoEjercicio } from './iconos';
 import { fechaLarga, resumenCarrera } from './formato';
 import { hoy } from './Registrar';
+import { POOLS, delDia } from './frases';
 
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 const coma = (n: number) => String(Math.round(n * 10) / 10).replace('.', ',');
@@ -112,7 +113,7 @@ export function FichaCarrera() {
         <h1>Carrera</h1>
       </div>
       <a class='boton' href='#/carrera' style='display:inline-flex;align-items:center;padding:0 18px;text-decoration:none;margin-bottom:6px'>＋ Apuntar carrera</a>
-      {cs.length === 0 ? <p class='suave'>Ni una carrera todavía. Las zapatillas lloran.</p> : <>
+      {cs.length === 0 ? <p class='suave'>{delDia('vacioCarrera', POOLS.vacioCarrera)}.</p> : <>
         <h2>Km por semana</h2>
         <div class='tarjeta'><BarrasKm semanas={kmPorSemana(cs, 12, h)} /></div>
         <h2>Ritmo</h2>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { descanso, pararDescanso, restanteSeg, sumarDescanso } from '../store/descanso';
 import { avisoFin, sonar } from './sonido';
-import { FIN_DESCANSO, elegir } from './frases';
+import { POOLS, sinRepetir } from './frases';
 import { formatearTiempo } from '../domain/carrera';
 import { usarPantallaEncendida } from './pantalla';
 
@@ -10,11 +10,14 @@ export function Descanso() {
   const fin = descanso.value;
   const [, setTic] = useState(0);
   const [acabado, setAcabado] = useState(false);
-  const [frase] = useState(() => elegir(FIN_DESCANSO));
+  const [frase, setFrase] = useState(POOLS.finDescanso[0]);
+  const [respira, setRespira] = useState(POOLS.respira[0]);
   usarPantallaEncendida(fin != null);
   useEffect(() => {
     if (fin == null) return;
     setAcabado(false);
+    setFrase(sinRepetir('finDescanso', POOLS.finDescanso));
+    setRespira(sinRepetir('respira', POOLS.respira));
     let avisado = false, ultimo = -1;
     const id = setInterval(() => {
       setTic((x) => x + 1);
@@ -33,7 +36,7 @@ export function Descanso() {
   return (
     <div class={`descanso${acabado ? ' acabado' : ''}`} role='timer' aria-live={acabado ? 'assertive' : 'off'}>
       {acabado ? <b>{frase}</b> : <>
-        <span class='etq'>Respira</span>
+        <span class='etq'>{respira}</span>
         <b>{formatearTiempo(restanteSeg())}</b>
         <button type='button' aria-label='Sumar 30 segundos' onClick={() => sumarDescanso(30)}>+30</button>
         <button type='button' aria-label='Parar descanso' onClick={pararDescanso}>✕</button>

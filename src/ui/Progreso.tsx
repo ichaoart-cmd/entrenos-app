@@ -7,6 +7,7 @@ import { FichaCarrera, TarjetaCarrera } from './ProgresoCarrera';
 import { FichaMetcon, TarjetaMetcon } from './ProgresoMetcon';
 import { TarjetaPeso } from './PesoCorporal';
 import { Reparto } from './Reparto';
+import { POOLS, delDia } from './frases';
 import { fuerzaRelativa, pesoEn } from '../domain/peso';
 import { CATALOGO, entrada } from '../domain/catalogo';
 import { fechaLarga } from './formato';
@@ -38,7 +39,7 @@ function Lista() {
   return (
     <main class='pagina'>
       <h1>Progreso</h1>
-      <p class='subtitulo'>Cuánto has crecido, en números.</p>
+      <p class='subtitulo'>{delDia('subProgreso', POOLS.subProgreso)}</p>
       <Reparto />
       <TarjetaCarrera />
       <TarjetaMetcon />

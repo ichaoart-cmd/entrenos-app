@@ -5,6 +5,7 @@ import { exportarCSV, exportarJSON } from '../domain/exportar';
 import { textoSync } from './formato';
 import { hoy } from './Registrar';
 import { activarSonido, sonidoActivo } from './sonido';
+import { POOLS, delDia } from './frases';
 
 function descargar(nombre: string, contenido: string, tipo: string) {
   const url = URL.createObjectURL(new Blob([contenido], { type: tipo }));
@@ -31,7 +32,7 @@ export function Ajustes() {
   return (
     <main class="pagina">
       <h1>Ajustes</h1>
-      <p class="subtitulo">Las tripas de la app.</p>
+      <p class="subtitulo">{delDia('subAjustes', POOLS.subAjustes)}</p>
       <section class="tarjeta">
         <h2>Al usar la app</h2>
         <div class="fila">

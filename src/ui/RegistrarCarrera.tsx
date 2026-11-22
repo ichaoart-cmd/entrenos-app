@@ -6,7 +6,7 @@ import { estado, quitarCarrera, registrarCarrera } from '../store/estado';
 import { BotonBorrar } from './componentes/BotonBorrar';
 import { usarPantallaEncendida } from './pantalla';
 import { sonar } from './sonido';
-import { GUARDADO, elegir } from './frases';
+import { POOLS, sinRepetir } from './frases';
 import { navegar } from './navegacion';
 import { AvisoMolestia, SelectorMolestias } from './Molestias';
 import { Chips } from './componentes/Chips';
@@ -67,7 +67,7 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
       return;
     }
     sonar(mejora ? 'record' : 'guardado');
-    setAviso(mejora ? { texto: `Nuevo mejor ${mejora.nombre}: ${formatearTiempo(mejora.seg)}. Vuelas 🔥`, record: true } : { texto: elegir(GUARDADO), record: false });
+    setAviso(mejora ? { texto: `Nuevo mejor ${mejora.nombre}: ${formatearTiempo(mejora.seg)}. Vuelas 🔥`, record: true } : { texto: sinRepetir('guardado', POOLS.guardado), record: false });
     setTimeout(() => { void navegar('#/'); }, 1800);
   };
 

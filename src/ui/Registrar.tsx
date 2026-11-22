@@ -8,7 +8,7 @@ import { BotonBorrar } from './componentes/BotonBorrar';
 import { BENCHMARKS, esMejor, mejorBenchmark } from '../domain/benchmarks';
 import { usarPantallaEncendida } from './pantalla';
 import { sonar } from './sonido';
-import { CIERRE_PR, GUARDADO, PREFIJO_PR, elegir } from './frases';
+import { POOLS, sinRepetir } from './frases';
 import { navegar } from './navegacion';
 import { AvisoMolestia, SelectorMolestias } from './Molestias';
 import { FuerzaForm, fuerzaInicial } from './FuerzaForm';
@@ -45,8 +45,8 @@ function mejoraBenchmark(s: Sesion, previas: Sesion[]): string | null {
 }
 
 export function textoPR(pr: PR, ejercicio?: string): string {
-  const base = `${elegir(PREFIJO_PR)}${ejercicio ? ` ${nombreEjercicio(ejercicio)}` : ''} ${pr.reps}RM: ${num(pr.kg)} kg`;
-  return (pr.anteriorKg == null ? base : `${base} (+${num(Math.round((pr.kg - pr.anteriorKg) * 10) / 10)} kg)`) + elegir(CIERRE_PR);
+  const base = `${sinRepetir('prefijoPR', POOLS.prefijoPR)}${ejercicio ? ` ${nombreEjercicio(ejercicio)}` : ''} ${pr.reps}RM: ${num(pr.kg)} kg`;
+  return (pr.anteriorKg == null ? base : `${base} (+${num(Math.round((pr.kg - pr.anteriorKg) * 10) / 10)} kg)`) + sinRepetir('cierrePR', POOLS.cierrePR);
 }
 
 /** Metcon de partida para un WOD de referencia. */
@@ -116,7 +116,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
     }
     if (!sesionInicial) escribirBorrador(null);
     const wod = mejoraBenchmark(s, previas);
-    setAviso(wod ?? (pr ? textoPR(pr.pr, fuerzas.length > 1 ? pr.ejercicio : undefined) : elegir(GUARDADO)));
+    setAviso(wod ?? (pr ? textoPR(pr.pr, fuerzas.length > 1 ? pr.ejercicio : undefined) : sinRepetir('guardado', POOLS.guardado)));
     setEsRecord(!!pr || !!wod);
     sonar(pr || wod ? 'record' : 'guardado');
     setTimeout(() => { void navegar('#/'); }, 1800);

@@ -1,6 +1,8 @@
 import { estado } from '../store/estado';
 import { ejerciciosHabituales, entrenoDeHoy, retoSemanal } from '../domain/inicio';
 import { MOVIMIENTOS } from '../domain/benchmarks';
+import { POOLS, delDia, saludo } from './frases';
+import { rachaSemanas } from '../domain/calendario';
 import { fechaLarga, nombreEjercicio, resumenCarrera, resumenFuerza, resumenMetcon, textoSync } from './formato';
 import { Calendario } from './Calendario';
 import { IconoEjercicio, NOMBRE_CORTO } from './iconos';
@@ -19,6 +21,11 @@ export function Inicio() {
   const masTiempo = habituales.reduce<typeof habituales[number] | null>((a, x) => (x.dias != null && x.dias >= 7 && (!a || x.dias > (a.dias ?? 0)) ? x : a), null);
   const deHoy = entrenoDeHoy(vivas, estado.datos.value.carreras, h);
   const reto = retoSemanal(vivas, h);
+  const carrerasVivas = estado.datos.value.carreras.filter((c) => !c.borrado);
+  const fechas = [...vivas.map((s) => s.fecha), ...carrerasVivas.map((c) => c.fecha)].filter((f) => f <= h);
+  const ultimaFecha = fechas.reduce((a, f) => (f > a ? f : a), '');
+  const diasSin = ultimaFecha ? Math.round((Date.parse(h) - Date.parse(ultimaFecha)) / 864e5) : null;
+  const racha = rachaSemanas(fechas, estado.ajustes.value.minSesionesSemana, h);
   const ahora = new Date();
   const error = estado.estadoSync.value === 'error';
 
@@ -26,11 +33,11 @@ export function Inicio() {
     <main class='pagina'>
       <div class='fecha-hoy'>{DIAS[ahora.getDay()]}, {ahora.getDate()} de {MESES[ahora.getMonth()]}
         <a class='beta' href='#/opinion' aria-label='Beta: cuéntame qué tal'>Beta · ¿qué tal?</a></div>
-      <h1>¿Hoy qué cae?</h1>
+      {(() => { const t = saludo({ entrenadoHoy: !deHoy.vacio, diasSinEntrenar: diasSin, racha }); return <h1 class={`saludo${t.length > 26 ? ' largo' : ''}`}>{t}</h1>; })()}
 
       {deHoy.vacio ? (
-        <section class='hero hero-elegir' aria-label='¿A qué le damos caña?'>
-          <h2 class='hero-titulo'>¿A qué le damos caña?</h2>
+        <section class='hero hero-elegir' aria-label='Elegir entreno'>
+          <h2 class='hero-titulo'>{delDia('hero', POOLS.hero)}</h2>
           <div class='hero-ejercicios'>
             {habituales.map((x) => (
               <a class={`hero-ej${x === masTiempo ? ' hace-tiempo' : ''}`} href={`#/registrar?ej=${x.id}`}
@@ -49,8 +56,8 @@ export function Inicio() {
           </div>
         </section>
       ) : (
-        <section class='hero hero-hecho' aria-label='Hoy ya has cumplido'>
-          <h2 class='hero-titulo'>Hoy ya has cumplido{deHoy.record ? ' ★' : ''}</h2>
+        <section class='hero hero-hecho' aria-label='Hecho hoy'>
+          <h2 class='hero-titulo'>{delDia('hecho', POOLS.hecho)}{deHoy.record ? ' ★' : ''}</h2>
           <ul>
             {deHoy.sesiones.map((s) => <li><a href={`#/registrar?id=${encodeURIComponent(s.id)}`}>
               {s.fuerza.length > 0 && <span>{resumenFuerza(s)}</span>}{s.metcon && <span>{resumenMetcon(s)}</span>}</a></li>)}
@@ -70,7 +77,7 @@ export function Inicio() {
         <div>
           <div class='k'>El reto de la semana</div>
           <b>{reto.benchmark.nombre}</b>
-          <small>{reto.mejor ? `Tu marca: ${reto.mejor.valor}${reto.diasDesde != null ? `, hace ${reto.diasDesde > 60 ? `${Math.round(reto.diasDesde / 30)} meses` : `${reto.diasDesde} días`}` : ''}. ¿Le das la revancha?` : `${reto.benchmark.descripcion}. Aún no te has atrevido.`}</small>
+          <small>{reto.mejor ? `Tu marca: ${reto.mejor.valor}${reto.diasDesde != null ? `, hace ${reto.diasDesde > 60 ? `${Math.round(reto.diasDesde / 30)} meses` : `${reto.diasDesde} días`}` : ''}. ${delDia('revancha', POOLS.revancha)}` : `${reto.benchmark.descripcion}. ${delDia('estreno', POOLS.estreno)}.`}</small>
         </div>
         <a class='accion' href={`#/registrar?wod=${reto.benchmark.id}`} aria-label={`Hacer ${reto.benchmark.nombre}`}>Al lío</a>
       </section>

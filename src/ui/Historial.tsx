@@ -3,6 +3,7 @@ import { borrar, estado, quitarCarrera } from '../store/estado';
 import type { Carrera, Sesion } from '../domain/types';
 import { fechaLarga, resumenCarrera, resumenFuerza, resumenMetcon } from './formato';
 import { IconoEjercicio } from './iconos';
+import { POOLS, delDia } from './frases';
 
 type Item = { tipo: 'sesion'; x: Sesion } | { tipo: 'carrera'; x: Carrera };
 
@@ -16,8 +17,8 @@ export function Historial() {
   return (
     <main class="pagina">
       <h1>Historial</h1>
-      <p class="subtitulo">Todo lo que has sudado.</p>
-      {items.length === 0 && <p class="suave">Aquí no hay nada aún. Ve a por la primera marca.</p>}
+      <p class="subtitulo">{delDia('subHistorial', POOLS.subHistorial)}</p>
+      {items.length === 0 && <p class="suave">{delDia('vacioHistorial', POOLS.vacioHistorial)}.</p>}
       <ul class="lista">
         {items.map((it) => {
           const id = it.x.id;
