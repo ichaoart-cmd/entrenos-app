@@ -30,11 +30,26 @@ export const ICONOS: Record<string, string> = {
 
 /** Ilustraciones a color (public/ilustraciones/*.webp). Lo que no está aquí usa el pictograma SVG. */
 const ILUSTRACION: Record<string, string> = {
-  'back-squat': 'sentadilla', 'front-squat': 'sentadilla', 'zercher-squat': 'sentadilla', 'goblet-squat': 'sentadilla',
-  'overhead-squat': 'overhead', 'snatch': 'overhead', 'power-snatch': 'overhead', 'hang-snatch': 'overhead',
-  'hang-power-snatch': 'overhead', 'snatch-balance': 'overhead',
-  'dominadas': 'dominadas', 'kb-swing': 'kb-swing', 'push-ups': 'burpee', 'dips': 'anillas',
-  'metcon': 'wall-ball',
+  // Sentadilla
+  'back-squat': 'sentadilla', 'zercher-squat': 'sentadilla', 'goblet-squat': 'sentadilla',
+  'front-squat': 'thruster', 'thruster': 'thruster', 'overhead-squat': 'overhead',
+  // Peso muerto y bisagra
+  'deadlift': 'peso-muerto', 'sumo-deadlift': 'peso-muerto', 'romanian-deadlift': 'peso-muerto', 'sdhp': 'peso-muerto',
+  'good-morning': 'peso-muerto', 'hip-thrust': 'peso-muerto', 'farmer-carry': 'peso-muerto',
+  // Empuje
+  'press-banca': 'press-banca', 'shoulder-press': 'press-hombro', 'push-press': 'press-hombro', 'push-jerk': 'press-hombro',
+  'db-press': 'press-hombro', 'split-jerk': 'split-jerk', 'dips': 'anillas', 'push-ups': 'burpee',
+  // Tirón
+  'dominadas': 'dominadas', 'remo-barra': 'remo-barra', 'remo-mancuerna': 'remo-barra',
+  // Halterofilia
+  'snatch': 'overhead', 'power-snatch': 'overhead', 'hang-snatch': 'overhead', 'hang-power-snatch': 'overhead',
+  'snatch-balance': 'overhead', 'db-snatch': 'overhead',
+  'clean': 'clean', 'power-clean': 'clean', 'hang-clean': 'clean', 'hang-power-clean': 'clean',
+  'clean-and-jerk': 'split-jerk', 'db-clean-jerk': 'split-jerk',
+  // Kettlebell y zancadas
+  'kb-swing': 'kb-swing', 'walking-lunge': 'zancada', 'front-rack-lunge': 'zancada', 'bulgarian-split-squat': 'zancada',
+  // Otros
+  'metcon': 'wall-ball', 'correr': 'correr',
 };
 export const ilustracionDe = (id: string): string | null => ILUSTRACION[id] ?? null;
 
