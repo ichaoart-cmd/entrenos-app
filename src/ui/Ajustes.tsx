@@ -4,6 +4,7 @@ import { cargarAjustes, guardarAjustes } from '../store/local';
 import { exportarCSV, exportarJSON } from '../domain/exportar';
 import { textoSync } from './formato';
 import { hoy } from './Registrar';
+import { activarSonido, sonidoActivo } from './sonido';
 
 function descargar(nombre: string, contenido: string, tipo: string) {
   const url = URL.createObjectURL(new Blob([contenido], { type: tipo }));
@@ -16,6 +17,7 @@ export function Ajustes() {
   const [token, setToken] = useState('');
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [ocupado, setOcupado] = useState(false);
+  const [sonido, setSonido] = useState(sonidoActivo());
   useEffect(() => { void cargarAjustes().then((a) => setToken(a.token ?? '')); }, []);
 
   const sync = async () => {
@@ -28,6 +30,15 @@ export function Ajustes() {
   return (
     <main class="pagina">
       <h1>Ajustes</h1>
+      <section class="tarjeta">
+        <h2>Al usar la app</h2>
+        <div class="fila">
+          <span class="etiqueta">Sonido y vibración al pulsar</span>
+          <button type="button" role="switch" class="interruptor" aria-checked={sonido} aria-label="Sonido y vibración al pulsar"
+            onClick={() => { activarSonido(!sonido); setSonido(!sonido); }}><span class="pista" /></button>
+        </div>
+        <p class="suave">El aviso de fin de descanso suena y vibra siempre.</p>
+      </section>
       <section class="tarjeta">
         <h2>Sincronización con GitHub</h2>
         <p class="suave">

@@ -10,6 +10,7 @@ import { IconoEjercicio, NOMBRE_CORTO } from './iconos';
 import { variantesDe } from '../domain/catalogo';
 import { normalizarReps } from '../domain/reps';
 import { aplicarObjetivo, estadoSerie } from '../domain/objetivo';
+import { descanso, duracionPreferida, iniciarDescanso } from '../store/descanso';
 import { Selector } from './Selector';
 
 /** Ejercicios a mano en la fila: la rotación, los usados recientemente y el elegido. */
@@ -130,6 +131,15 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar, a
         onClick={() => setTempo(seg, !pausa)}>
         <span>Con pausa abajo</span><span class='pista' aria-hidden='true' />
       </button>
+
+      <div class='barra-descanso' role='group' aria-label='Descanso entre series'>
+        <span class='etq'>Descanso</span>
+        {[60, 90, 120, 180].map((seg) => (
+          <button type='button' aria-pressed={descanso.value != null && duracionPreferida() === seg} onClick={() => iniciarDescanso(seg)}>
+            {`${Math.floor(seg / 60)}:${String(seg % 60).padStart(2, '0')}`}
+          </button>
+        ))}
+      </div>
 
       <h3 class='bloque'>Lo que hiciste</h3>
       <p class='pista-texto'>Se rellena con el objetivo. Si en alguna serie no llegas (o la superas), cambia el peso o las reps.</p>

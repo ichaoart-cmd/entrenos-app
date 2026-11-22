@@ -7,6 +7,7 @@ import { estado } from '../store/estado';
 import { Progreso } from './Progreso';
 import { IconoNav } from './iconos';
 import { RegistrarCarrera } from './RegistrarCarrera';
+import { Descanso } from './Descanso';
 
 function rutaActual(): string {
   return typeof location === 'undefined' || !location.hash ? '#/' : location.hash;
@@ -45,6 +46,7 @@ export function App() {
   return (
     <>
       {pagina}
+      <Descanso />
       <nav class="barra">
         {([['#/', 'inicio', 'Inicio'], ['#/historial', 'historial', 'Historial'], ['#/progreso', 'progreso', 'Progreso'], ['#/ajustes', 'ajustes', 'Ajustes']] as const).map(([href, icono, texto]) => (
           <a href={href} aria-current={base === href || (href === '#/' && (base === '#/registrar' || base === '#/carrera')) ? 'page' : undefined}>

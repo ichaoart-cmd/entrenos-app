@@ -4,6 +4,7 @@ import { nuevoId } from '../domain/ids';
 import { formatearRitmo, formatearTiempo, partirTiempo } from '../domain/carrera';
 import { estado, quitarCarrera, registrarCarrera } from '../store/estado';
 import { BotonBorrar } from './componentes/BotonBorrar';
+import { usarPantallaEncendida } from './pantalla';
 import { Chips } from './componentes/Chips';
 import { Stepper } from './componentes/Stepper';
 import { Aviso } from './componentes/Aviso';
@@ -34,6 +35,7 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
   const [desnivel, setDesnivel] = useState(carreraInicial?.desnivelM ?? 0);
   const [aviso, setAviso] = useState<{ texto: string; record: boolean } | null>(null);
   const [guardando, setGuardando] = useState(false);
+  usarPantallaEncendida();
   const seg = Math.round(h * 3600 + m * 60 + s);
   const valida = km > 0 && seg > 0;
 

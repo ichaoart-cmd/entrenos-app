@@ -5,6 +5,7 @@ import { nuevoId } from '../domain/ids';
 import { EJERCICIOS_BASE } from '../store/local';
 import { borrar, estado, registrar } from '../store/estado';
 import { BotonBorrar } from './componentes/BotonBorrar';
+import { usarPantallaEncendida } from './pantalla';
 import { FuerzaForm, fuerzaInicial } from './FuerzaForm';
 import { MetconForm } from './MetconForm';
 import { Chips } from './componentes/Chips';
@@ -51,6 +52,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
   const [aviso, setAviso] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [esRecord, setEsRecord] = useState(false);
+  usarPantallaEncendida();
 
   useEffect(() => {
     // Antes de tener los datos no se guarda borrador: lo calculado aún no es fiable y la pantalla se rehará.
