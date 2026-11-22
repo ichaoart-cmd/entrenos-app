@@ -127,7 +127,8 @@ export const avisoFin = () => sonar('fin');
 
 /** Qué sonido corresponde a pulsar este elemento (o null si no es pulsable). */
 export function sonidoPara(t: Element | null): Sonido | null {
-  const el = t?.closest?.('button, a[href], [role="switch"]');
+  // Solo botones de verdad (y enlaces con pinta de botón); tarjetas, días del calendario y avisos no suenan.
+  const el = t?.closest?.('button, [role="switch"], .barra a, a.accion, a.boton, a.hero-ej, a.circulo, a.volver');
   if (!el) return null;
   const etiqueta = el.getAttribute('aria-label') ?? '';
   if (etiqueta.startsWith('Subir ')) return 'subir';
@@ -143,8 +144,9 @@ export function sonidoPara(t: Element | null): Sonido | null {
 
 /** Escucha las pulsaciones en toda la app. */
 export function activarClics(): void {
-  addEventListener('pointerdown', (e) => {
+  // «click» y no «pointerdown»: así no suena al tocar para hacer scroll.
+  addEventListener('click', (e) => {
     const s = sonidoPara(e.target as Element | null);
     if (s) sonar(s);
-  }, { passive: true });
+  }, { capture: true, passive: true });
 }

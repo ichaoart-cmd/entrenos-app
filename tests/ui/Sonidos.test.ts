@@ -14,4 +14,24 @@ test('cada tipo de pulsación tiene su sonido', () => {
   expect(sonidoPara(el(`<button>Otro</button>`))).toBe('tecla');
   expect(sonidoPara(el(`<button><span data-t>+30</span></button>`))).toBe('tecla');
   expect(sonidoPara(el(`<div>nada</div>`))).toBeNull();
+  // Tarjetas, días del calendario y avisos son enlaces, pero no botones: no suenan.
+  expect(sonidoPara(el(`<a class="tarjeta ultima" href="#/registrar?id=a">Lo último</a>`))).toBeNull();
+  expect(sonidoPara(el(`<a class="cal-dia" href="#/registrar?fecha=x">3</a>`))).toBeNull();
+  expect(sonidoPara(el(`<ul class="destacado"><li><a data-t href="#/progreso">aviso</a></li></ul>`))).toBeNull();
+  // Los enlaces con pinta de botón sí.
+  expect(sonidoPara(el(`<a class="accion" href="#/carrera">Carrera</a>`))).toBe('tecla');
+  expect(sonidoPara(el(`<a class="hero-ej" href="#/registrar?ej=x">Banca</a>`))).toBe('tecla');
+});
+
+test('suena al pulsar (click), no al empezar a tocar para hacer scroll', async () => {
+  const { activarClics } = await import('../../src/ui/sonido');
+  const vib = vi.fn(); Object.defineProperty(navigator, 'vibrate', { value: vib, configurable: true });
+  localStorage.clear();
+  activarClics();
+  document.body.innerHTML = '<button id="b">Hola</button>';
+  const b = document.getElementById('b')!;
+  b.dispatchEvent(new Event('pointerdown', { bubbles: true }));
+  expect(vib).not.toHaveBeenCalled();
+  b.click();
+  expect(vib).toHaveBeenCalledTimes(1);
 });
