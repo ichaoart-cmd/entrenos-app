@@ -22,10 +22,6 @@ test('se puede escribir el peso de cada serie con decimales', async () => {
 
 
 
-test('Hoy toca ofrece elegir otro ejercicio', () => {
-  render(<Inicio />);
-  expect(screen.getByRole('link', { name: 'Otro ejercicio' }).getAttribute('href')).toBe('#/registrar?elegir=1');
-});
 
 test('registrar con elegir abre el catálogo', () => {
   render(<Registrar abrirSelector />);

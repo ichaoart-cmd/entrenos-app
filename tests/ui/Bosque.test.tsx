@@ -14,14 +14,33 @@ const ym = () => { const h = new Date(); return `${h.getFullYear()}-${String(h.g
 
 beforeEach(async () => { await clear(); localStorage.clear(); });
 
-test('Hoy toca muestra el ejercicio sugerido con su última marca y enlaza a registrarlo', () => {
+test('la tarjeta grande deja elegir entre tus ejercicios habituales, sin imponer la rotación', () => {
   estado.datos.value = datosCon([sesion('b', '2026-06-18', 'back-squat', 5, [74, 79, 84, 89, 94]), sesion('p', '2026-10-16', 'press-banca', 6, [53, 65])]);
   render(<Inicio />);
-  const hero = screen.getByRole('region', { name: 'Hoy toca' });
-  expect(hero.textContent).toContain('Shoulder Press'); // nunca hecho en estos datos → primero de la rotación sin historial
+  const hero = screen.getByRole('region', { name: '¿Qué entrenas hoy?' });
   const banca = screen.getByRole('link', { name: /^Press Banca, 65 kg/ });
+  expect(hero.contains(banca)).toBe(true);
   expect(banca.getAttribute('href')).toBe('#/registrar?ej=press-banca');
-  expect(banca.textContent).toContain('65 kg');
+  expect(screen.getByRole('link', { name: 'Otro ejercicio' }).getAttribute('href')).toBe('#/registrar?elegir=1');
+  expect(screen.getByRole('link', { name: 'Metcon' }).getAttribute('href')).toBe('#/registrar?metcon=1');
+  expect(screen.getByRole('link', { name: 'Carrera' }).getAttribute('href')).toBe('#/carrera');
+  expect(hero.textContent).not.toMatch(/rotación/i);
+});
+
+test('si ya has entrenado hoy, la tarjeta grande resume lo de hoy', async () => {
+  const { hoy } = await import('../../src/ui/Registrar');
+  estado.datos.value = datosCon([sesion('h', hoy(), 'back-squat', 5, [90])]);
+  render(<Inicio />);
+  const hero = screen.getByRole('region', { name: 'Hoy has entrenado' });
+  expect(hero.textContent).toContain('Back Squat');
+  expect(screen.getByRole('link', { name: 'Añadir algo más' })).toBeTruthy();
+});
+
+test('reto de referencia de la semana enlaza a registrarlo ya rellenado', () => {
+  estado.datos.value = datosCon([]);
+  render(<Inicio />);
+  const reto = screen.getByRole('region', { name: 'Reto de la semana' });
+  expect(reto.querySelector('a')!.getAttribute('href')).toMatch(/^#\/registrar\?wod=/);
 });
 
 test('el calendario marca en bronce los días de récord', () => {

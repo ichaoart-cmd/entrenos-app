@@ -33,7 +33,7 @@ export function App() {
     const fecha = q.get('fecha');
     const ej = q.get('ej');
     const s = id ? estado.datos.value.sesiones.find((x) => x.id === id) : undefined;
-    pagina = <Registrar key={`${ruta}-${s?.id ?? 'nueva'}-${estado.listo.value}`} sesionInicial={s} fechaInicial={fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : undefined} ejercicioInicial={ej ?? undefined} abrirSelector={q.get('elegir') === '1'} />;
+    pagina = <Registrar key={`${ruta}-${s?.id ?? 'nueva'}-${estado.listo.value}`} sesionInicial={s} fechaInicial={fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : undefined} ejercicioInicial={ej ?? undefined} abrirSelector={q.get('elegir') === '1'} wodInicial={q.get('wod') ?? undefined} soloMetcon={q.get('metcon') === '1'} />;
   } else if (base === '#/carrera') {
     const q = new URLSearchParams(query);
     const id = q.get('id'), fecha = q.get('fecha');

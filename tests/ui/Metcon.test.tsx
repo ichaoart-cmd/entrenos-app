@@ -60,3 +60,16 @@ test('Progreso → Metcons: mejor marca e historial de cada WOD de referencia', 
   expect(fran.textContent).toContain('5:40');
   expect(fran.textContent).toContain('6:12');
 });
+
+test('registrar con un WOD de referencia abre el Metcon ya rellenado y sin fuerza', async () => {
+  await con([]);
+  render(<Registrar wodInicial='cindy' />);
+  expect(screen.queryByRole('button', { name: 'Quitar fuerza' })).toBeNull();
+  expect(screen.getByText('Cindy')).toBeTruthy();
+});
+test('registrar solo Metcon', async () => {
+  await con([]);
+  render(<Registrar soloMetcon />);
+  expect(screen.queryByRole('button', { name: 'Quitar fuerza' })).toBeNull();
+  expect(screen.getByRole('button', { name: 'WOD de referencia' })).toBeTruthy();
+});

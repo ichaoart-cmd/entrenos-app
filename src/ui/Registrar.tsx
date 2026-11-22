@@ -47,10 +47,19 @@ export function textoPR(pr: PR): string {
   return pr.anteriorKg == null ? base : `${base} (+${num(Math.round((pr.kg - pr.anteriorKg) * 10) / 10)} kg)`;
 }
 
-export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrirSelector = false }: { sesionInicial?: Sesion; fechaInicial?: string; ejercicioInicial?: string; abrirSelector?: boolean }) {
+/** Metcon de partida para un WOD de referencia. */
+function metconDeWod(id: string): Metcon | null {
+  const b = BENCHMARKS.find((x) => x.id === id);
+  return b ? { formato: b.formato, rx: true, benchmark: b.id, descripcion: b.descripcion, movimientos: [...b.movimientos], ...(b.duracionMin ? { duracionMin: b.duracionMin } : {}) } : null;
+}
+
+export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrirSelector = false, wodInicial, soloMetcon = false }: {
+  sesionInicial?: Sesion; fechaInicial?: string; ejercicioInicial?: string; abrirSelector?: boolean; wodInicial?: string; soloMetcon?: boolean;
+}) {
+  const metconPedido = wodInicial ? metconDeWod(wodInicial) : soloMetcon ? { formato: 'AMRAP' as const, rx: true } : null;
   const datos = estado.datos.value;
   // Solo las sesiones nuevas usan borrador; al editar se parte de la sesión guardada.
-  const [borrador] = useState(() => (sesionInicial || fechaInicial || ejercicioInicial ? null : leerBorrador()));
+  const [borrador] = useState(() => (sesionInicial || fechaInicial || ejercicioInicial || metconPedido ? null : leerBorrador()));
   // Bloques de fuerza adicionales (p. ej. sesiones importadas con varios levantamientos): se conservan siempre.
   const extras = sesionInicial?.fuerza.slice(1) ?? [];
   const ejercicios = [...EJERCICIOS_BASE, ...datos.ejercicios.filter((e) => !EJERCICIOS_BASE.some((b) => b.id === e.id))];
@@ -59,8 +68,9 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
   const [fuerza, setFuerza] = useState<Fuerza | null>(() =>
     sesionInicial ? sesionInicial.fuerza[0] ?? null
       : borrador ? borrador.fuerza
+      : metconPedido ? null
       : fuerzaInicial(ejercicioInicial ?? ejercicioSugerido(datos.sesiones, ROTACION), datos.sesiones));
-  const [metcon, setMetcon] = useState<Metcon | null>(sesionInicial?.metcon ?? borrador?.metcon ?? null);
+  const [metcon, setMetcon] = useState<Metcon | null>(sesionInicial?.metcon ?? borrador?.metcon ?? metconPedido);
   const [nota, setNota] = useState(sesionInicial?.nota ?? borrador?.nota ?? '');
   const [molestias, setMolestias] = useState<string[]>(sesionInicial?.molestias ?? []);
   const [aviso, setAviso] = useState<string | null>(null);
