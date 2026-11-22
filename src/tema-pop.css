@@ -143,3 +143,11 @@ html.tema-pop {
 .tema-pop table.datos { font-family: var(--mono); font-size: 0.78rem; }
 .tema-pop table.datos th { color: var(--negro); text-transform: uppercase; font-size: 0.7rem; }
 .tema-pop .tabla-carrera > div:last-child { border-bottom: 0; }
+.tema-pop .grafica .leyenda i.a { width: 16px; height: 12px; border: 2px solid var(--negro); border-radius: 3px; }
+.tema-pop .grafica svg { overflow: visible; }
+
+/* Ilustraciones a color: van sobre fondo claro para no mezclarse con los pasteles de la baldosa */
+.tema-pop .disco:has(img.ilustracion), .tema-pop .pictograma:has(img.ilustracion) { background: var(--blanco) !important; }
+img.ilustracion { display: block; object-fit: contain; }
+.tema-pop .hero .pictograma img { width: 76px; height: 76px; }
+.tema-pop .disco img.ilustracion { width: 86%; height: 86%; }

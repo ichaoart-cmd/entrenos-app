@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => mode === 'vista-previa' ? {
     preact(),
     VitePWA({
       registerType: 'autoUpdate',
-      workbox: { globPatterns: ['**/*.{js,css,html,woff2,png,svg}'] },
+      workbox: { globPatterns: ['**/*.{js,css,html,woff2,png,svg,webp}'] },
       manifest: {
         name: 'Entrenos',
         short_name: 'Entrenos',

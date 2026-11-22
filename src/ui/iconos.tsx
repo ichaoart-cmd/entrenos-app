@@ -28,7 +28,19 @@ export const ICONOS: Record<string, string> = {
   'push-ups': SUELO + H(38, 23) + L('34,27 10,36') + L('10,36 6,41', 4) + L('31,28 32,36 32,43', 4),
 };
 
+/** Ilustraciones a color (public/ilustraciones/*.webp). Lo que no está aquí usa el pictograma SVG. */
+const ILUSTRACION: Record<string, string> = {
+  'back-squat': 'sentadilla', 'front-squat': 'sentadilla', 'zercher-squat': 'sentadilla', 'goblet-squat': 'sentadilla',
+  'overhead-squat': 'overhead', 'snatch': 'overhead', 'power-snatch': 'overhead', 'hang-snatch': 'overhead',
+  'hang-power-snatch': 'overhead', 'snatch-balance': 'overhead',
+  'dominadas': 'dominadas', 'kb-swing': 'kb-swing', 'push-ups': 'burpee', 'dips': 'anillas',
+  'metcon': 'wall-ball',
+};
+export const ilustracionDe = (id: string): string | null => ILUSTRACION[id] ?? null;
+
 export function IconoEjercicio({ id, size = 40 }: { id: string; size?: number }) {
+  const ilu = ilustracionDe(id);
+  if (ilu) return <img class='ilustracion' src={`${import.meta.env.BASE_URL}ilustraciones/${ilu}.webp`} width={size} height={size} alt='' loading='lazy' decoding='async' />;
   return <svg width={size} height={size} viewBox='0 0 48 48' aria-hidden='true' dangerouslySetInnerHTML={{ __html: ICONOS[id] ?? ICONOS[iconoDe(id)] ?? ICONOS['back-squat'] }} />;
 }
 

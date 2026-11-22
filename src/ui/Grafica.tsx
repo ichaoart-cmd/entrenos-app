@@ -3,9 +3,10 @@ import type { Punto } from '../domain/progreso';
 
 import { AMARILLO, FONDO, MONO, REJILLA, ROSA, TEXTO, TINTA } from './coloresGrafica';
 
-/** 1RM estimado = línea negra gruesa; serie top = puntos rosa con contorno (doble codificación: línea vs punto + leyenda). */
-export const COLOR_E1RM = TINTA;
-export const COLOR_TOP = ROSA;
+/** 1RM estimado = área rosa plana con línea negra gruesa encima; serie top = puntos amarillos con contorno.
+ * Doble codificación (área vs punto + leyenda); rosa/amarillo: CVD ΔE 16,8, normal 19,7. */
+export const COLOR_E1RM = ROSA;
+export const COLOR_TOP = AMARILLO;
 
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 const dia = (f: string) => Date.parse(f) / 864e5;
@@ -43,6 +44,7 @@ export function Grafica({ puntos, nombre }: { puntos: Punto[]; nombre: string })
     d.setUTCMonth(d.getUTCMonth() + salto);
   }
   const linea = puntos.map((p, i) => `${i ? 'L' : 'M'}${X(p.fecha).toFixed(1)} ${Y(p.e1rm).toFixed(1)}`).join(' ');
+  const area = `${linea} L${X(puntos[puntos.length - 1].fecha).toFixed(1)} ${Y(yMin)} L${X(puntos[0].fecha).toFixed(1)} ${Y(yMin)} Z`;
   const mover = (e: PointerEvent) => {
     const svg = e.currentTarget as SVGSVGElement, r = svg.getBoundingClientRect();
     const x = ((e.clientX - r.left) / r.width) * W;
@@ -56,14 +58,14 @@ export function Grafica({ puntos, nombre }: { puntos: Punto[]; nombre: string })
   return (
     <figure class='grafica'>
       <div class='leyenda'>
-        <span><i class='l' style={{ background: COLOR_E1RM }} />1RM estimado</span>
+        <span><i class='a' style={{ background: COLOR_E1RM }} />1RM estimado</span>
         <span><i class='p' style={{ background: COLOR_TOP }} />Serie top</span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} role='img' aria-label={`${nombre}: 1RM estimado y serie top por sesión`}
         onPointerMove={mover} onPointerDown={mover} onPointerLeave={() => setActivo(null)} style={{ touchAction: 'pan-y' }}>
         {ticks.map((v) => (
           <g>
-            <line x1={izq} x2={W - der} y1={Y(v)} y2={Y(v)} stroke={v === yMin ? TINTA : REJILLA} stroke-width={v === yMin ? 2.5 : 1} stroke-dasharray={v === yMin ? undefined : '3 4'} />
+            <line x1={izq} x2={W - der} y1={Y(v)} y2={Y(v)} stroke={REJILLA} stroke-dasharray='3 4' />
             <text x={izq - 6} y={Y(v) + 3.5} text-anchor='end' font-size='10' font-family={MONO} fill={TEXTO}>{v}</text>
           </g>
         ))}
@@ -72,11 +74,14 @@ export function Grafica({ puntos, nombre }: { puntos: Punto[]; nombre: string })
             {salto >= 12 ? m.slice(0, 4) : `${MESES[Number(m.slice(5, 7)) - 1]} ${m.slice(2, 4)}`}
           </text>
         ))}
+        <path d={area} fill={COLOR_E1RM} />
+        {ticks.slice(1).map((v) => <line x1={izq} x2={W - der} y1={Y(v)} y2={Y(v)} stroke={TINTA} stroke-opacity='0.12' />)}
+        <line x1={izq} x2={W - der} y1={Y(yMin)} y2={Y(yMin)} stroke={TINTA} stroke-width='2.5' />
         {a && <line x1={X(a.fecha)} x2={X(a.fecha)} y1={arriba} y2={H - abajo} stroke={TINTA} stroke-width='1.5' stroke-dasharray='4 3' />}
-        {puntos.map((p) => <circle cx={X(p.fecha)} cy={Y(p.kg)} r='4.5' fill={COLOR_TOP} stroke={TINTA} stroke-width='2' />)}
-        <path d={linea} fill='none' stroke={COLOR_E1RM} stroke-width='3' stroke-linejoin='round' stroke-linecap='round' />
+        <path d={linea} fill='none' stroke={TINTA} stroke-width='3' stroke-linejoin='round' stroke-linecap='round' />
+        {puntos.map((p) => <circle cx={X(p.fecha)} cy={Y(p.kg)} r='5' fill={COLOR_TOP} stroke={TINTA} stroke-width='2' />)}
         {!a && <Etiqueta x={X(ultimo.fecha)} y={Y(ultimo.e1rm) - 18} texto={kg(ultimo.e1rm)} max={W} />}
-        {a && <circle cx={X(a.fecha)} cy={Y(a.e1rm)} r='6.5' fill={AMARILLO} stroke={TINTA} stroke-width='2.5' />}
+        {a && <circle cx={X(a.fecha)} cy={Y(a.e1rm)} r='6.5' fill={FONDO} stroke={TINTA} stroke-width='3' />}
         {a && <Etiqueta x={X(a.fecha)} y={Y(a.e1rm) - 20} texto={kg(a.e1rm)} max={W} />}
       </svg>
       <figcaption class='detalle' aria-live='polite'>

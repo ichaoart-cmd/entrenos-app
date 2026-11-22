@@ -24,7 +24,7 @@ export function Historial() {
           const href = esCarrera ? `#/carrera?id=${encodeURIComponent(id)}` : `#/registrar?id=${encodeURIComponent(id)}`;
           return (
             <li key={`${it.tipo}-${id}`}>
-              <span class="disco"><IconoEjercicio id={esCarrera ? 'correr' : (it.x as Sesion).fuerza[0]?.ejercicio ?? 'snatch'} size={30} /></span>
+              <span class="disco"><IconoEjercicio id={esCarrera ? 'correr' : (it.x as Sesion).fuerza[0]?.ejercicio ?? 'metcon'} size={30} /></span>
               <div class="cuerpo"><a href={href}>
                 {it.tipo === 'carrera' ? (
                   <>

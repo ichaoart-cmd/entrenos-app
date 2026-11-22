@@ -3,7 +3,7 @@ import { estado } from '../store/estado';
 import type { Carrera } from '../domain/types';
 import { DISTANCIAS, formatearRitmo, formatearTiempo, kmPorSemana, mejoresTiempos, prediccion, ritmoSegKm } from '../domain/carrera';
 import { Etiqueta } from './Grafica';
-import { AMARILLO, CIELO, MENTA, MONO, REJILLA, TEXTO, TINTA } from './coloresGrafica';
+import { AMARILLO, CIELO, FONDO, MONO, REJILLA, TEXTO, TINTA } from './coloresGrafica';
 import { IconoEjercicio } from './iconos';
 import { fechaLarga, resumenCarrera } from './formato';
 import { hoy } from './Registrar';
@@ -82,10 +82,12 @@ function GraficaRitmo({ carreras }: { carreras: Carrera[] }) {
       <svg viewBox={`0 0 ${W} ${H}`} role='img' aria-label='Ritmo medio de cada carrera; más arriba es más rápido'
         onPointerMove={mover} onPointerDown={mover} onPointerLeave={() => setActivo(null)} style={{ touchAction: 'pan-y' }}>
         {ticks.map((r) => <g><line x1={izq} x2={W - der} y1={Y(r)} y2={Y(r)} stroke={REJILLA} stroke-dasharray='3 4' /><text x={izq - 6} y={Y(r) + 3.5} text-anchor='end' font-size='10' font-family={MONO} fill={TEXTO}>{formatearRitmo(r)}</text></g>)}
+        {(() => { const l = carreras.map((c, i) => `${i ? 'L' : 'M'}${X(c.fecha).toFixed(1)} ${Y(rs[i]).toFixed(1)}`).join(' ');
+          return <path d={`${l} L${X(carreras[carreras.length - 1].fecha).toFixed(1)} ${H - abajo} L${X(carreras[0].fecha).toFixed(1)} ${H - abajo} Z`} fill={CIELO} />; })()}
         <line x1={izq} x2={W - der} y1={H - abajo} y2={H - abajo} stroke={TINTA} stroke-width='2.5' />
         {a && <line x1={X(a.fecha)} x2={X(a.fecha)} y1={arriba} y2={H - abajo} stroke={TINTA} stroke-width='1.5' stroke-dasharray='4 3' />}
         <path d={carreras.map((c, i) => `${i ? 'L' : 'M'}${X(c.fecha).toFixed(1)} ${Y(rs[i]).toFixed(1)}`).join(' ')} fill='none' stroke={TINTA} stroke-width='3' stroke-linejoin='round' stroke-linecap='round' />
-        {carreras.map((c, i) => <circle cx={X(c.fecha)} cy={Y(rs[i])} r={a === c ? 6.5 : 4.5} fill={a === c ? AMARILLO : MENTA} stroke={TINTA} stroke-width='2' />)}
+        {carreras.map((c, i) => <circle cx={X(c.fecha)} cy={Y(rs[i])} r={a === c ? 6.5 : 4.5} fill={a === c ? AMARILLO : FONDO} stroke={TINTA} stroke-width='2' />)}
         {a && <Etiqueta x={X(a.fecha)} y={Y(rs[activo!]) - 18} texto={formatearRitmo(rs[activo!])} max={W} />}
         <text x={izq} y={H - 6} font-size='10' font-family={MONO} fill={TEXTO}>{corta(carreras[0].fecha)}</text>
         <text x={W - der} y={H - 6} text-anchor='end' font-size='10' font-family={MONO} fill={TEXTO}>{corta(carreras[carreras.length - 1].fecha)}</text>
