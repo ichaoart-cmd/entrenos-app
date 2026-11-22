@@ -8,9 +8,16 @@ import { cargarLocal, reemplazarDatos } from './store/local';
 import type { Datos } from './domain/types';
 
 async function arrancar() {
+  // Recarga los datos cuando cambia la copia incluida (p. ej. tras corregir erratas), o si no hay nada guardado.
+  const huella = (datos as Datos).sesiones.reduce((a, x) => (x.actualizado > a ? x.actualizado : a), '') + (datos as Datos).sesiones.length;
   try {
     const local = await cargarLocal();
-    if (!local.sesiones.length) await reemplazarDatos(datos as Datos);
+    let previa: string | null = null;
+    try { previa = localStorage.getItem('vista-previa-datos'); } catch { /* sin localStorage */ }
+    if (!local.sesiones.length || previa !== huella) {
+      await reemplazarDatos(datos as Datos);
+      try { localStorage.setItem('vista-previa-datos', huella); } catch { /* sin localStorage */ }
+    }
   } catch { /* sin almacenamiento: la app arranca vacía */ }
   const aviso = document.createElement('div');
   aviso.textContent = 'Vista previa: lo que registres aquí no se guarda en GitHub.';
