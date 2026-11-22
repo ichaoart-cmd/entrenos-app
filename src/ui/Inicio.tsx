@@ -4,6 +4,8 @@ import { fechaLarga, nombreEjercicio, resumenCarrera, resumenFuerza, resumenMetc
 import { Calendario } from './Calendario';
 import { IconoEjercicio, NOMBRE_CORTO } from './iconos';
 import { ultimoTop } from './FuerzaForm';
+import { generarAvisos } from '../domain/avisos';
+import { hoy } from './Registrar';
 
 const DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
@@ -61,6 +63,17 @@ export function Inicio() {
 
       <h2>Constancia</h2>
       <Calendario sesiones={vivas} carreras={estado.datos.value.carreras} minSemana={estado.ajustes.value.minSesionesSemana} />
+
+      <h2>Lo destacado</h2>
+      <ul class='destacado'>
+        {generarAvisos(estado.datos.value, hoy(), estado.ajustes.value.minSesionesSemana).map((a) => {
+          const cuerpo = <>
+            <span class='marca' aria-hidden='true'>{a.tipo === 'logro' ? '★' : a.tipo === 'alerta' ? '!' : '✓'}</span>
+            <span><b>{a.titulo}</b>{a.texto && <small>{a.texto}</small>}</span>
+          </>;
+          return <li class={a.tipo}>{a.href ? <a href={a.href}>{cuerpo}</a> : <div>{cuerpo}</div>}</li>;
+        })}
+      </ul>
 
       {ultima && (
         <a class='tarjeta ultima' href={`#/registrar?id=${encodeURIComponent(ultima.id)}`}>

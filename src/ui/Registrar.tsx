@@ -3,7 +3,8 @@ import type { Fuerza, Lugar, Metcon, Sesion } from '../domain/types';
 import { ejercicioSugerido, ROTACION, type PR } from '../domain/records';
 import { nuevoId } from '../domain/ids';
 import { EJERCICIOS_BASE } from '../store/local';
-import { estado, registrar } from '../store/estado';
+import { borrar, estado, registrar } from '../store/estado';
+import { BotonBorrar } from './componentes/BotonBorrar';
 import { FuerzaForm, fuerzaInicial } from './FuerzaForm';
 import { MetconForm } from './MetconForm';
 import { Chips } from './componentes/Chips';
@@ -93,6 +94,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
         : <button type="button" class="boton" style="margin:12px 0 0 8px" onClick={() => setMetcon({ formato: 'AMRAP', rx: true })}>＋ Metcon</button>}
       <textarea aria-label="Nota" placeholder="Nota (opcional)" style="margin-top:12px" value={nota} onInput={(e) => setNota((e.target as HTMLTextAreaElement).value)} />
       <div class="fila"><button type="button" class="primario" disabled={guardando || (!fuerza && !metcon && extras.length === 0)} onClick={guardar}>Guardar sesión</button></div>
+      {sesionInicial && <BotonBorrar texto='Borrar sesión' onBorrar={async () => { await borrar(sesionInicial.id); escribirBorrador(null); location.hash = '#/historial'; }} />}
     </main>
   );
 }

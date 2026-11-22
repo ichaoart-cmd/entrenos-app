@@ -3,17 +3,18 @@ import type { Carrera, Sesion } from '../domain/types';
 import { rachaSemanas, semanasDelMes, sesionesPorDia } from '../domain/calendario';
 import { diasConRecord } from '../domain/records';
 import { nombreEjercicio } from './formato';
+import { TIPOS, colorTipo, nombreTipo, tiposPorDia, type TipoEntreno } from '../domain/tipos';
 import { hoy } from './Registrar';
 
 const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
-function etiquetaDia(d: string, ses: Sesion[], record: boolean, cs: Carrera[] = []): string {
+function etiquetaDia(d: string, ses: Sesion[], record: boolean, cs: Carrera[] = [], tipos: TipoEntreno[] = []): string {
   const n = String(Number(d.slice(8)));
   if (!ses.length && !cs.length) return n;
   const cosas = [...ses.flatMap((s) => [...s.fuerza.map((f) => nombreEjercicio(f.ejercicio)), ...(s.metcon ? ['Metcon'] : [])]),
     ...cs.map((c) => `carrera ${String(c.distanciaKm).replace('.', ',')} km`)];
-  return `${n} · ${cosas.length ? cosas.join(', ') : 'entreno'}${record ? ', récord' : ''}`;
+  return `${n} · ${cosas.length ? cosas.join(', ') : 'entreno'}${tipos.length ? ` · ${tipos.map(nombreTipo).join(', ')}` : ''}${record ? ', récord' : ''}`;
 }
 
 export function Calendario({ sesiones, minSemana, carreras = [] }: { sesiones: Sesion[]; minSemana: number; carreras?: Carrera[] }) {
@@ -21,6 +22,7 @@ export function Calendario({ sesiones, minSemana, carreras = [] }: { sesiones: S
   const [ym, setYm] = useState({ a: Number(h.slice(0, 4)), m: Number(h.slice(5, 7)) });
   const porDia = sesionesPorDia(sesiones);
   const records = diasConRecord(sesiones);
+  const tipos = tiposPorDia(sesiones, carreras);
   const corridos = new Map<string, Carrera[]>();
   for (const c of carreras) if (!c.borrado) corridos.set(c.fecha, [...(corridos.get(c.fecha) ?? []), c]);
   const prefijo = `${ym.a}-${String(ym.m).padStart(2, '0')}`;
@@ -49,20 +51,32 @@ export function Calendario({ sesiones, minSemana, carreras = [] }: { sesiones: S
           const rec = records.has(d);
           const href = ses.length ? `#/registrar?id=${encodeURIComponent(ses[0].id)}`
             : cs.length ? `#/carrera?id=${encodeURIComponent(cs[0].id)}` : `#/registrar?fecha=${d}`;
+          const ts = tipos.get(d) ?? [];
           return (
-            <a href={href} aria-label={etiquetaDia(d, ses, rec, cs)}
-              class={`cal-dia${ses.length ? ' entrenado' : ''}${cs.length ? ' corrido' : ''}${rec ? ' record' : ''}${d === h ? ' hoy' : ''}${d > h ? ' futuro' : ''}`}>
-              {Number(d.slice(8))}
+            <a href={href} aria-label={etiquetaDia(d, ses, rec, cs, ts)} style={ts.length ? { '--anillo': anillo(ts) } : undefined}
+              class={`cal-dia${ses.length || cs.length ? ' entrenado' : ''}${ts.length ? ' con-tipo' : ''}${rec ? ' record' : ''}${d === h ? ' hoy' : ''}${d > h ? ' futuro' : ''}`}>
+              <span>{Number(d.slice(8))}</span>
             </a>
           );
         })}
       </div>
       <div class='cal-leyenda'>
-        <span><i style='background:var(--bosque)' />Entreno</span>
-        <span><i style='background:var(--bronce)' />Récord</span>
-        <span><i style='background:var(--rio)' />Carrera</span>
-        <span>Racha: semanas con {minSemana} o más</span>
+        {TIPOS.map((t) => <span><i style={{ background: t.color }} />{t.nombre}</span>)}
+        <span><b class='estrella' aria-hidden='true'>★</b>Récord</span>
+        <span class='racha-nota'>Racha: semanas con {minSemana} entrenos o más</span>
       </div>
     </section>
   );
+}
+
+/** Anillo partido en segmentos iguales, uno por tipo, con una pequeña separación entre ellos. */
+function anillo(ts: TipoEntreno[]): string {
+  if (ts.length === 1) return colorTipo(ts[0]);
+  const paso = 360 / ts.length, hueco = 7;
+  const partes = ts.flatMap((t, i) => [
+    `var(--papel) ${i * paso}deg ${i * paso + hueco / 2}deg`,
+    `${colorTipo(t)} ${i * paso + hueco / 2}deg ${(i + 1) * paso - hueco / 2}deg`,
+    `var(--papel) ${(i + 1) * paso - hueco / 2}deg ${(i + 1) * paso}deg`,
+  ]);
+  return `conic-gradient(${partes.join(', ')})`;
 }

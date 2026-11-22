@@ -22,5 +22,7 @@ export interface Sesion extends Base {
 export interface Carrera extends Base {
   fecha: string; tipo?: string; distanciaKm: number; tiempoSeg: number; nota?: string; stravaId?: number;
   desnivelM?: number; fcMedia?: number;
+  /** Sensación de esfuerzo: 1 suave … 5 al límite. */
+  esfuerzo?: number;
 }
 export interface Datos { version: 1; ejercicios: Ejercicio[]; sesiones: Sesion[]; carreras: Carrera[] }

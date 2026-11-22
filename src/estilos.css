@@ -108,10 +108,14 @@ textarea { width: 100%; min-height: 84px; padding: 12px; }
 .cal-dia { aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: auto; width: 100%; max-width: 40px;
   color: var(--tinta); text-decoration: none; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
 .cal-dia.futuro { color: #b5b0a4; }
-.cal-dia.entrenado { background: var(--bosque); color: var(--papel); font-weight: 700; }
-.cal-dia.record { background: var(--bronce); color: var(--papel); font-weight: 700; }
-.cal-dia.hoy { box-shadow: inset 0 0 0 1.5px var(--tinta); font-weight: 700; }
-.cal-leyenda { display: flex; gap: 14px; font-size: 0.75rem; color: var(--suave); margin-top: 12px; }
+.cal-dia.entrenado { background: var(--salvia); font-weight: 700; }
+.cal-dia.con-tipo { background: var(--anillo); color: var(--tinta); }
+.cal-dia.con-tipo span { position: absolute; inset: 5px; border-radius: 50%; background: var(--papel); display: flex; align-items: center; justify-content: center; }
+.cal-dia.record::after { content: '★'; position: absolute; top: -4px; right: -3px; font-size: 13px; line-height: 1; color: var(--bronce); text-shadow: 0 0 2px var(--papel), 0 0 2px var(--papel); }
+.cal-dia.hoy { box-shadow: 0 0 0 2px var(--papel), 0 0 0 3.5px var(--tinta); font-weight: 700; }
+.cal-leyenda { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.75rem; color: var(--suave); margin-top: 12px; }
+.cal-leyenda .estrella { color: var(--bronce); margin-right: 4px; }
+.cal-leyenda .racha-nota { flex-basis: 100%; }
 .cal-leyenda i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
 
 .ultima { display: block; color: inherit; text-decoration: none; }
@@ -232,10 +236,26 @@ h3.bloque { font-family: var(--serif); font-weight: 500; font-size: 1.15rem; mar
 .tabla-carrera b { font-family: var(--serif); font-weight: 500; font-size: 1.3rem; text-align: right; }
 .tabla-carrera small { grid-column: 1 / -1; color: var(--suave); font-size: 0.78rem; }
 .cal-dia { position: relative; }
-.cal-dia.corrido::after { content: ''; position: absolute; bottom: 3px; left: 50%; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--rio); box-shadow: 0 0 0 1.5px var(--papel); }
-.cal-dia.corrido:not(.entrenado):not(.record) { background: #dbe5ec; color: var(--tinta); font-weight: 700; }
 .acceso-carrera { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; margin-top: 14px; padding: 12px 14px; }
 .acceso-carrera .disco { width: 46px; height: 46px; border-radius: 50%; background: #dbe5ec; color: var(--rio); display: flex; align-items: center; justify-content: center; flex: 0 0 auto; --halo: #dbe5ec; }
 .acceso-carrera > span:nth-child(2) { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .acceso-carrera small { color: var(--suave); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .acceso-carrera .mas { width: 40px; height: 40px; border-radius: 50%; background: var(--bosque); color: var(--papel); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+
+/* Borrar */
+.boton-borrar { display: block; margin: 18px auto 0; background: transparent; color: var(--error); font-weight: 600; }
+.borrar-confirmar { margin-top: 18px; padding: 14px; border-radius: 22px; background: #f6e3df; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.borrar-confirmar span { flex-basis: 100%; font-size: 0.9rem; }
+.peligro-lleno { background: var(--error); color: #fff; font-weight: 700; padding: 0 18px; }
+/* Lo destacado */
+.destacado { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.destacado li a, .destacado li > div { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 20px; background: var(--papel); color: inherit; text-decoration: none; }
+.destacado .marca { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; }
+.destacado .logro .marca { background: #f1e4cf; color: var(--bronce); }
+.destacado .alerta .marca { background: #f6e3df; color: var(--error); }
+.destacado .info .marca { background: var(--salvia); color: var(--bosque); }
+.destacado b { display: block; font-weight: 650; }
+.destacado small { display: block; color: var(--suave); font-size: 0.8rem; margin-top: 2px; }
+.etiq small { font-size: 0.75rem; }
+.minis.datos-carrera { grid-template-columns: 1fr; }
+.datos-carrera .stepper input { width: 64px; }

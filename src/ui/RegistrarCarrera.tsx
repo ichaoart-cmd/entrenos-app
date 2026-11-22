@@ -2,7 +2,8 @@ import { useState } from 'preact/hooks';
 import type { Carrera } from '../domain/types';
 import { nuevoId } from '../domain/ids';
 import { formatearRitmo, formatearTiempo, partirTiempo } from '../domain/carrera';
-import { estado, registrarCarrera } from '../store/estado';
+import { estado, quitarCarrera, registrarCarrera } from '../store/estado';
+import { BotonBorrar } from './componentes/BotonBorrar';
 import { Chips } from './componentes/Chips';
 import { Stepper } from './componentes/Stepper';
 import { Aviso } from './componentes/Aviso';
@@ -11,6 +12,11 @@ import { hoy } from './Registrar';
 export const TIPOS_CARRERA = [
   { valor: 'rodaje', texto: 'Rodaje' }, { valor: 'series', texto: 'Series' },
   { valor: 'tirada larga', texto: 'Tirada larga' }, { valor: 'competición', texto: 'Competición' },
+];
+
+export const ESFUERZOS = [
+  { valor: '1', texto: 'Suave' }, { valor: '2', texto: 'Cómodo' }, { valor: '3', texto: 'Duro' },
+  { valor: '4', texto: 'Muy duro' }, { valor: '5', texto: 'Al límite' },
 ];
 
 export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInicial?: Carrera; fechaInicial?: string }) {
@@ -23,6 +29,9 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
   const [km, setKm] = useState(base?.distanciaKm ?? 5);
   const [h, setH] = useState(t0.h), [m, setM] = useState(t0.m), [s, setS] = useState(t0.s);
   const [nota, setNota] = useState(carreraInicial?.nota ?? '');
+  const [esfuerzo, setEsfuerzo] = useState<string | undefined>(carreraInicial?.esfuerzo != null ? String(carreraInicial.esfuerzo) : undefined);
+  const [fc, setFc] = useState(carreraInicial?.fcMedia ?? 0);
+  const [desnivel, setDesnivel] = useState(carreraInicial?.desnivelM ?? 0);
   const [aviso, setAviso] = useState<{ texto: string; record: boolean } | null>(null);
   const [guardando, setGuardando] = useState(false);
   const seg = Math.round(h * 3600 + m * 60 + s);
@@ -36,6 +45,10 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
       fecha, tipo, distanciaKm: km, tiempoSeg: seg, ...(nota.trim() ? { nota: nota.trim() } : {}),
     };
     if (!nota.trim()) delete c.nota;
+    // 0 o sin elegir = sin dato.
+    if (esfuerzo) c.esfuerzo = Number(esfuerzo); else delete c.esfuerzo;
+    if (fc > 0) c.fcMedia = Math.round(fc); else delete c.fcMedia;
+    if (desnivel > 0) c.desnivelM = Math.round(desnivel); else delete c.desnivelM;
     const mejora = await registrarCarrera(c);
     setAviso(mejora ? { texto: `Mejor ${mejora.nombre}: ${formatearTiempo(mejora.seg)}`, record: true } : { texto: 'Guardado ✓', record: false });
     setTimeout(() => { location.hash = '#/'; }, 1800);
@@ -50,7 +63,7 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
         <input type='date' aria-label='Fecha' value={fecha} onInput={(e) => setFecha((e.target as HTMLInputElement).value)} />
       </div>
       {carreraInicial?.stravaId != null && (
-        <p class='origen-strava'>De Strava{carreraInicial.desnivelM != null ? `, desnivel ${carreraInicial.desnivelM} m` : ''}{carreraInicial.fcMedia != null ? `, FC media ${carreraInicial.fcMedia}` : ''}</p>
+        <p class='origen-strava'>De Strava</p>
       )}
       <Chips etiqueta='Tipo de carrera' opciones={TIPOS_CARRERA} valor={tipo} onCambio={setTipo} />
 
@@ -71,8 +84,17 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
           : <span class='suave'>Pon distancia y tiempo para ver el ritmo</span>}
       </div>
 
+      <div class='etiq'>¿Cómo fue? <small>(opcional, para ver si mejoras a igual esfuerzo)</small></div>
+      <Chips etiqueta='Esfuerzo' opciones={ESFUERZOS} valor={esfuerzo} onCambio={(v) => setEsfuerzo(v === esfuerzo ? undefined : v)} />
+      <div class='minis datos-carrera'>
+        <Stepper etiqueta='FC media' valor={fc} paso={1} onCambio={setFc} />
+        <Stepper etiqueta='Desnivel (m)' valor={desnivel} paso={10} onCambio={setDesnivel} />
+      </div>
+      <p class='pista-texto'>Pon 0 si no lo sabes. La FC media la tienes en Mi Fitness, en el detalle del entreno.</p>
+
       <textarea aria-label='Nota' placeholder='Nota (opcional)' value={nota} onInput={(e) => setNota((e.target as HTMLTextAreaElement).value)} />
       <div class='fila'><button type='button' class='primario' disabled={guardando || !valida} onClick={guardar}>Guardar carrera</button></div>
+      {carreraInicial && <BotonBorrar texto='Borrar carrera' onBorrar={async () => { await quitarCarrera(carreraInicial.id); location.hash = '#/historial'; }} />}
     </main>
   );
 }

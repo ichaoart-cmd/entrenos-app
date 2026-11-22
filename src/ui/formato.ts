@@ -44,5 +44,5 @@ const TIPO_CARRERA: Record<string, string> = { rodaje: 'Rodaje', series: 'Series
 
 /** «Rodaje 8 km · 42:10 · 5:16 /km» */
 export function resumenCarrera(c: Carrera): string {
-  return `${TIPO_CARRERA[c.tipo ?? ''] ?? 'Carrera'} ${kg(c.distanciaKm)} km · ${formatearTiempo(c.tiempoSeg)} · ${formatearRitmo(c.tiempoSeg / c.distanciaKm)} /km`;
+  return `${TIPO_CARRERA[c.tipo ?? ''] ?? 'Carrera'} ${kg(c.distanciaKm)} km · ${formatearTiempo(c.tiempoSeg)} · ${formatearRitmo(c.tiempoSeg / c.distanciaKm)} /km${c.fcMedia ? ` · ${c.fcMedia} ppm` : ''}`;
 }
