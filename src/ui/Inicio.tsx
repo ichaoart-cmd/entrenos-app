@@ -12,9 +12,9 @@ export function Inicio() {
       <a class="boton-grande" href="#/registrar">＋ Registrar</a>
       <Calendario sesiones={vivas} minSemana={estado.ajustes.value.minSesionesSemana} />
       {ultima && (
-        <a class="tarjeta" href={`#/registrar?id=${encodeURIComponent(ultima.id)}`} style="display:block;color:inherit;text-decoration:none">
-          <div class="suave">Última sesión · {fechaLarga(ultima.fecha)}</div>
-          {ultima.fuerza.length > 0 && <div>{resumenFuerza(ultima)}</div>}
+        <a class="tarjeta ultima" href={`#/registrar?id=${encodeURIComponent(ultima.id)}`}>
+          <div class="titulo">Última sesión, {fechaLarga(ultima.fecha)}</div>
+          {ultima.fuerza.length > 0 && <div class="que">{resumenFuerza(ultima)}</div>}
           {ultima.metcon && <div>{resumenMetcon(ultima)}</div>}
         </a>
       )}

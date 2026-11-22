@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import type { Sesion } from '../domain/types';
 import { rachaSemanas, semanasDelMes, sesionesPorDia } from '../domain/calendario';
-import { COLOR_METCON, colorDe } from './iconos';
+import { COLOR_CLARO, COLOR_METCON, colorDe } from './iconos';
 import { nombreEjercicio } from './formato';
 import { hoy } from './Registrar';
 
@@ -32,8 +32,8 @@ export function Calendario({ sesiones, minSemana }: { sesiones: Sesion[]; minSem
         <button type='button' aria-label='Mes siguiente' onClick={() => mover(1)}>›</button>
       </div>
       <div class='cal-resumen'>
-        <span><b>{delMes}</b> {delMes === 1 ? 'sesión' : 'sesiones'} este mes</span>
-        <span>Racha: <b>{racha}</b> {racha === 1 ? 'semana' : 'semanas'} ({minSemana}+/sem)</span>
+        <span><b>{delMes}</b>{delMes === 1 ? 'sesión' : 'sesiones'} este mes</span>
+        <span><b>{racha}</b>{racha === 1 ? 'semana' : 'semanas'} seguidas con {minSemana} o más</span>
       </div>
       <div class='cal-rejilla'>
         {DIAS.map((d) => <span class='cal-dia-nombre'>{d}</span>)}
@@ -43,10 +43,11 @@ export function Calendario({ sesiones, minSemana }: { sesiones: Sesion[]; minSem
           const href = ses.length ? `#/registrar?id=${encodeURIComponent(ses[0].id)}` : `#/registrar?fecha=${d}`;
           const colores = ses.flatMap((s) => [...s.fuerza.map((f) => colorDe(f.ejercicio)), ...(s.metcon ? [COLOR_METCON] : [])]);
           return (
-            <a href={href} aria-label={etiquetaDia(d, ses)} class={`cal-dia${ses.length ? ' entrenado' : ''}${d === h ? ' hoy' : ''}${d > h ? ' futuro' : ''}`}
-              style={colores.length ? { background: `${colores[0]}33`, borderColor: colores[0] } : undefined}>
+            <a href={href} aria-label={etiquetaDia(d, ses)}
+              class={`cal-dia${ses.length ? ' entrenado' : ''}${colores.length && COLOR_CLARO.has(colores[0]) ? ' claro' : ''}${d === h ? ' hoy' : ''}${d > h ? ' futuro' : ''}`}
+              style={colores.length ? { background: colores[0] } : undefined}>
               <span>{Number(d.slice(8))}</span>
-              {colores.length > 0 && <span class='puntos'>{colores.slice(0, 3).map((c) => <i style={{ background: c }} />)}</span>}
+              {colores.length > 1 && <span class='puntos'>{colores.slice(1, 4).map((c) => <i style={{ background: c }} />)}</span>}
             </a>
           );
         })}

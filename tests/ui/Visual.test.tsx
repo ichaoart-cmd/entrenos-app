@@ -54,7 +54,7 @@ test('inicio muestra el calendario del mes con los días entrenados', () => {
   render(<Inicio />);
   const dia = screen.getByRole('link', { name: /^2 .*Back Squat/ });
   expect(dia.getAttribute('href')).toBe('#/registrar?id=a');
-  expect(screen.getByText(/este mes/i).textContent).toMatch(/^1 sesión/);
+  expect(screen.getByText(/este mes/i).textContent).toMatch(/^1\s?sesión/);
 });
 
 test('tocar un día sin sesión abre el registro con esa fecha', () => {

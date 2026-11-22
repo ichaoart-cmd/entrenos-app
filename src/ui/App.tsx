@@ -36,9 +36,9 @@ export function App() {
     <>
       {pagina}
       <nav class="barra">
-        <a href="#/">Inicio</a>
-        <a href="#/historial">Historial</a>
-        <a href="#/ajustes">Ajustes</a>
+        <a href="#/" aria-current={base === '#/' || base === '#/registrar' ? 'page' : undefined}>Inicio</a>
+        <a href="#/historial" aria-current={base === '#/historial' ? 'page' : undefined}>Historial</a>
+        <a href="#/ajustes" aria-current={base === '#/ajustes' ? 'page' : undefined}>Ajustes</a>
       </nav>
     </>
   );

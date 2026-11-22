@@ -8,12 +8,14 @@ const PATRON: Record<string, Patron> = {
 };
 
 export const COLOR: Record<string, string> = {
-  'back-squat': '#f5c518', 'front-squat': '#ff9f0a', 'press-banca': '#30d158', 'shoulder-press': '#64d2ff',
-  deadlift: '#ff453a', 'push-press': '#5e9eff', snatch: '#bf5af2', 'power-snatch': '#bf5af2',
-  clean: '#ff6fae', 'power-clean': '#ff6fae', dips: '#ac8e68', 'push-ups': '#98989d',
+  'back-squat': '#d7263d', 'front-squat': '#f2b705', 'press-banca': '#1f5fbf', 'shoulder-press': '#2e9e5b',
+  deadlift: '#15171a', 'push-press': '#5b8def', snatch: '#7a4fd0', 'power-snatch': '#7a4fd0',
+  clean: '#c2417a', 'power-clean': '#c2417a', dips: '#8a8f98', 'push-ups': '#8a8f98',
 };
+/** Colores claros sobre los que el texto va en tinta, no en blanco. */
+export const COLOR_CLARO = new Set(['#f2b705', '#8a8f98']);
 export const colorDe = (id: string) => COLOR[id] ?? '#98989d';
-export const COLOR_METCON = '#e5e5ea';
+export const COLOR_METCON = '#8a8f98';
 
 const trazo = { fill: 'none', stroke: 'currentColor', strokeWidth: 2.4, strokeLinecap: 'round', strokeLinejoin: 'round' } as const;
 

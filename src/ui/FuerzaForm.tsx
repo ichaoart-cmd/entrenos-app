@@ -30,7 +30,7 @@ export function fuerzaInicial(ejercicio: string, sesiones: Sesion[]): Fuerza {
 function Tarjeta({ e, activa, top, onClick }: { e: Ejercicio; activa: boolean; top?: number; onClick: () => void }) {
   return (
     <button type='button' class='tarjeta-ejercicio' aria-pressed={activa} onClick={onClick}
-      style={activa ? { borderColor: colorDe(e.id), background: `${colorDe(e.id)}22` } : undefined}>
+      style={activa ? { borderColor: colorDe(e.id), background: `${colorDe(e.id)}1f` } : undefined}>
       <IconoEjercicio id={e.id} size={44} />
       <span class='nombre'>{e.nombre}</span>
       <span class='suave'>{top != null ? `${kg(top)} kg` : '—'}</span>
@@ -82,8 +82,8 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar }:
         <button type='button' class='chip' disabled={seg == null} aria-pressed={seg != null && pausa} onClick={() => setTempo(seg, true)}>Con pausa</button>
       </div>
 
-      <Stepper etiqueta='Serie top (kg)' valor={top} paso={0.5}
-        onCambio={(v) => onCambio({ ...fuerza, series: generarRampa(v, anterior, fuerza.series.length) })} />
+      <div class='campo-top'><Stepper etiqueta='Serie top (kg)' valor={top} paso={0.5}
+        onCambio={(v) => onCambio({ ...fuerza, series: generarRampa(v, anterior, fuerza.series.length) })} /></div>
       <Stepper etiqueta='Reps' valor={fuerza.reps ?? 0} paso={1} min={1}
         onCambio={(v) => onCambio({ ...fuerza, reps: v })} />
 
@@ -98,7 +98,7 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar }:
         {fuerza.series.map((v, i) => (
           <div class='rampa-barra'>
             <div class='hueco'>
-              <div class='relleno' style={{ height: `${alto(v)}%`, background: colorDe(fuerza.ejercicio), opacity: i === fuerza.series.length - 1 ? 1 : 0.45 }} />
+              <div class='relleno' style={{ height: `${alto(v)}%`, background: colorDe(fuerza.ejercicio), opacity: i === fuerza.series.length - 1 ? 1 : 0.35 }} />
             </div>
             <input aria-label={`Serie ${i + 1}`} inputMode='decimal' value={String(v)}
               onChange={(e) => {
