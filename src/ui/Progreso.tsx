@@ -6,6 +6,7 @@ import { filtrarPorTempo, serieProgreso, type FiltroTempo } from '../domain/prog
 import { FichaCarrera, TarjetaCarrera } from './ProgresoCarrera';
 import { FichaMetcon, TarjetaMetcon } from './ProgresoMetcon';
 import { TarjetaPeso } from './PesoCorporal';
+import { Reparto } from './Reparto';
 import { fuerzaRelativa, pesoEn } from '../domain/peso';
 import { CATALOGO, entrada } from '../domain/catalogo';
 import { fechaLarga } from './formato';
@@ -37,6 +38,7 @@ function Lista() {
   return (
     <main class='pagina'>
       <h1>Progreso</h1>
+      <Reparto />
       <TarjetaCarrera />
       <TarjetaMetcon />
       <TarjetaPeso />

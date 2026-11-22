@@ -195,3 +195,23 @@ img.ilustracion { display: block; object-fit: contain; }
 .tema-pop .hist-peso li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1.5px dashed var(--negro); }
 .tema-pop .hist-peso li:last-child { border-bottom: 0; }
 .tema-pop .resumen-rm .relativa { display: inline-block; margin-top: 6px; font-family: var(--mono); font-weight: 700; font-size: 0.8rem; background: var(--blanco); border: 2px solid var(--negro); border-radius: 999px; padding: 1px 10px; }
+.tema-pop .reparto h3 { margin: 0 0 2px; }
+.tema-pop .reparto-fila { display: grid; grid-template-columns: 92px 1fr 92px; gap: 10px; align-items: center; padding: 5px 0; }
+.tema-pop .reparto-fila .nombre { font-family: var(--mono); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+.tema-pop .reparto-fila .pista { height: 16px; border: 2px solid var(--negro); border-radius: 6px; background: var(--crema); overflow: hidden; }
+.tema-pop .reparto-fila .pista i { display: block; height: 100%; border-right: 2px solid var(--negro); }
+.tema-pop .reparto-fila .pista i[style*='width: 0%'] { border-right: 0; }
+.tema-pop .reparto-fila .dato { display: flex; flex-direction: column; line-height: 1.1; }
+.tema-pop .reparto-fila .dato small { font-family: var(--mono); font-size: 0.68rem; color: var(--suave); }
+.tema-pop .cal-vista { display: flex; gap: 6px; margin-bottom: 10px; }
+.tema-pop .cal-vista button { min-height: 34px; padding: 0 14px; font-family: var(--mono); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; }
+.tema-pop .cal-vista button[aria-pressed='true'] { background: var(--amarillo); }
+.tema-pop .cal-anio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 10px; margin-top: 8px; }
+.tema-pop .mini-mes { display: flex; flex-direction: column; gap: 4px; padding: 0; min-height: 0; border: 0; box-shadow: none; background: transparent; text-align: left; }
+.tema-pop .mini-nombre { font-family: var(--mono); font-weight: 700; text-transform: uppercase; font-size: 0.7rem; }
+.tema-pop .mini-rejilla { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.tema-pop .mini-rejilla i { aspect-ratio: 1; border-radius: 2px; background: #ebe3cf; }
+.tema-pop .mini-rejilla i.vacio { background: transparent; }
+.tema-pop .mini-rejilla i.futuro { opacity: 0.4; }
+.tema-pop .mini-rejilla i.hoy { outline: 1.5px solid var(--negro); }
+.tema-pop .mini-rejilla i[style] { outline: 1px solid var(--negro); }

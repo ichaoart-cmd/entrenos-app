@@ -29,10 +29,17 @@ export function Calendario({ sesiones, minSemana, carreras = [] }: { sesiones: S
   const dias = new Set([...porDia.keys(), ...corridos.keys()]);
   const delMes = [...dias].filter((d) => d.startsWith(prefijo)).length;
   const racha = rachaSemanas([...porDia.entries(), ...corridos.entries()].flatMap(([d, s]) => s.map(() => d)), minSemana, h);
+  const [vista, setVista] = useState<'mes' | 'anio'>('mes');
   const mover = (delta: number) => setYm(({ a, m }) => { const t = a * 12 + (m - 1) + delta; return { a: Math.floor(t / 12), m: (t % 12) + 1 }; });
 
   return (
     <section class='tarjeta calendario'>
+      <div class='cal-vista' role='group' aria-label='Vista del calendario'>
+        <button type='button' aria-pressed={vista === 'mes'} onClick={() => setVista('mes')}>Mes</button>
+        <button type='button' aria-pressed={vista === 'anio'} onClick={() => setVista('anio')}>Año</button>
+      </div>
+      {vista === 'anio' ? <VistaAnio anio={ym.a} tipos={tipos} hoy={h} onAnio={(a) => setYm({ a, m: ym.m })}
+        onMes={(m) => { setYm({ a: ym.a, m }); setVista('mes'); }} /> : <>
       <div class='cal-cabecera'>
         <button type='button' aria-label='Mes anterior' onClick={() => mover(-1)}>‹</button>
         <strong>{MESES[ym.m - 1]} {ym.a}</strong>
@@ -60,6 +67,7 @@ export function Calendario({ sesiones, minSemana, carreras = [] }: { sesiones: S
           );
         })}
       </div>
+      </>}
       <div class='cal-leyenda'>
         {TIPOS.map((t) => <span><i style={{ background: t.color }} />{t.nombre}</span>)}
         <span><b class='estrella' aria-hidden='true'>★</b>Récord</span>
@@ -79,4 +87,36 @@ function anillo(ts: TipoEntreno[]): string {
     `var(--papel) ${(i + 1) * paso - hueco / 2}deg ${(i + 1) * paso}deg`,
   ]);
   return `conic-gradient(${partes.join(', ')})`;
+}
+
+/** Año entero: 12 minimeses con un cuadradito por día, del color del tipo principal de ese día. */
+function VistaAnio({ anio, tipos, hoy: h, onAnio, onMes }: {
+  anio: number; tipos: Map<string, TipoEntreno[]>; hoy: string; onAnio: (a: number) => void; onMes: (m: number) => void;
+}) {
+  const total = [...tipos.keys()].filter((d) => d.startsWith(`${anio}-`)).length;
+  return (
+    <>
+      <div class='cal-cabecera'>
+        <button type='button' aria-label='Año anterior' onClick={() => onAnio(anio - 1)}>‹</button>
+        <strong>{anio}</strong>
+        <button type='button' aria-label='Año siguiente' onClick={() => onAnio(anio + 1)}>›</button>
+      </div>
+      <div class='cal-resumen'><span><b>{total}</b>días entrenados en {anio}</span></div>
+      <div class='cal-anio'>
+        {MESES.map((nombre, i) => (
+          <button type='button' class='mini-mes' aria-label={`Ver ${nombre}`} onClick={() => onMes(i + 1)}>
+            <span class='mini-nombre' aria-hidden='true'>{nombre.slice(0, 3)}</span>
+            <span class='mini-rejilla'>
+              {semanasDelMes(anio, i + 1).flat().map((d) => {
+                if (!d) return <i class='vacio' />;
+                const ts = tipos.get(d) ?? [];
+                return <i role={ts.length ? 'img' : undefined} class={`${d === h ? 'hoy' : ''}${d > h ? ' futuro' : ''}`} style={ts.length ? { background: colorTipo(ts[0]) } : undefined}
+                  aria-label={ts.length ? `${Number(d.slice(8))} ${nombre}: ${ts.map(nombreTipo).join(', ')}` : undefined} />;
+              })}
+            </span>
+          </button>
+        ))}
+      </div>
+    </>
+  );
 }

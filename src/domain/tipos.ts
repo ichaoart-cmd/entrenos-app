@@ -46,3 +46,25 @@ export function tiposPorDia(sesiones: Sesion[], carreras: Carrera[]): Map<string
   for (const c of carreras) if (!c.borrado) add(c.fecha, 'carrera');
   return new Map([...m].map(([d, set]) => [d, TIPOS.map((x) => x.id).filter((x) => set.has(x))]));
 }
+
+export interface Reparto { tipo: TipoEntreno; dias: number; kg?: number; km?: number }
+
+/** Días por tipo en las últimas `semanas` semanas (hasta hoy), con kg movidos (series × reps) o km de carrera. */
+export function repartoPorTipo(sesiones: Sesion[], carreras: Carrera[], hoy: string, semanas = 4): Reparto[] {
+  const desde = new Date(Date.parse(`${hoy}T00:00:00Z`) - semanas * 7 * 864e5).toISOString().slice(0, 10);
+  const dentro = (f: string) => f > desde && f <= hoy;
+  const dias = new Map<TipoEntreno, Set<string>>(TIPOS.map((t) => [t.id, new Set()]));
+  const kg = new Map<TipoEntreno, number>(TIPOS.map((t) => [t.id, 0]));
+  for (const s of sesiones) {
+    if (s.borrado || !dentro(s.fecha)) continue;
+    for (const t of tiposDeSesion(s)) dias.get(t)!.add(s.fecha);
+    for (const f of s.fuerza) {
+      const t = tipoEjercicio(f.ejercicio); if (!t) continue;
+      kg.set(t, kg.get(t)! + f.series.reduce((a, x, i) => a + x * (f.repsSeries?.[i] ?? f.reps ?? 0), 0));
+    }
+  }
+  let km = 0;
+  for (const c of carreras) if (!c.borrado && dentro(c.fecha)) { dias.get('carrera')!.add(c.fecha); km += c.distanciaKm; }
+  return TIPOS.map(({ id }) => id === 'carrera' ? { tipo: id, dias: dias.get(id)!.size, km: Math.round(km * 10) / 10 }
+    : id === 'metcon' ? { tipo: id, dias: dias.get(id)!.size } : { tipo: id, dias: dias.get(id)!.size, kg: Math.round(kg.get(id)!) });
+}
