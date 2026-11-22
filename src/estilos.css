@@ -154,3 +154,29 @@ section[aria-label='Fuerza'] { margin-top: 16px; }
 .lista li .fila { margin: 2px 0 0; gap: 14px; }
 .lista li .fila button { min-height: 32px; padding: 0; font-size: 0.85rem; }
 .lista li .fila .peligro { color: var(--error); font-weight: 600; }
+.circulo .disco.mas { font-size: 1.6rem; color: var(--bosque); border: 1.5px dashed var(--linea); background: transparent; }
+.hoja { position: fixed; inset: 0; z-index: 30; background: var(--arena); display: flex; flex-direction: column; padding: 18px 20px 0; }
+.hoja-cabecera { display: flex; align-items: center; justify-content: space-between; }
+.hoja-cabecera h2 { margin: 0; font-size: 1.6rem; }
+.hoja input[type='search'] { width: 100%; margin: 14px 0 6px; border: 0; border-radius: 999px; padding: 0 18px; }
+.hoja-lista { overflow-y: auto; flex: 1; padding-bottom: 40px; }
+.hoja-item { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; border-radius: 18px; margin-bottom: 6px; padding: 6px 12px; min-height: 56px; }
+.hoja-item .disco { width: 40px; height: 40px; border-radius: 50%; background: var(--arena); display: flex; align-items: center; justify-content: center; --halo: var(--arena); }
+.enlace-ficha { display: block; color: inherit; text-decoration: none; }
+.enlace-ficha h3 { margin: 0; }
+.grafica { margin: 0; }
+.grafica svg { width: 100%; height: auto; display: block; }
+.leyenda { display: flex; gap: 16px; font-size: 0.8rem; color: var(--suave); margin-bottom: 6px; }
+.leyenda i { display: inline-block; margin-right: 6px; vertical-align: middle; }
+.leyenda i.l { width: 16px; height: 2px; }
+.leyenda i.p { width: 8px; height: 8px; border-radius: 50%; }
+.detalle { font-size: 0.85rem; min-height: 1.4em; margin-top: 4px; }
+.resumen-rm { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.resumen-rm b { font-family: var(--serif); font-weight: 500; font-size: 2.2rem; display: block; line-height: 1; }
+.resumen-rm > div > span { font-size: 0.8rem; color: var(--suave); }
+.estimados { display: flex; gap: 10px; }
+.estimados span { text-align: center; font-weight: 600; }
+.estimados small { display: block; font-weight: 400; color: var(--suave); font-size: 0.72rem; }
+table.datos { width: 100%; border-collapse: collapse; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+table.datos th, table.datos td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--linea); }
+table.datos th { color: var(--suave); font-weight: 600; }

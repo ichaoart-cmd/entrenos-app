@@ -34,7 +34,7 @@ export function App() {
     pagina = <Registrar key={`${ruta}-${s?.id ?? 'nueva'}`} sesionInicial={s} fechaInicial={fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : undefined} ejercicioInicial={ej ?? undefined} />;
   } else if (base === '#/historial') pagina = <Historial />;
   else if (base === '#/ajustes') pagina = <Ajustes />;
-  else if (base === '#/progreso') pagina = <Progreso />;
+  else if (base === '#/progreso') pagina = <Progreso key={query} ejercicio={new URLSearchParams(query).get('ej') ?? undefined} />;
   else pagina = <Inicio />;
   return (
     <>

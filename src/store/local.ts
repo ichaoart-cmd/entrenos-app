@@ -1,3 +1,4 @@
+import { CATALOGO } from '../domain/catalogo';
 import { get, set } from 'idb-keyval';
 import type { Datos, Ejercicio, Sesion } from '../domain/types';
 
@@ -5,20 +6,8 @@ export interface Ajustes {
   token?: string; ultimoSha?: string; pendiente: boolean; ultimaSync?: string; minSesionesSemana: number;
 }
 
-export const EJERCICIOS_BASE: Ejercicio[] = [
-  { id: 'back-squat', nombre: 'Back Squat', grupo: 'Dom. Rodilla' },
-  { id: 'front-squat', nombre: 'Front Squat', grupo: 'Dom. Rodilla' },
-  { id: 'press-banca', nombre: 'Press Banca', grupo: 'Empuje horizontal' },
-  { id: 'shoulder-press', nombre: 'Shoulder Press', grupo: 'Empuje vertical' },
-  { id: 'deadlift', nombre: 'Peso muerto', grupo: 'Dom. Cadera' },
-  { id: 'push-press', nombre: 'Push Press', grupo: 'Empuje vertical' },
-  { id: 'snatch', nombre: 'Snatch', grupo: 'Halterofilia' },
-  { id: 'power-snatch', nombre: 'Power Snatch', grupo: 'Halterofilia' },
-  { id: 'clean', nombre: 'Clean', grupo: 'Halterofilia' },
-  { id: 'power-clean', nombre: 'Power Clean', grupo: 'Halterofilia' },
-  { id: 'dips', nombre: 'Dips', grupo: 'Empuje vertical' },
-  { id: 'push-ups', nombre: 'Push Ups', grupo: 'Empuje horizontal' },
-];
+/** Todos los ejercicios del catálogo, en su orden. */
+export const EJERCICIOS_BASE: Ejercicio[] = CATALOGO.map(({ id, nombre, grupo }) => ({ id, nombre, grupo }));
 
 const AJUSTES_DEF: Ajustes = { pendiente: false, minSesionesSemana: 3 };
 

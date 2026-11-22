@@ -68,3 +68,11 @@ export function parsearMetcon(texto: string): Metcon | undefined {
   else if (numeros.length === 1) m.resultado = { tipo: 'reps', valor: numeros[0] };
   return m;
 }
+
+/** Corrige el ejercicio cuando el título contradice el desplegable de Notion (erratas detectadas en el histórico). */
+export function corregirEjercicio(id: string, titulo: string): string {
+  if (/domin/i.test(titulo)) return 'dominadas';
+  if (id === 'snatch' && /power/i.test(titulo)) return 'power-snatch';
+  if (id === 'clean' && /power/i.test(titulo)) return 'power-clean';
+  return id;
+}

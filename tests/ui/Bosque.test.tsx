@@ -59,9 +59,9 @@ test('el número de series se ajusta con su contador', () => {
 
 test('progreso muestra el 1RM estimado y los récords de cada ejercicio', () => {
   estado.datos.value = datosCon([sesion('b', '2026-06-18', 'back-squat', 5, [74, 79, 84, 89, 94])]);
-  render(<Progreso />);
-  const bs = screen.getByRole('region', { name: 'Back Squat' });
-  expect(bs.textContent).toContain('108'); // e1rm(94,5) = 107,7 → 108
-  expect(bs.textContent).toContain('5RM');
-  expect(bs.textContent).toContain('94');
+  const { unmount } = render(<Progreso />);
+  expect(screen.getByRole('link', { name: 'Back Squat' }).textContent).toContain('108'); // e1rm(94,5) = 107,7 → 108
+  unmount();
+  render(<Progreso ejercicio='back-squat' />);
+  expect(screen.getByText('5RM 94 kg')).toBeTruthy();
 });

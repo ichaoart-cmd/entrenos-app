@@ -4,7 +4,7 @@
  */
 import type { Datos, Fuerza, Sesion } from '../src/domain/types';
 import { EJERCICIOS_BASE } from '../src/store/local';
-import { extraerReps, extraerVariante, normalizarEjercicio, normalizarTempo } from './notion/parsers';
+import { corregirEjercicio, extraerReps, extraerVariante, normalizarEjercicio, normalizarTempo } from './notion/parsers';
 
 type FilaFuerza = [string | null, string | null, string, number | null, ...(number | null)[]];
 interface ExportFuerza { columnas: string[]; filas: any[][] }
@@ -63,7 +63,8 @@ export function importar(fuerza: ExportFuerza, sesiones: ExportSesiones): Datos 
       if (!f) return;
       sesion = porFecha.get(f) ?? nueva(`f${i}`, f, 'Box');
     }
-    const ejercicio = normalizarEjercicio(sel) ?? inferirEjercicio(nombre);
+    const base = normalizarEjercicio(sel) ?? inferirEjercicio(nombre);
+    const ejercicio = base && corregirEjercicio(base, nombre);
     if (!ejercicio) { sesion.nota = [sesion.nota, nombre].filter(Boolean).join(' · '); return; }
     const f: Fuerza = { ejercicio, reps: reps ?? extraerReps(nombre), series };
     const variante = extraerVariante(nombre);

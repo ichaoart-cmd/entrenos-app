@@ -1,3 +1,4 @@
+import { useState } from 'preact/hooks';
 import type { Ejercicio, Fuerza, Sesion } from '../domain/types';
 import { generarRampa } from '../domain/rampa';
 import { parsearKg } from '../domain/numeros';
@@ -6,12 +7,16 @@ import { componerTempo, partirTempo } from '../domain/tempo';
 import { Chips } from './componentes/Chips';
 import { Stepper } from './componentes/Stepper';
 import { IconoEjercicio, NOMBRE_CORTO } from './iconos';
+import { variantesDe } from '../domain/catalogo';
+import { Selector } from './Selector';
 
-/** Valor guardado → texto visible. Los valores guardados no cambian (compatibles con el histórico). */
-export const VARIANTES: { valor: string; texto: string }[] = [
-  { valor: 'normal', texto: 'Normal' }, { valor: 'btn', texto: 'Tras nuca' }, { valor: 'close grip', texto: 'Agarre cerrado' },
-  { valor: 'agarre medio', texto: 'Agarre medio' }, { valor: 'barra alta', texto: 'Barra alta' },
-];
+/** Ejercicios a mano en la fila: la rotación, los usados recientemente y el elegido. */
+export function ejerciciosFrecuentes(sesiones: Sesion[], actual: string): string[] {
+  const ultimo = new Map<string, string>();
+  for (const s of sesiones) if (!s.borrado) for (const f of s.fuerza) if (s.fecha > (ultimo.get(f.ejercicio) ?? '')) ultimo.set(f.ejercicio, s.fecha);
+  const recientes = [...ultimo.entries()].sort((a, b) => b[1].localeCompare(a[1])).map(([id]) => id);
+  return [...new Set([...ROTACION, actual, ...recientes])].slice(0, 10);
+}
 const SEGUNDOS = [2, 3, 4, 5];
 const kg = (n: number) => String(n).replace('.', ',');
 
@@ -38,12 +43,11 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar }:
 }) {
   const top = fuerza.series.length ? fuerza.series[fuerza.series.length - 1] : 0;
   const anterior = ultimaFuerza(sesiones, fuerza.ejercicio)?.series;
-  const orden = [...ejercicios].sort((a, b) => {
-    const ia = ROTACION.indexOf(a.id), ib = ROTACION.indexOf(b.id);
-    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
-  });
-  const variantes = VARIANTES.some((v) => v.valor === fuerza.variante) || !fuerza.variante
-    ? VARIANTES : [...VARIANTES, { valor: fuerza.variante, texto: fuerza.variante }];
+  const [selector, setSelector] = useState(false);
+  const nombres = new Map(ejercicios.map((e) => [e.id, e.nombre]));
+  const orden = ejerciciosFrecuentes(sesiones, fuerza.ejercicio).map((id) => ({ id, nombre: nombres.get(id) ?? id }));
+  const variantes = variantesDe(fuerza.ejercicio, fuerza.variante);
+  const elegir = (id: string) => { if (id !== fuerza.ejercicio) onCambio(fuerzaInicial(id, sesiones)); };
   const { seg, pausa } = partirTempo(fuerza.tempo);
   const max = Math.max(...fuerza.series, 1), min = Math.min(...fuerza.series);
   const alto = (v: number) => (max === min ? 100 : 35 + (65 * (v - min)) / (max - min));
@@ -56,17 +60,23 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar }:
           const t = ultimoTop(sesiones, e.id);
           return (
             <button type='button' class='circulo' aria-label={e.nombre} aria-pressed={e.id === fuerza.ejercicio}
-              onClick={() => e.id !== fuerza.ejercicio && onCambio(fuerzaInicial(e.id, sesiones))}>
+              onClick={() => elegir(e.id)}>
               <span class='disco'><IconoEjercicio id={e.id} size={40} /></span>
               <span>{NOMBRE_CORTO[e.id] ?? e.nombre}</span>
               <span class='kg'>{t != null ? `${kg(t)} kg` : '—'}</span>
             </button>
           );
         })}
+        <button type='button' class='circulo' aria-label='Más ejercicios' onClick={() => setSelector(true)}>
+          <span class='disco mas'>＋</span><span>Más</span><span class='kg'>&nbsp;</span>
+        </button>
       </div>
+      {selector && <Selector onCerrar={() => setSelector(false)} onElegir={(id) => { elegir(id); setSelector(false); }} />}
 
-      <div class='etiq'>Variante</div>
-      <Chips etiqueta='Variante' opciones={variantes} valor={fuerza.variante} onCambio={(v) => onCambio({ ...fuerza, variante: v })} />
+      {variantes.length > 1 && <>
+        <div class='etiq'>Variante</div>
+        <Chips etiqueta='Variante' opciones={variantes} valor={fuerza.variante ?? 'normal'} onCambio={(v) => onCambio({ ...fuerza, variante: v })} />
+      </>}
 
       <div class='etiq'>Serie top (kg)</div>
       <div class='peso-grande'>

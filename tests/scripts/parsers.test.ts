@@ -1,4 +1,4 @@
-import { normalizarEjercicio, extraerVariante, normalizarTempo, extraerReps, parsearMetcon } from '../../scripts/notion/parsers';
+import { normalizarEjercicio, extraerVariante, normalizarTempo, extraerReps, parsearMetcon, corregirEjercicio } from '../../scripts/notion/parsers';
 
 test('normalizarEjercicio unifica erratas', () => {
   expect(normalizarEjercicio('Back Squat')).toBe('back-squat');
@@ -68,4 +68,11 @@ test('extraerVariante: agarre cerrado y mid grip', () => {
   expect(extraerVariante('Press banca agarre cerrado 67kg')).toBe('close grip');
   expect(extraerVariante('Press banca mid grip 65kg')).toBe('agarre medio');
   expect(extraerVariante('Prees Banca mind grip 64kg. 4seg.')).toBe('agarre medio');
+});
+
+test('corregirEjercicio: el título manda cuando el desplegable de Notion estaba mal', () => {
+  expect(corregirEjercicio('push-ups', 'Dominadas 7kg')).toBe('dominadas');
+  expect(corregirEjercicio('snatch', 'Power Snach')).toBe('power-snatch');
+  expect(corregirEjercicio('snatch', 'snach')).toBe('snatch');
+  expect(corregirEjercicio('press-banca', 'Press banca 65kg')).toBe('press-banca');
 });

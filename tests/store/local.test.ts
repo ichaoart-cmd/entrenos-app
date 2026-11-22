@@ -8,7 +8,7 @@ test('vacío por defecto con ejercicios base', async () => {
   const d = await cargarLocal();
   expect(d.sesiones).toEqual([]);
   expect(d.ejercicios.map((e) => e.id)).toContain('back-squat');
-  expect(EJERCICIOS_BASE).toHaveLength(12);
+  expect(EJERCICIOS_BASE.length).toBeGreaterThanOrEqual(35);
   expect((await cargarAjustes()).pendiente).toBe(false);
   expect((await cargarAjustes()).minSesionesSemana).toBe(3);
 });
