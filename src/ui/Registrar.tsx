@@ -32,7 +32,7 @@ export function textoPR(pr: PR): string {
   return pr.anteriorKg == null ? base : `${base} (+${num(Math.round((pr.kg - pr.anteriorKg) * 10) / 10)} kg)`;
 }
 
-export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial }: { sesionInicial?: Sesion; fechaInicial?: string; ejercicioInicial?: string }) {
+export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrirSelector = false }: { sesionInicial?: Sesion; fechaInicial?: string; ejercicioInicial?: string; abrirSelector?: boolean }) {
   const datos = estado.datos.value;
   // Solo las sesiones nuevas usan borrador; al editar se parte de la sesión guardada.
   const [borrador] = useState(() => (sesionInicial || fechaInicial || ejercicioInicial ? null : leerBorrador()));
@@ -80,7 +80,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial }: { s
       </div>
       <Chips etiqueta="Lugar" opciones={[{ valor: 'box', texto: 'Box' }, { valor: 'casa', texto: 'Casa' }]} valor={lugar} onCambio={setLugar} />
       {fuerza
-        ? <FuerzaForm fuerza={fuerza} onCambio={setFuerza} ejercicios={ejercicios} sesiones={datos.sesiones.filter((x) => x.id !== sesionInicial?.id)} onQuitar={() => setFuerza(null)} />
+        ? <FuerzaForm fuerza={fuerza} onCambio={setFuerza} ejercicios={ejercicios} sesiones={datos.sesiones.filter((x) => x.id !== sesionInicial?.id)} onQuitar={() => setFuerza(null)} autoInicial={!sesionInicial} abrirSelector={abrirSelector} />
         : <button type="button" class="boton" style="margin-top:12px" onClick={() => setFuerza(fuerzaInicial(ejercicioSugerido(datos.sesiones, ROTACION), datos.sesiones))}>＋ Fuerza</button>}
       {extras.length > 0 && (
         <section class="tarjeta">

@@ -31,7 +31,7 @@ export function App() {
     const fecha = q.get('fecha');
     const ej = q.get('ej');
     const s = id ? estado.datos.value.sesiones.find((x) => x.id === id) : undefined;
-    pagina = <Registrar key={`${ruta}-${s?.id ?? 'nueva'}`} sesionInicial={s} fechaInicial={fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : undefined} ejercicioInicial={ej ?? undefined} />;
+    pagina = <Registrar key={`${ruta}-${s?.id ?? 'nueva'}`} sesionInicial={s} fechaInicial={fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : undefined} ejercicioInicial={ej ?? undefined} abrirSelector={q.get('elegir') === '1'} />;
   } else if (base === '#/historial') pagina = <Historial />;
   else if (base === '#/ajustes') pagina = <Ajustes />;
   else if (base === '#/progreso') pagina = <Progreso key={query} ejercicio={new URLSearchParams(query).get('ej') ?? undefined} />;

@@ -1,4 +1,5 @@
 import type { Fuerza, Sesion } from './types';
+import { repsDeTop } from './reps';
 
 export interface Marca { reps: number; kg: number; fecha: string }
 export interface PR { reps: number; kg: number; anteriorKg: number | null }
@@ -13,21 +14,23 @@ export function recordsPorReps(sesiones: Sesion[], ejercicioId: string): Map<num
   const res = new Map<number, Marca>();
   for (const s of vivas(sesiones)) {
     for (const f of s.fuerza) {
-      if (f.ejercicio !== ejercicioId || f.reps == null || f.series.length === 0) continue;
+      const reps = repsDeTop(f);
+      if (f.ejercicio !== ejercicioId || reps == null || f.series.length === 0) continue;
       const kg = Math.max(...f.series);
-      const prev = res.get(f.reps);
-      if (!prev || kg > prev.kg) res.set(f.reps, { reps: f.reps, kg, fecha: s.fecha });
+      const prev = res.get(reps);
+      if (!prev || kg > prev.kg) res.set(reps, { reps, kg, fecha: s.fecha });
     }
   }
   return res;
 }
 
 export function detectarPR(f: Fuerza, _fecha: string, historial: Sesion[]): PR | null {
-  if (f.reps == null || f.series.length === 0) return null;
+  const reps = repsDeTop(f);
+  if (reps == null || f.series.length === 0) return null;
   const kg = Math.max(...f.series);
-  const prev = recordsPorReps(historial, f.ejercicio).get(f.reps);
+  const prev = recordsPorReps(historial, f.ejercicio).get(reps);
   if (prev && kg <= prev.kg) return null;
-  return { reps: f.reps, kg, anteriorKg: prev ? prev.kg : null };
+  return { reps, kg, anteriorKg: prev ? prev.kg : null };
 }
 
 function ultimaFecha(sesiones: Sesion[], ejercicioId: string): string | null {
@@ -65,8 +68,9 @@ export function diasConRecord(sesiones: Sesion[]): Set<string> {
   const dias = new Set<string>();
   for (const s of vivas(sesiones).sort((a, b) => a.fecha.localeCompare(b.fecha))) {
     for (const f of s.fuerza) {
-      if (f.reps == null || !f.series.length) continue;
-      const k = `${f.ejercicio}|${f.reps}`, kg = Math.max(...f.series), prev = mejor.get(k);
+      const r = repsDeTop(f);
+      if (r == null || !f.series.length) continue;
+      const k = `${f.ejercicio}|${r}`, kg = Math.max(...f.series), prev = mejor.get(k);
       if (prev != null && kg > prev) dias.add(s.fecha);
       if (prev == null || kg > prev) mejor.set(k, kg);
     }

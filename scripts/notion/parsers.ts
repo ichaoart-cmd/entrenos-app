@@ -76,3 +76,11 @@ export function corregirEjercicio(id: string, titulo: string): string {
   if (id === 'clean' && /power/i.test(titulo)) return 'power-clean';
   return id;
 }
+
+/** Reps por serie escritas en el título ("9,7,5,7,9"); solo si hay tantas como series. */
+export function extraerRepsSeries(titulo: string, nSeries: number): number[] | undefined {
+  const m = titulo.match(/\b\d{1,2}(?:\s*,\s*\d{1,2}){2,}\b/);
+  if (!m) return undefined;
+  const reps = m[0].split(',').map((x) => Number(x.trim()));
+  return reps.length === nSeries ? reps : undefined;
+}

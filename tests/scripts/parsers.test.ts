@@ -1,4 +1,4 @@
-import { normalizarEjercicio, extraerVariante, normalizarTempo, extraerReps, parsearMetcon, corregirEjercicio } from '../../scripts/notion/parsers';
+import { normalizarEjercicio, extraerVariante, normalizarTempo, extraerReps, parsearMetcon, corregirEjercicio, extraerRepsSeries } from '../../scripts/notion/parsers';
 
 test('normalizarEjercicio unifica erratas', () => {
   expect(normalizarEjercicio('Back Squat')).toBe('back-squat');
@@ -75,4 +75,10 @@ test('corregirEjercicio: el título manda cuando el desplegable de Notion estaba
   expect(corregirEjercicio('snatch', 'Power Snach')).toBe('power-snatch');
   expect(corregirEjercicio('snatch', 'snach')).toBe('snatch');
   expect(corregirEjercicio('press-banca', 'Press banca 65kg')).toBe('press-banca');
+});
+
+test('extraerRepsSeries lee pirámides del título si cuadran con el número de series', () => {
+  expect(extraerRepsSeries('Back sq. 95kg. 9,7,5,7,9', 5)).toEqual([9, 7, 5, 7, 9]);
+  expect(extraerRepsSeries('Fresh blanca 9,7,5,7,9 60kg.', 4)).toBeUndefined();
+  expect(extraerRepsSeries('Back Squad H.L. 82,5', 5)).toBeUndefined();
 });

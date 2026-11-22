@@ -24,7 +24,7 @@ export function Inicio() {
       <h1>Hola, ¿entrenamos?</h1>
 
       <section class='hero' aria-label='Hoy toca'>
-        <div class='k'>Hoy toca</div>
+        <div class='k'>Hoy toca, según tu rotación</div>
         <div class='ej'>{nombreEjercicio(toca)}</div>
         <div class='ult'>
           {ultToca?.series.length
@@ -32,7 +32,10 @@ export function Inicio() {
             : 'Aún no lo has registrado'}
         </div>
         <span class='pictograma'><IconoEjercicio id={toca} size={92} /></span>
-        <a class='accion' href={`#/registrar?ej=${toca}`}>Registrar</a>
+        <div class='acciones'>
+          <a class='accion' href={`#/registrar?ej=${toca}`}>Registrar</a>
+          <a class='accion secundaria' href='#/registrar?elegir=1'>Otro ejercicio</a>
+        </div>
       </section>
 
       <h2>Tus ejercicios</h2>

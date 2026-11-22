@@ -6,6 +6,8 @@ export interface Base { id: string; actualizado: string; borrado?: boolean }
 export interface Ejercicio { id: string; nombre: string; grupo: string }
 export interface Fuerza {
   ejercicio: string; variante?: string; reps: number | null; series: number[]; tempo?: string; nota?: string;
+  /** Reps de cada serie cuando no son todas iguales (p. ej. pirámides). `reps` = las de la serie más pesada. */
+  repsSeries?: number[];
 }
 export interface Metcon {
   formato: FormatoMetcon; duracionMin?: number; equipo?: boolean;
