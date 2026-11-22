@@ -19,6 +19,10 @@ async function arrancar() {
       try { localStorage.setItem('vista-previa-datos', huella); } catch { /* sin localStorage */ }
     }
   } catch { /* sin almacenamiento: la app arranca vacía */ }
+  if (import.meta.env.VITE_TEMA === 'pop') {
+    document.documentElement.classList.add('tema-pop');
+    await Promise.all([import('./tema-pop.css'), import('@fontsource/space-mono/400.css'), import('@fontsource/space-mono/700.css')]);
+  }
   const aviso = document.createElement('div');
   aviso.textContent = 'Vista previa: lo que registres aquí no se guarda en GitHub.';
   aviso.style.cssText = 'position:sticky;top:0;z-index:20;background:#a57c45;color:#f8f4ec;font:600 13px system-ui;padding:8px 12px;text-align:center';

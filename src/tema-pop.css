@@ -1,0 +1,134 @@
+/* Tema «pop»: bordes gruesos negros, sombras planas desplazadas, pasteles planos, sin degradados.
+ * Sans ancha y muy negrita para titulares y cifras; mono para etiquetas. Todo cuelga de html.tema-pop. */
+html.tema-pop {
+  --crema: #faf3e3; --blanco: #fffdf7; --negro: #141414;
+  --menta: #a9dcb8; --amarillo: #f4c430; --rosa: #f4a8c7; --cielo: #7cc0f2; --melocoton: #f6c39f; --lila: #c9b6ef;
+  --arena: var(--crema); --papel: var(--blanco); --bosque: var(--negro); --bosque-2: var(--negro); --tinta: var(--negro);
+  --suave: #55534c; --linea: var(--negro); --bronce: #b8860b; --salvia: var(--menta);
+  --borde: 2.5px solid var(--negro); --sombra: 4px 4px 0 var(--negro); --sombra-p: 2px 2px 0 var(--negro);
+  --ancha: 'Archivo Variable', system-ui, sans-serif; --mono: 'Space Mono', ui-monospace, monospace;
+  --serif: var(--ancha);
+  background: var(--crema);
+}
+.tema-pop body { background: var(--crema); }
+.tema-pop :focus-visible { outline: 3px solid var(--cielo); outline-offset: 3px; }
+
+/* Tipografía */
+.tema-pop h1, .tema-pop h2, .tema-pop h3, .tema-pop .hero .ej, .tema-pop .cal-cabecera strong, .tema-pop h3.bloque, .tema-pop .hoja-cabecera h2 {
+  font-family: var(--ancha); font-weight: 850; font-stretch: 125%; letter-spacing: -0.01em; text-transform: uppercase; }
+.tema-pop h1 { font-size: 1.75rem; }
+.tema-pop h2 { font-size: 1.05rem; margin-top: 30px; }
+.tema-pop .etiq, .tema-pop .fecha-hoy, .tema-pop .hero .k, .tema-pop .cal-resumen, .tema-pop .cal-leyenda, .tema-pop .barra a,
+.tema-pop .ultima .titulo, .tema-pop .etiqueta, .tema-pop .circulo, .tema-pop .pista-texto, .tema-pop .sync {
+  font-family: var(--mono); letter-spacing: 0; }
+.tema-pop .etiq { text-transform: uppercase; font-size: 0.78rem; color: var(--negro); font-weight: 700; }
+.tema-pop .stepper input, .tema-pop .cal-resumen b, .tema-pop .resumen-rm b, .tema-pop .ejercicio-progreso .rm b,
+.tema-pop .ritmo b, .tema-pop .tabla-carrera b {
+  font-family: var(--ancha); font-weight: 850; font-stretch: 112%; }
+
+/* Superficies: borde negro + sombra plana */
+.tema-pop .tarjeta, .tema-pop .ejercicio-progreso, .tema-pop .lista li, .tema-pop .serie, .tema-pop .destacado li a, .tema-pop .destacado li > div,
+.tema-pop .peso-grande .fila, .tema-pop .minis .fila, .tema-pop .tiempo-carrera .fila, .tema-pop .borrar-confirmar {
+  background: var(--blanco); border: var(--borde); box-shadow: var(--sombra); border-radius: 14px; }
+.tema-pop .tarjeta { padding: 16px; }
+.tema-pop .serie .barra-fondo { background: var(--menta); opacity: 0.55; border-radius: 0; }
+.tema-pop .serie.top .barra-fondo { background: var(--amarillo); opacity: 0.6; }
+.tema-pop .serie.no-alcanzado { background: #fde3ec; box-shadow: var(--sombra); }
+.tema-pop .serie.no-alcanzado .marca { color: #b3134f; }
+
+/* Botones */
+.tema-pop button, .tema-pop .boton { border-radius: 12px; border: var(--borde); background: var(--blanco); box-shadow: var(--sombra-p); font-weight: 600; }
+.tema-pop button:active, .tema-pop .boton:active, .tema-pop a.accion:active, .tema-pop .primario:active { transform: translate(2px, 2px); box-shadow: none; }
+.tema-pop .primario, .tema-pop .boton-grande { background: var(--negro); color: var(--blanco); border-radius: 12px; box-shadow: 4px 4px 0 var(--rosa);
+  border: var(--borde); font-family: var(--ancha); font-stretch: 112%; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; }
+.tema-pop .stepper button { background: var(--crema); border-radius: 10px; box-shadow: none; border: 2px solid var(--negro); }
+.tema-pop .peso-grande .stepper button { background: var(--amarillo); }
+.tema-pop .serie .reps-serie .stepper button, .tema-pop .cal-cabecera button, .tema-pop .enlace, .tema-pop .peligro,
+.tema-pop .lista li .fila button, .tema-pop .boton-borrar, .tema-pop .hoja-item, .tema-pop .circulo { border: 0; box-shadow: none; background: transparent; }
+.tema-pop .stepper input { border: 0; }
+.tema-pop .chip { border-radius: 999px; }
+.tema-pop .chip[aria-pressed='true'] { background: var(--menta); color: var(--negro); font-weight: 800; box-shadow: var(--sombra-p); }
+.tema-pop input, .tema-pop textarea, .tema-pop select { border: var(--borde); border-radius: 12px; background: var(--blanco); }
+.tema-pop .cabecera-registro input { border: var(--borde); border-radius: 12px; box-shadow: var(--sombra-p); }
+.tema-pop .interruptor .pista { border: 2px solid var(--negro); background: var(--blanco); }
+.tema-pop .interruptor .pista::after { background: var(--negro); top: 3px; left: 3px; }
+.tema-pop .interruptor[aria-checked='true'] .pista { background: var(--menta); }
+
+/* Hoy toca: tarjeta amarilla con pegatina */
+.tema-pop .hero { background: var(--amarillo); color: var(--negro); border: var(--borde); box-shadow: 6px 6px 0 var(--negro); border-radius: 18px; }
+.tema-pop .hero .k { opacity: 1; text-transform: uppercase; font-size: 0.75rem; font-weight: 700; }
+.tema-pop .hero .ej { font-size: 1.7rem; }
+.tema-pop .hero .ult { opacity: 1; }
+.tema-pop .hero .pictograma { color: var(--negro); --halo: var(--blanco); background: var(--blanco); border: var(--borde); border-radius: 14px;
+  box-shadow: var(--sombra); padding: 6px; right: 16px; top: 18px; bottom: auto; transform: rotate(4deg); }
+.tema-pop .hero .pictograma svg { width: 64px; height: 64px; display: block; }
+.tema-pop .hero::before { content: ''; position: absolute; right: 92px; top: 10px; width: 26px; height: 26px; background: var(--rosa);
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); filter: drop-shadow(0 0 0 var(--negro)); }
+.tema-pop .hero a.accion { background: var(--negro); color: var(--blanco); border: var(--borde); border-radius: 12px; box-shadow: 3px 3px 0 var(--blanco); }
+.tema-pop .hero a.accion.secundaria { background: var(--blanco); color: var(--negro); box-shadow: var(--sombra-p); }
+
+/* Ejercicios: baldosas de color */
+.tema-pop .circulo { width: 70px; color: var(--negro); }
+.tema-pop .circulo .disco { width: 62px; height: 62px; border-radius: 14px; border: var(--borde); box-shadow: var(--sombra-p); background: var(--menta); --halo: var(--menta); }
+.tema-pop .circulo:nth-child(5n+2) .disco { background: var(--rosa); --halo: var(--rosa); }
+.tema-pop .circulo:nth-child(5n+3) .disco { background: var(--cielo); --halo: var(--cielo); }
+.tema-pop .circulo:nth-child(5n+4) .disco { background: var(--amarillo); --halo: var(--amarillo); }
+.tema-pop .circulo:nth-child(5n+5) .disco { background: var(--lila); --halo: var(--lila); }
+.tema-pop .circulo .kg { color: var(--negro); font-weight: 700; }
+.tema-pop .lista li .disco, .tema-pop .ejercicio-progreso header .disco, .tema-pop .hoja-item .disco {
+  border-radius: 12px; border: 2px solid var(--negro); background: var(--menta); --halo: var(--menta); }
+.tema-pop .acceso-carrera { background: var(--cielo); }
+.tema-pop .acceso-carrera .disco { border-radius: 12px; border: 2px solid var(--negro); background: var(--blanco); color: var(--negro); --halo: var(--blanco); }
+.tema-pop .acceso-carrera small { color: var(--negro); }
+.tema-pop .acceso-carrera .mas { border-radius: 12px; background: var(--negro); border: 2px solid var(--negro); box-shadow: 2px 2px 0 var(--blanco); }
+
+/* Calendario */
+.tema-pop .cal-resumen { color: var(--negro); }
+.tema-pop .cal-dia { border-radius: 10px; }
+.tema-pop .cal-dia.con-tipo { border-radius: 10px; box-shadow: 0 0 0 2px var(--negro); }
+.tema-pop .cal-dia.con-tipo span { border-radius: 6px; inset: 5px; border: 2px solid var(--negro); font-weight: 800; }
+.tema-pop .cal-dia.hoy { box-shadow: 0 0 0 2px var(--negro), 3px 3px 0 2px var(--negro); background: var(--amarillo); }
+.tema-pop .cal-dia.record::after { color: var(--amarillo); text-shadow: -1px -1px 0 var(--negro), 1px -1px 0 var(--negro), -1px 1px 0 var(--negro), 1px 1px 0 var(--negro); font-size: 15px; }
+.tema-pop .cal-leyenda { color: var(--negro); }
+.tema-pop .cal-leyenda i { border-radius: 3px; border: 1.5px solid var(--negro); }
+.tema-pop .cal-leyenda .estrella { color: var(--amarillo); text-shadow: -1px -1px 0 var(--negro), 1px 1px 0 var(--negro), 1px -1px 0 var(--negro), -1px 1px 0 var(--negro); }
+
+/* Lo destacado */
+.tema-pop .destacado .marca { border-radius: 8px; border: 2px solid var(--negro); color: var(--negro) !important; }
+.tema-pop .destacado .logro a, .tema-pop .destacado .logro > div { background: #fff4cc; }
+.tema-pop .destacado .logro .marca { background: var(--amarillo); }
+.tema-pop .destacado .alerta a, .tema-pop .destacado .alerta > div { background: #fde3ec; }
+.tema-pop .destacado .alerta .marca { background: var(--rosa); }
+.tema-pop .destacado .info .marca { background: var(--menta); }
+.tema-pop .destacado small, .tema-pop .lista .suave { color: var(--suave); }
+
+/* Barra inferior */
+.tema-pop .barra { background: var(--blanco); border-top: var(--borde); border-radius: 0; padding-left: 8px; padding-right: 8px; gap: 6px; }
+.tema-pop .barra a { color: var(--negro); opacity: 1; font-size: 0.66rem; text-transform: uppercase; border-radius: 12px; border: 2px solid transparent; }
+.tema-pop .barra a[aria-current='page'] { color: var(--negro); background: var(--amarillo); border: 2px solid var(--negro); box-shadow: var(--sombra-p); font-weight: 700; }
+
+/* Progreso */
+.tema-pop .resumen-rm { background: var(--menta); }
+.tema-pop .marcas span { background: var(--blanco); border: 2px solid var(--negro); border-radius: 999px; font-family: var(--mono); font-size: 0.8rem; }
+.tema-pop .marcas span:nth-child(3n+1) { background: var(--rosa); }
+.tema-pop .marcas span:nth-child(3n+2) { background: var(--cielo); }
+.tema-pop .marcas span:nth-child(3n) { background: var(--amarillo); }
+.tema-pop table.datos th, .tema-pop table.datos td { border-bottom: 1.5px solid var(--negro); }
+.tema-pop .tabla-carrera > div { border-bottom: 1.5px dashed var(--negro); }
+.tema-pop .ritmo { background: var(--cielo); color: var(--negro); border: var(--borde); box-shadow: var(--sombra); border-radius: 14px; }
+.tema-pop .ritmo span, .tema-pop .ritmo .suave { color: var(--negro); opacity: 1; }
+
+/* Avisos y varios */
+.tema-pop .aviso { background: var(--negro); color: var(--blanco); border: var(--borde); box-shadow: 4px 4px 0 var(--menta); border-radius: 14px; font-family: var(--ancha); font-stretch: 112%; text-transform: uppercase; }
+.tema-pop .aviso.record { background: var(--amarillo); color: var(--negro); box-shadow: var(--sombra); }
+.tema-pop .borrar-confirmar { background: #fde3ec; }
+.tema-pop .peligro-lleno { background: #d1335b; color: var(--blanco); }
+.tema-pop .hoja { background: var(--crema); }
+.tema-pop .hoja input[type='search'] { border: var(--borde); box-shadow: var(--sombra-p); }
+
+/* Ajustes de ancho: la sans ancha ocupa más */
+.tema-pop .cabecera-registro h1 { font-size: 1.3rem; min-width: 0; }
+.tema-pop .cabecera-registro input { width: 150px; min-width: 0; flex: 0 1 auto; padding: 0 8px; font-size: 0.85rem; }
+.tema-pop .cal-resumen { gap: 16px; font-size: 0.72rem; }
+.tema-pop .cal-resumen b { font-size: 1.4rem; }
+.tema-pop .barra a { min-width: 0; }
