@@ -17,8 +17,8 @@ export function usarRuta(): string {
   const [ruta, setRuta] = useState(rutaActual());
   useEffect(() => {
     const f = () => setRuta(rutaActual());
-    addEventListener('hashchange', f);
-    return () => removeEventListener('hashchange', f);
+    addEventListener('hashchange', f); addEventListener('popstate', f); addEventListener('ruta', f);
+    return () => { removeEventListener('hashchange', f); removeEventListener('popstate', f); removeEventListener('ruta', f); };
   }, []);
   return ruta;
 }

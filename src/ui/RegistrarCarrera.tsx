@@ -6,6 +6,7 @@ import { estado, quitarCarrera, registrarCarrera } from '../store/estado';
 import { BotonBorrar } from './componentes/BotonBorrar';
 import { usarPantallaEncendida } from './pantalla';
 import { sonar } from './sonido';
+import { navegar } from './navegacion';
 import { AvisoMolestia, SelectorMolestias } from './Molestias';
 import { Chips } from './componentes/Chips';
 import { Stepper } from './componentes/Stepper';
@@ -66,7 +67,7 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
     }
     sonar(mejora ? 'record' : 'guardado');
     setAviso(mejora ? { texto: `Mejor ${mejora.nombre}: ${formatearTiempo(mejora.seg)}`, record: true } : { texto: 'Guardado ✓', record: false });
-    setTimeout(() => { location.hash = '#/'; }, 1800);
+    setTimeout(() => { void navegar('#/'); }, 1800);
   };
 
   return (
@@ -111,7 +112,7 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
       <SelectorMolestias valor={molestias} onCambio={setMolestias} />
       <textarea aria-label='Nota' placeholder='Nota (opcional)' value={nota} onInput={(e) => setNota((e.target as HTMLTextAreaElement).value)} />
       <div class='fila'><button type='button' class='primario' disabled={guardando || !valida} onClick={guardar}>Guardar carrera</button></div>
-      {carreraInicial && <BotonBorrar texto='Borrar carrera' onBorrar={async () => { await quitarCarrera(carreraInicial.id); location.hash = '#/historial'; }} />}
+      {carreraInicial && <BotonBorrar texto='Borrar carrera' onBorrar={async () => { await quitarCarrera(carreraInicial.id); void navegar('#/historial'); }} />}
     </main>
   );
 }

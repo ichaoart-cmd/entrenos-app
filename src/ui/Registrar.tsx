@@ -8,6 +8,7 @@ import { BotonBorrar } from './componentes/BotonBorrar';
 import { BENCHMARKS, esMejor, mejorBenchmark } from '../domain/benchmarks';
 import { usarPantallaEncendida } from './pantalla';
 import { sonar } from './sonido';
+import { navegar } from './navegacion';
 import { AvisoMolestia, SelectorMolestias } from './Molestias';
 import { FuerzaForm, fuerzaInicial } from './FuerzaForm';
 import { MetconForm } from './MetconForm';
@@ -97,7 +98,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
     setAviso(wod ?? (pr ? textoPR(pr) : 'Guardado ✓'));
     setEsRecord(!!pr || !!wod);
     sonar(pr || wod ? 'record' : 'guardado');
-    setTimeout(() => { location.hash = '#/'; }, 1800);
+    setTimeout(() => { void navegar('#/'); }, 1800);
   };
 
   return (
@@ -124,7 +125,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
       <SelectorMolestias valor={molestias} onCambio={setMolestias} />
       <textarea aria-label="Nota" placeholder="Nota (opcional)" style="margin-top:12px" value={nota} onInput={(e) => setNota((e.target as HTMLTextAreaElement).value)} />
       <div class="fila"><button type="button" class="primario" disabled={guardando || (!fuerza && !metcon && extras.length === 0)} onClick={guardar}>Guardar sesión</button></div>
-      {sesionInicial && <BotonBorrar texto='Borrar sesión' onBorrar={async () => { await borrar(sesionInicial.id); escribirBorrador(null); location.hash = '#/historial'; }} />}
+      {sesionInicial && <BotonBorrar texto='Borrar sesión' onBorrar={async () => { await borrar(sesionInicial.id); escribirBorrador(null); void navegar('#/historial'); }} />}
     </main>
   );
 }
