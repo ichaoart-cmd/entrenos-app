@@ -250,3 +250,4 @@ img.ilustracion { display: block; object-fit: contain; }
 .tema-pop .hero-ej .disco img { width: 42px; height: 42px; }
 .tema-pop .hero-ej b { font-size: 0.82rem; font-stretch: 100%; overflow-wrap: anywhere; }
 .tema-pop .hero-ej small { line-height: 1.25; }
+.tema-pop .subtitulo { margin: -6px 0 14px; font-family: var(--mono); font-size: 0.82rem; color: var(--suave); }

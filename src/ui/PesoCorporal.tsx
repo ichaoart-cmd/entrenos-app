@@ -24,7 +24,7 @@ export function TarjetaPeso() {
   return (
     <section class='tarjeta peso-corporal' aria-label='Peso corporal'>
       <h3>Peso corporal</h3>
-      <p class='suave'>{ult ? `Último: ${coma(ult.kg)} kg (${fechaLarga(ult.fecha)}). Sirve para ver tu fuerza relativa.` : 'Apúntalo de vez en cuando para ver tu fuerza relativa (× tu peso).'}</p>
+      <p class='suave'>{ult ? `Último: ${coma(ult.kg)} kg (${fechaLarga(ult.fecha)}). Sirve para ver tu fuerza relativa.` : 'Súbete a la báscula de vez en cuando y te digo cuánto mueves respecto a tu peso.'}</p>
       <div class='fila'>
         <Stepper etiqueta='Peso corporal (kg)' valor={kg} paso={0.5} min={30} onCambio={setKg} />
       </div>

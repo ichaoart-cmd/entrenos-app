@@ -6,7 +6,7 @@ import { hoy } from './Registrar';
 export function SelectorMolestias({ valor, onCambio }: { valor: string[]; onCambio: (v: string[]) => void }) {
   return (
     <div class='molestias'>
-      <div class='etiq'>¿Alguna molestia? <small>(opcional)</small></div>
+      <div class='etiq'>¿Algo te duele? <small>(opcional)</small></div>
       <div class='molestias-zonas' role='group' aria-label='Molestias'>
         {ZONAS.map((z) => (
           <button type='button' class='chip' aria-pressed={valor.includes(z.id)}
@@ -23,5 +23,5 @@ export function AvisoMolestia({ ejercicio, excluir }: { ejercicio: string; exclu
   const m = molestiasRecientes(estado.datos.value.sesiones, estado.datos.value.carreras, hoy(), excluir).filter((x) => zonas.includes(x.zona));
   if (!m.length) return null;
   const txt = m.map(textoMolestia).join(' y ');
-  return <p class='aviso-molestia' role='note'>Ojo: hace poco apuntaste molestia en {txt}. Calienta bien y baja peso si hace falta.</p>;
+  return <p class='aviso-molestia' role='note'>Ojo: hace poco te molestó {txt}. Calienta bien y baja peso si hace falta.</p>;
 }

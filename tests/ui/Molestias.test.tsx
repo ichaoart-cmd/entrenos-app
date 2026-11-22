@@ -26,7 +26,7 @@ test('apuntar una molestia al registrar la sesión', async () => {
 test('aviso al registrar un ejercicio que carga una zona con molestia reciente', async () => {
   await con([{ id: 'x', actualizado: '', fecha: hoy(), lugar: 'box', fuerza: [], molestias: ['hombro'] }]);
   render(<Registrar ejercicioInicial='press-banca' />);
-  expect(screen.getByRole('note').textContent).toMatch(/molestia en el hombro/i);
+  expect(screen.getByRole('note').textContent).toMatch(/te molestó el hombro/i);
 });
 
 test('sin aviso si el ejercicio no carga esa zona', async () => {

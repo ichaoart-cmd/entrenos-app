@@ -49,7 +49,7 @@ test('al guardar un benchmark mejor, avisa del récord', async () => {
   fireEvent.click(screen.getByRole('button', { name: /^Fran/ }));
   fireEvent.input(screen.getByLabelText('Tiempo (mm:ss)'), { target: { value: '5:10' } });
   fireEvent.click(screen.getByRole('button', { name: 'Guardar sesión' }));
-  expect(await screen.findByText(/Mejor Fran: 5:10/)).toBeTruthy();
+  expect(await screen.findByText(/Fran: 5:10\. Más rápido que nunca/)).toBeTruthy();
 });
 
 test('Progreso → Metcons: mejor marca e historial de cada WOD de referencia', async () => {

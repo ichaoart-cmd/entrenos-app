@@ -21,7 +21,7 @@ export function TarjetaCarrera() {
     <a class='ejercicio-progreso enlace-ficha' href={cs.length ? '#/progreso?ej=carrera' : '#/carrera'} aria-label='Carrera'>
       <header>
         <span class='disco'><IconoEjercicio id='correr' size={32} /></span>
-        <div><h3>Carrera</h3><span class='suave' style='font-size:0.8rem'>{cs.length ? `${cs.length} ${cs.length === 1 ? 'carrera' : 'carreras'}` : 'Apunta tu primera carrera'}</span></div>
+        <div><h3>Carrera</h3><span class='suave' style='font-size:0.8rem'>{cs.length ? `${cs.length} ${cs.length === 1 ? 'carrera' : 'carreras'}` : 'Las zapatillas te esperan'}</span></div>
         {cs.length > 0 && <div class='rm'><b>{coma(kmMes)} km</b><span>este mes</span></div>}
       </header>
     </a>
@@ -112,7 +112,7 @@ export function FichaCarrera() {
         <h1>Carrera</h1>
       </div>
       <a class='boton' href='#/carrera' style='display:inline-flex;align-items:center;padding:0 18px;text-decoration:none;margin-bottom:6px'>＋ Apuntar carrera</a>
-      {cs.length === 0 ? <p class='suave'>Aún no hay carreras.</p> : <>
+      {cs.length === 0 ? <p class='suave'>Ni una carrera todavía. Las zapatillas lloran.</p> : <>
         <h2>Km por semana</h2>
         <div class='tarjeta'><BarrasKm semanas={kmPorSemana(cs, 12, h)} /></div>
         <h2>Ritmo</h2>

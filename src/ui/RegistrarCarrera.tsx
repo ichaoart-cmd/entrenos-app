@@ -6,6 +6,7 @@ import { estado, quitarCarrera, registrarCarrera } from '../store/estado';
 import { BotonBorrar } from './componentes/BotonBorrar';
 import { usarPantallaEncendida } from './pantalla';
 import { sonar } from './sonido';
+import { GUARDADO, elegir } from './frases';
 import { navegar } from './navegacion';
 import { AvisoMolestia, SelectorMolestias } from './Molestias';
 import { Chips } from './componentes/Chips';
@@ -66,7 +67,7 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
       return;
     }
     sonar(mejora ? 'record' : 'guardado');
-    setAviso(mejora ? { texto: `Mejor ${mejora.nombre}: ${formatearTiempo(mejora.seg)}`, record: true } : { texto: 'Guardado ✓', record: false });
+    setAviso(mejora ? { texto: `Nuevo mejor ${mejora.nombre}: ${formatearTiempo(mejora.seg)}. Vuelas 🔥`, record: true } : { texto: elegir(GUARDADO), record: false });
     setTimeout(() => { void navegar('#/'); }, 1800);
   };
 
@@ -98,16 +99,16 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
 
       <div class='ritmo' aria-live='polite'>
         {valida ? <><b>{formatearRitmo(seg / km)}</b><span>/km de ritmo medio · {formatearTiempo(seg)} en total</span></>
-          : <span class='suave'>Pon distancia y tiempo para ver el ritmo</span>}
+          : <span class='suave'>Mete distancia y tiempo y te digo a qué ritmo vas</span>}
       </div>
 
-      <div class='etiq'>¿Cómo fue? <small>(opcional, para ver si mejoras a igual esfuerzo)</small></div>
+      <div class='etiq'>¿Cómo de duro? <small>(opcional: así ves si mejoras sufriendo lo mismo)</small></div>
       <Chips etiqueta='Esfuerzo' opciones={ESFUERZOS} valor={esfuerzo} onCambio={(v) => setEsfuerzo(v === esfuerzo ? undefined : v)} />
       <div class='minis datos-carrera'>
         <Stepper etiqueta='FC media' valor={fc} paso={1} onCambio={setFc} />
         <Stepper etiqueta='Desnivel (m)' valor={desnivel} paso={10} onCambio={setDesnivel} />
       </div>
-      <p class='pista-texto'>Pon 0 si no lo sabes. La FC media la tienes en Mi Fitness, en el detalle del entreno.</p>
+      <p class='pista-texto'>¿No lo sabes? Déjalo en 0. La FC media está en Mi Fitness, en el detalle del entreno.</p>
 
       <SelectorMolestias valor={molestias} onCambio={setMolestias} />
       <textarea aria-label='Nota' placeholder='Nota (opcional)' value={nota} onInput={(e) => setNota((e.target as HTMLTextAreaElement).value)} />

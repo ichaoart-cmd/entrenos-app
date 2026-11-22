@@ -17,7 +17,7 @@ beforeEach(async () => { await clear(); localStorage.clear(); });
 test('la tarjeta grande deja elegir entre tus ejercicios habituales, sin imponer la rotación', () => {
   estado.datos.value = datosCon([sesion('b', '2026-06-18', 'back-squat', 5, [74, 79, 84, 89, 94]), sesion('p', '2026-10-16', 'press-banca', 6, [53, 65])]);
   render(<Inicio />);
-  const hero = screen.getByRole('region', { name: '¿Qué entrenas hoy?' });
+  const hero = screen.getByRole('region', { name: '¿A qué le damos caña?' });
   const banca = screen.getByRole('link', { name: /^Press Banca, 65 kg/ });
   expect(hero.contains(banca)).toBe(true);
   expect(banca.getAttribute('href')).toBe('#/registrar?ej=press-banca');
@@ -31,15 +31,15 @@ test('si ya has entrenado hoy, la tarjeta grande resume lo de hoy', async () => 
   const { hoy } = await import('../../src/ui/Registrar');
   estado.datos.value = datosCon([sesion('h', hoy(), 'back-squat', 5, [90])]);
   render(<Inicio />);
-  const hero = screen.getByRole('region', { name: 'Hoy has entrenado' });
+  const hero = screen.getByRole('region', { name: 'Hoy ya has cumplido' });
   expect(hero.textContent).toContain('Back Squat');
-  expect(screen.getByRole('link', { name: 'Añadir algo más' })).toBeTruthy();
+  expect(screen.getByRole('link', { name: 'Meter algo más' })).toBeTruthy();
 });
 
 test('reto de referencia de la semana enlaza a registrarlo ya rellenado', () => {
   estado.datos.value = datosCon([]);
   render(<Inicio />);
-  const reto = screen.getByRole('region', { name: 'Reto de la semana' });
+  const reto = screen.getByRole('region', { name: 'El reto de la semana' });
   expect(reto.querySelector('a')!.getAttribute('href')).toMatch(/^#\/registrar\?wod=/);
 });
 

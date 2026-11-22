@@ -36,7 +36,7 @@ export function generarAvisos(d: Datos, hoy: string, minSemana: number, max = 5)
     const r = repsDeTop(f); if (r == null) continue;
     const k = `${f.ejercicio}|${r}`, kg = Math.max(...f.series), prev = mejor.get(k);
     if (prev != null && kg > prev && fecha >= hace14)
-      logros.push({ tipo: 'logro', titulo: `Nuevo ${r}RM en ${nombre(f.ejercicio)}: ${coma(kg)} kg`, texto: `${coma(kg - prev)} kg más que tu marca anterior.`, href: `#/progreso?ej=${f.ejercicio}` });
+      logros.push({ tipo: 'logro', titulo: `¡PR! ${r}RM en ${nombre(f.ejercicio)}: ${coma(kg)} kg`, texto: `${coma(kg - prev)} kg más que tu marca anterior. Máquina.`, href: `#/progreso?ej=${f.ejercicio}` });
     if (prev == null || kg > prev) mejor.set(k, kg);
   }
 
@@ -47,7 +47,7 @@ export function generarAvisos(d: Datos, hoy: string, minSemana: number, max = 5)
     const antes = mejoresTiempos(cs.slice(0, i)), con = mejoresTiempos(cs.slice(0, i + 1));
     for (const m of con) {
       const a = antes.find((x) => x.km === m.km);
-      if (a && m.seg < a.seg) logros.push({ tipo: 'logro', titulo: `Mejor ${DISTANCIAS.find((x) => x.km === m.km)!.nombre}: ${formatearTiempo(m.seg)}`, href: '#/progreso?ej=carrera' });
+      if (a && m.seg < a.seg) logros.push({ tipo: 'logro', titulo: `Nuevo mejor ${DISTANCIAS.find((x) => x.km === m.km)!.nombre}: ${formatearTiempo(m.seg)}. Vuelas`, href: '#/progreso?ej=carrera' });
     }
   });
 
@@ -58,7 +58,7 @@ export function generarAvisos(d: Datos, hoy: string, minSemana: number, max = 5)
       if (x.fecha < hace14 || !x.rx) return;
       const previas = h.slice(0, i).filter((y) => y.rx);
       if (previas.length && previas.every((y) => esMejor(x.tipo, x.n, y.n)))
-        logros.push({ tipo: 'logro', titulo: `Mejor ${b.nombre}: ${x.valor}`, href: '#/progreso?ej=metcon' });
+        logros.push({ tipo: 'logro', titulo: `${b.nombre}: ${x.valor}, tu mejor marca 🔥`, href: '#/progreso?ej=metcon' });
     });
   }
 
@@ -71,9 +71,9 @@ export function generarAvisos(d: Datos, hoy: string, minSemana: number, max = 5)
     if (ult.length < 2 || ult[0].fecha < menos(hoy, 60) || !ult.every((h) => h.f.objetivo)) continue;
     const estados = ult.map(({ f }) => f.series.map((kg, i) => estadoSerie(kg, f.repsSeries?.[i] ?? f.reps ?? 0, f.objetivo!.series[i] ?? kg, f.objetivo!.reps[i] ?? 0)));
     if (estados.every((e) => e.includes('no-alcanzado')))
-      alertas.push({ tipo: 'alerta', titulo: `${nombre(id)}: no llegaste al objetivo las 2 últimas veces`, texto: 'Prueba a bajar 2,5 kg la serie top y consolidar antes de volver a subir.', href: `#/progreso?ej=${id}` });
+      alertas.push({ tipo: 'alerta', titulo: `${nombre(id)} se te resiste`, texto: 'Dos veces sin llegar al objetivo. Baja 2,5 kg la serie top, consolida y vuelve a por él.', href: `#/progreso?ej=${id}` });
     else if (estados.every((e) => !e.includes('no-alcanzado') && e.includes('superado')))
-      logros.push({ tipo: 'logro', titulo: `${nombre(id)}: has superado el objetivo 2 veces seguidas`, texto: 'Puedes subir 2,5 kg la serie top la próxima vez.', href: `#/registrar?ej=${id}` });
+      logros.push({ tipo: 'logro', titulo: `${nombre(id)}: te sobra peso`, texto: 'Has pasado el objetivo dos veces seguidas. Sube 2,5 kg la serie top sin miedo.', href: `#/registrar?ej=${id}` });
   }
 
   // Estancamiento: 5 sesiones o más sin superar el mejor 1RM estimado, comparando solo con el mismo tipo de tempo
@@ -89,18 +89,18 @@ export function generarAvisos(d: Datos, hoy: string, minSemana: number, max = 5)
     const sin = vals.length - 1 - iMejor;
     if (sin >= 5 && (!peor || sin > peor.sin)) peor = { id, sin, fecha: hs[iMejor].fecha };
   }
-  if (peor) alertas.push({ tipo: 'alerta', titulo: `${nombre(peor.id)}: ${peor.sin} sesiones sin mejorar`, texto: `Tu mejor 1RM estimado es del ${peor.fecha.split('-').reverse().join('/')}. Prueba otro rango de reps o una semana de descarga.`, href: `#/progreso?ej=${peor.id}` });
+  if (peor) alertas.push({ tipo: 'alerta', titulo: `${nombre(peor.id)} lleva ${peor.sin} sesiones plano`, texto: `Tu mejor 1RM estimado es del ${peor.fecha.split('-').reverse().join('/')}. Toca cambiar algo: otro rango de reps o una semana de descarga.`, href: `#/progreso?ej=${peor.id}` });
 
   // Ejercicios de la rotación abandonados (un solo aviso).
   const olvidados = ROTACION.map((id) => ({ id, ult: porEjercicio.get(id)?.at(-1)?.fecha }))
     .filter((x): x is { id: string; ult: string } => !!x.ult && dias(x.ult, hoy) > 21)
     .sort((a, b) => a.ult.localeCompare(b.ult));
   if (olvidados.length === 1)
-    alertas.push({ tipo: 'alerta', titulo: `Hace ${dias(olvidados[0].ult, hoy)} días que no haces ${nombre(olvidados[0].id)}`, href: `#/registrar?ej=${olvidados[0].id}` });
+    alertas.push({ tipo: 'alerta', titulo: `${nombre(olvidados[0].id)} te echa de menos (${dias(olvidados[0].ult, hoy)} días)`, href: `#/registrar?ej=${olvidados[0].id}` });
   else if (olvidados.length > 1)
     alertas.push({
       tipo: 'alerta',
-      titulo: `Hace tiempo que no haces ${olvidados.slice(0, -1).map((x) => nombre(x.id)).join(', ')} ni ${nombre(olvidados.at(-1)!.id)}`,
+      titulo: `Tienes abandonados: ${olvidados.slice(0, -1).map((x) => nombre(x.id)).join(', ')} y ${nombre(olvidados.at(-1)!.id)}`,
       texto: olvidados.map((x) => `${nombre(x.id)}: ${dias(x.ult, hoy)} días`).join(' · '),
       href: `#/registrar?ej=${olvidados[0].id}`,
     });
@@ -108,25 +108,25 @@ export function generarAvisos(d: Datos, hoy: string, minSemana: number, max = 5)
   // Km de carrera: subida brusca respecto a las 4 semanas anteriores.
   const sem = kmPorSemana(cs, 5, hoy), previas = sem.slice(0, 4), media = previas.reduce((a, s) => a + s.km, 0) / 4, esta = sem[4].km;
   if (previas.filter((s) => s.km > 0).length >= 2 && esta > media * 1.3 && esta - media >= 5)
-    alertas.push({ tipo: 'alerta', titulo: 'Has subido mucho los km esta semana', texto: `${coma(esta)} km frente a ${coma(media)} de media. Subir más de un 10 % por semana aumenta el riesgo de lesión.`, href: '#/progreso?ej=carrera' });
+    alertas.push({ tipo: 'alerta', titulo: 'Ojo, que te has venido arriba con los km', texto: `${coma(esta)} km frente a ${coma(media)} de media. Subir más de un 10 % por semana aumenta el riesgo de lesión.`, href: '#/progreso?ej=carrera' });
 
   // Molestias de las últimas 2 semanas.
   for (const m of molestiasRecientes(d.sesiones, cs, hoy))
-    alertas.unshift({ tipo: 'alerta', titulo: `Molestia en ${textoMolestia(m)}`, texto: 'Calienta bien y baja la carga en lo que la cargue. Si no mejora, consulta con un fisio.' });
+    alertas.unshift({ tipo: 'alerta', titulo: `Ojo con ${textoMolestia(m)}`, texto: 'Calienta bien y baja la carga en lo que la cargue. Si no mejora, consulta con un fisio.' });
 
   // Desequilibrio pierna / torso en el último mes.
   const mes = d.sesiones.filter((s) => !s.borrado && s.fecha > menos(hoy, 30) && s.fecha <= hoy);
   const diasCon = (t: 'pierna' | 'torso') => new Set(mes.filter((s) => tiposDeSesion(s).includes(t)).map((s) => s.fecha)).size;
   const p = diasCon('pierna'), t = diasCon('torso');
-  if (p >= 3 && t === 0) alertas.push({ tipo: 'alerta', titulo: `Último mes: ${p} días de pierna y ninguno de torso` });
-  if (t >= 3 && p === 0) alertas.push({ tipo: 'alerta', titulo: `Último mes: ${t} días de torso y ninguno de pierna` });
+  if (p >= 3 && t === 0) alertas.push({ tipo: 'alerta', titulo: `Último mes: ${p} días de pierna y ni uno de torso. ¿Y esos brazos?` });
+  if (t >= 3 && p === 0) alertas.push({ tipo: 'alerta', titulo: `Último mes: ${t} días de torso y ni uno de pierna. Clásico.` });
 
   // Semana en curso.
   const lunes = sem[4].lunes;
   const n = [...d.sesiones.filter((s) => !s.borrado), ...cs].filter((x) => x.fecha >= lunes && x.fecha <= hoy).length;
   info.push(n >= minSemana
-    ? { tipo: 'info', titulo: `Semana cumplida: ${n} entrenos` }
-    : { tipo: 'info', titulo: `Esta semana: ${n} de ${minSemana} entrenos`, texto: `Te ${minSemana - n === 1 ? 'falta 1' : `faltan ${minSemana - n}`} para mantener la racha.` });
+    ? { tipo: 'info', titulo: `Semana cerrada: ${n} entrenos 💪` }
+    : { tipo: 'info', titulo: `Llevas ${n} de ${minSemana} esta semana`, texto: `${minSemana - n === 1 ? 'Queda 1' : `Quedan ${minSemana - n}`} para no romper la racha.` });
 
   return [...[...logros.reverse(), ...alertas].slice(0, Math.max(0, max - info.length)), ...info];
 }

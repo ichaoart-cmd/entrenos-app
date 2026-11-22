@@ -38,6 +38,7 @@ function Lista() {
   return (
     <main class='pagina'>
       <h1>Progreso</h1>
+      <p class='subtitulo'>Cuánto has crecido, en números.</p>
       <Reparto />
       <TarjetaCarrera />
       <TarjetaMetcon />

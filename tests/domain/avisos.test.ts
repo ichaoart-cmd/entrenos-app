@@ -10,7 +10,7 @@ const textos = (d: Datos) => generarAvisos(d, HOY, 3).map((a) => `${a.tipo}: ${a
 
 test('récord reciente de fuerza', () => {
   const t = textos(datos([ses('2026-09-01', f('back-squat', 90)), ses('2026-11-18', f('back-squat', 95))]));
-  expect(t).toContain('logro: Nuevo 5RM en Back Squat: 95 kg');
+  expect(t).toContain('logro: ¡PR! 5RM en Back Squat: 95 kg');
 });
 test('un récord de hace más de 14 días ya no sale', () => {
   const t = textos(datos([ses('2026-09-01', f('back-squat', 90)), ses('2026-10-01', f('back-squat', 95))]));
@@ -18,33 +18,33 @@ test('un récord de hace más de 14 días ya no sale', () => {
 });
 test('ejercicio de la rotación abandonado más de 21 días', () => {
   const t = textos(datos([ses('2026-10-20', f('deadlift', 120)), ses('2026-11-20', f('back-squat', 90))]));
-  expect(t).toContain('alerta: Hace 33 días que no haces Peso muerto');
+  expect(t).toContain('alerta: Peso muerto te echa de menos (33 días)');
   expect(t.some((x) => x.includes('Back Squat') && x.includes('días'))).toBe(false);
 });
 test('objetivo no alcanzado dos veces seguidas: sugiere bajar', () => {
   const fallo = (kg: number) => f('press-banca', kg, 3, { repsSeries: [3], objetivo: { series: [kg], reps: [5] } });
   const t = textos(datos([ses('2026-11-10', fallo(70)), ses('2026-11-17', fallo(70))]));
-  expect(t).toContain('alerta: Press Banca: no llegaste al objetivo las 2 últimas veces');
+  expect(t).toContain('alerta: Press Banca se te resiste');
 });
 test('objetivo superado dos veces seguidas: sugiere subir', () => {
   const sup = (kg: number) => f('press-banca', kg, 7, { repsSeries: [7], objetivo: { series: [kg], reps: [5] } });
   const t = textos(datos([ses('2026-11-10', sup(70)), ses('2026-11-17', sup(70))]));
-  expect(t).toContain('logro: Press Banca: has superado el objetivo 2 veces seguidas');
+  expect(t).toContain('logro: Press Banca: te sobra peso');
 });
 test('estancamiento: 5 sesiones sin mejorar el 1RM estimado', () => {
   const s = [ses('2026-06-01', f('front-squat', 100)), ...['07', '08', '09', '10', '11'].map((m) => ses(`2026-${m}-05`, f('front-squat', 95)))];
-  expect(textos(datos(s))).toContain('alerta: Front Squat: 5 sesiones sin mejorar');
+  expect(textos(datos(s))).toContain('alerta: Front Squat lleva 5 sesiones plano');
 });
 test('subida brusca de km de carrera', () => {
   const c = [run('2026-10-27', 10, 3000), run('2026-11-03', 10, 3000), run('2026-11-10', 10, 3000), run('2026-11-17', 10, 3000), run('2026-11-21', 16, 4800)];
-  expect(textos(datos([], c))).toContain('alerta: Has subido mucho los km esta semana');
+  expect(textos(datos([], c))).toContain('alerta: Ojo, que te has venido arriba con los km');
 });
 test('desequilibrio pierna / torso en 30 días', () => {
   const s = ['2026-11-02', '2026-11-09', '2026-11-16'].map((d) => ses(d, f('back-squat', 90)));
-  expect(textos(datos(s))).toContain('alerta: Último mes: 3 días de pierna y ninguno de torso');
+  expect(textos(datos(s))).toContain('alerta: Último mes: 3 días de pierna y ni uno de torso. ¿Y esos brazos?');
 });
 test('semana: cuántos faltan', () => {
-  expect(textos(datos([ses('2026-11-17', f('snatch', 60))]))).toContain('info: Esta semana: 1 de 3 entrenos');
+  expect(textos(datos([ses('2026-11-17', f('snatch', 60))]))).toContain('info: Llevas 1 de 3 esta semana');
 });
 test('los logros van antes que las alertas y se limita el número', () => {
   const t = generarAvisos(datos([ses('2026-09-01', f('back-squat', 90)), ses('2026-11-18', f('back-squat', 95))]), HOY, 3, 2);
@@ -54,21 +54,21 @@ test('los logros van antes que las alertas y se limita el número', () => {
 
 test('varios ejercicios abandonados van en un solo aviso', () => {
   const t = textos(datos([ses('2026-10-20', f('deadlift', 120)), ses('2026-10-10', f('press-banca', 60))]));
-  expect(t).toContain('alerta: Hace tiempo que no haces Press Banca ni Peso muerto');
+  expect(t).toContain('alerta: Tienes abandonados: Press Banca y Peso muerto');
 });
 test('estancamiento: solo compara con sesiones del mismo tempo y avisa de uno solo', () => {
   const ft = (fecha: string, kg: number, tempo?: string) => ses(fecha, f('front-squat', kg, 5, { tempo }));
   // Las sesiones con tempo pesan menos: no cuentan como estancamiento de las de sin tempo.
   const s = [ft('2026-06-01', 100), ...['07', '08', '09', '10'].map((m) => ft(`2026-${m}-05`, 80, '4s+pausa')), ft('2026-11-05', 98)];
-  expect(textos(datos(s)).some((x) => x.includes('sin mejorar'))).toBe(false);
+  expect(textos(datos(s)).some((x) => x.includes('plano'))).toBe(false);
 });
 
 test('mejor marca en un WOD de referencia reciente', () => {
   const m = (fecha: string, valor: string): Sesion => ({ id: fecha, actualizado: '', fecha, lugar: 'box', fuerza: [], metcon: { formato: 'ForTime', benchmark: 'fran', rx: true, resultado: { tipo: 'tiempo', valor } } });
-  expect(textos(datos([m('2026-09-01', '6:00'), m('2026-11-20', '5:30')]))).toContain('logro: Mejor Fran: 5:30');
+  expect(textos(datos([m('2026-09-01', '6:00'), m('2026-11-20', '5:30')]))).toContain('logro: Fran: 5:30, tu mejor marca 🔥');
 });
 
 test('molestia reciente aparece como alerta', () => {
   const s: Sesion = { id: 'm', actualizado: '', fecha: '2026-11-20', lugar: 'box', fuerza: [], molestias: ['hombro'] };
-  expect(textos(datos([s]))).toContain('alerta: Molestia en el hombro (20/11)');
+  expect(textos(datos([s]))).toContain('alerta: Ojo con el hombro (20/11)');
 });

@@ -8,6 +8,7 @@ import { BotonBorrar } from './componentes/BotonBorrar';
 import { BENCHMARKS, esMejor, mejorBenchmark } from '../domain/benchmarks';
 import { usarPantallaEncendida } from './pantalla';
 import { sonar } from './sonido';
+import { CIERRE_PR, GUARDADO, PREFIJO_PR, elegir } from './frases';
 import { navegar } from './navegacion';
 import { AvisoMolestia, SelectorMolestias } from './Molestias';
 import { FuerzaForm, fuerzaInicial } from './FuerzaForm';
@@ -39,12 +40,12 @@ function mejoraBenchmark(s: Sesion, previas: Sesion[]): string | null {
   if (!m?.benchmark || !m.resultado) return null;
   const antes = mejorBenchmark(previas, m.benchmark), ahora = mejorBenchmark([...previas, s], m.benchmark);
   if (!antes || !ahora || ahora.fecha !== s.fecha || ahora.valor !== m.resultado.valor || !esMejor(ahora.tipo, ahora.n, antes.n)) return null;
-  return `¡Mejor ${BENCHMARKS.find((b) => b.id === m.benchmark)?.nombre ?? m.benchmark}: ${ahora.valor}!`;
+  return `${BENCHMARKS.find((b) => b.id === m.benchmark)?.nombre ?? m.benchmark}: ${ahora.valor}. ${ahora.tipo === 'tiempo' ? 'Más rápido que nunca 🔥' : 'Tu mejor marca 🔥'}`;
 }
 
 export function textoPR(pr: PR): string {
-  const base = `Nuevo ${pr.reps}RM: ${num(pr.kg)} kg`;
-  return pr.anteriorKg == null ? base : `${base} (+${num(Math.round((pr.kg - pr.anteriorKg) * 10) / 10)} kg)`;
+  const base = `${elegir(PREFIJO_PR)} ${pr.reps}RM: ${num(pr.kg)} kg`;
+  return (pr.anteriorKg == null ? base : `${base} (+${num(Math.round((pr.kg - pr.anteriorKg) * 10) / 10)} kg)`) + elegir(CIERRE_PR);
 }
 
 /** Metcon de partida para un WOD de referencia. */
@@ -105,7 +106,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
     }
     if (!sesionInicial) escribirBorrador(null);
     const wod = mejoraBenchmark(s, previas);
-    setAviso(wod ?? (pr ? textoPR(pr) : 'Guardado ✓'));
+    setAviso(wod ?? (pr ? textoPR(pr) : elegir(GUARDADO)));
     setEsRecord(!!pr || !!wod);
     sonar(pr || wod ? 'record' : 'guardado');
     setTimeout(() => { void navegar('#/'); }, 1800);

@@ -1,3 +1,4 @@
+import { GUARDADO } from '../../src/ui/frases';
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/preact';
 import { clear } from 'idb-keyval';
 import { Registrar } from '../../src/ui/Registrar';
@@ -37,7 +38,7 @@ test('el borrador del registro sobrevive a salir de la pantalla y se borra al gu
   render(<Registrar />);
   expect((screen.getByLabelText('Serie top (kg)') as HTMLInputElement).value).toBe('77');
   fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
-  await screen.findByText(/Guardado/);
+  await screen.findByText(new RegExp(GUARDADO.map((x) => x.replace(/[()]/g, '\\$&')).join('|')));
   cleanup();
   render(<Registrar />);
   expect((screen.getByLabelText('Serie top (kg)') as HTMLInputElement).value).not.toBe('77');

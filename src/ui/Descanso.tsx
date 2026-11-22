@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { descanso, pararDescanso, restanteSeg, sumarDescanso } from '../store/descanso';
 import { avisoFin, sonar } from './sonido';
+import { FIN_DESCANSO, elegir } from './frases';
 import { formatearTiempo } from '../domain/carrera';
 import { usarPantallaEncendida } from './pantalla';
 
@@ -9,6 +10,7 @@ export function Descanso() {
   const fin = descanso.value;
   const [, setTic] = useState(0);
   const [acabado, setAcabado] = useState(false);
+  const [frase] = useState(() => elegir(FIN_DESCANSO));
   usarPantallaEncendida(fin != null);
   useEffect(() => {
     if (fin == null) return;
@@ -30,8 +32,8 @@ export function Descanso() {
   if (fin == null) return null;
   return (
     <div class={`descanso${acabado ? ' acabado' : ''}`} role='timer' aria-live={acabado ? 'assertive' : 'off'}>
-      {acabado ? <b>¡A por la siguiente!</b> : <>
-        <span class='etq'>Descanso</span>
+      {acabado ? <b>{frase}</b> : <>
+        <span class='etq'>Respira</span>
         <b>{formatearTiempo(restanteSeg())}</b>
         <button type='button' aria-label='Sumar 30 segundos' onClick={() => sumarDescanso(30)}>+30</button>
         <button type='button' aria-label='Parar descanso' onClick={pararDescanso}>✕</button>

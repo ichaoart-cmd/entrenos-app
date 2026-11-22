@@ -52,7 +52,7 @@ test('quedarse corto en la última serie la marca y se guardan objetivo y real',
   render(<Registrar ejercicioInicial='back-squat' />);
   fireEvent.click(screen.getByRole('button', { name: 'Bajar Reps serie 5' }));
   fireEvent.click(screen.getByRole('button', { name: 'Bajar Reps serie 5' }));
-  expect(screen.getByText('No alcanzado')).toBeTruthy();
+  expect(screen.getByText('Casi')).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
   await waitFor(async () => {
     const f = (await cargarLocal()).sesiones.find((x) => x.id !== 'b')!.fuerza[0];
@@ -81,7 +81,7 @@ test('las reps generales cambian el objetivo de todas y lo real de las no tocada
 test('al editar una sesión antigua sin objetivo, el objetivo es lo que se hizo', () => {
   render(<Registrar sesionInicial={estado.datos.value.sesiones[0]} />);
   expect(screen.getByText('Objetivo 94 × 5')).toBeTruthy();
-  expect(screen.queryByText('No alcanzado')).toBeNull();
+  expect(screen.queryByText('Casi')).toBeNull();
 });
 
 test('botón «Repetir la última vez» copia la última sesión de ese ejercicio', async () => {

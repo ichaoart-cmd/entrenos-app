@@ -34,14 +34,14 @@ test('guardar token y sincronizar muestra el error de token', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'Guardar token' }));
   await waitFor(async () => expect((await cargarAjustes()).token).toBe('ghp_x'));
   fireEvent.click(screen.getByRole('button', { name: 'Sincronizar ahora' }));
-  await screen.findByText('Sin sincronizar: revisa el token');
+  await screen.findByText('Sin subir: revisa el token en Ajustes');
 });
 
 test('inicio muestra la última sesión y el estado de sincronización', () => {
   estado.ultimoResultado.value = { ok: false, motivo: 'token' };
   estado.estadoSync.value = 'error';
   render(<Inicio />);
-  expect(screen.getByText(/Back Squat 5×94/)).toBeTruthy();
+  expect(screen.getAllByText(/Back Squat 5×94/).length).toBeGreaterThan(0);
   expect(screen.getByText(/3\+200/)).toBeTruthy();
-  expect(screen.getByText('Sin sincronizar: revisa el token')).toBeTruthy();
+  expect(screen.getByText('Sin subir: revisa el token en Ajustes')).toBeTruthy();
 });

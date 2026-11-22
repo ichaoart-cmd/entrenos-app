@@ -30,6 +30,7 @@ export function Ajustes() {
   return (
     <main class="pagina">
       <h1>Ajustes</h1>
+      <p class="subtitulo">Las tripas de la app.</p>
       <section class="tarjeta">
         <h2>Al usar la app</h2>
         <div class="fila">

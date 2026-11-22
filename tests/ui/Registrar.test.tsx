@@ -1,3 +1,4 @@
+import { GUARDADO } from '../../src/ui/frases';
 import { render, screen, fireEvent, waitFor } from '@testing-library/preact';
 import { clear } from 'idb-keyval';
 import { Registrar } from '../../src/ui/Registrar';
@@ -74,7 +75,7 @@ test('ForTime guarda tiempo', async () => {
 test('guardar sin red guarda en local y muestra Guardado', async () => {
   render(<Registrar />);
   fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
-  await screen.findByText(/Guardado/);
+  await screen.findByText(new RegExp(GUARDADO.map((x) => x.replace(/[()]/g, '\\$&')).join('|')));
   const s = (await cargarLocal()).sesiones;
   expect(s).toHaveLength(1);
   expect(s[0].fuerza[0].ejercicio).toBe('press-banca');
@@ -87,7 +88,7 @@ test('muestra aviso de PR', async () => {
   fireEvent.click(screen.getByRole('button', { name: /Back Squat/ }));
   fireEvent.input(screen.getByLabelText('Serie top (kg)'), { target: { value: '96' } });
   fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
-  await screen.findByText('Nuevo 5RM: 96 kg (+2 kg)');
+  await screen.findByText(/5RM: 96 kg \(\+2 kg\)/);
 });
 
 test('se puede quitar la fuerza y guardar solo Metcon', async () => {

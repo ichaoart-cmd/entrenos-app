@@ -45,7 +45,7 @@ test('avisa de una mejor marca en una distancia', async () => {
   fireEvent.input(screen.getByLabelText('Minutos'), { target: { value: '25' } });
   fireEvent.input(screen.getByLabelText('Segundos'), { target: { value: '0' } });
   fireEvent.click(screen.getByRole('button', { name: 'Guardar carrera' }));
-  expect(await screen.findByText(/Mejor 5 km: 25:00/)).toBeTruthy();
+  expect(await screen.findByText(/mejor 5 km: 25:00/)).toBeTruthy();
 });
 
 test('una carrera importada de Strava muestra su origen y conserva el stravaId al editar', async () => {

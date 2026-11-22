@@ -68,6 +68,6 @@ test('el calendario dice el tipo de entreno de cada día y tiene leyenda', () =>
 test('Inicio muestra lo destacado bajo el calendario', async () => {
   await con({ sesiones: [sesion('a', '2026-01-01', 'deadlift', 5, [120])] });
   render(<Inicio />);
-  expect(screen.getByRole('heading', { name: 'Lo destacado' })).toBeTruthy();
-  expect(screen.getByText(/que no haces Peso muerto/)).toBeTruthy();
+  expect(screen.getByRole('heading', { name: 'Lo que se cuece' })).toBeTruthy();
+  expect(screen.getByText(/Peso muerto te echa de menos/)).toBeTruthy();
 });

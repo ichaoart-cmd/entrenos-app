@@ -147,8 +147,8 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar, a
         ))}
       </div>
 
-      <h3 class='bloque'>Lo que hiciste</h3>
-      <p class='pista-texto'>Se rellena con el objetivo. Si en alguna serie no llegas (o la superas), cambia el peso o las reps.</p>
+      <h3 class='bloque'>Lo que hiciste de verdad</h3>
+      <p class='pista-texto'>Viene relleno con el objetivo. ¿No llegaste o te sobró? Cambia esa serie y listo.</p>
       <div class='lista-series'>
         {fuerza.series.map((v, i) => {
           const estado = obj.series[i] != null ? estadoSerie(v, repsReales[i], obj.series[i], obj.reps[i]) : 'cumplido';
@@ -158,7 +158,7 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar, a
               <span class='nombre'>
                 <b>{i === fuerza.series.length - 1 ? 'Top' : `${i + 1}ª`}</b>
                 {obj.series[i] != null && <small>Objetivo {kg(obj.series[i])} × {obj.reps[i]}</small>}
-                {estado !== 'cumplido' && <small class='marca'>{estado === 'no-alcanzado' ? 'No alcanzado' : 'Superado'}</small>}
+                {estado !== 'cumplido' && <small class='marca'>{estado === 'no-alcanzado' ? 'Casi' : 'Te has pasado (bien)'}</small>}
               </span>
               <Stepper etiqueta={`Serie ${i + 1}`} valor={v} paso={1} onCambio={(n) => ajustar(i, n, repsReales[i])} />
               <span class='reps-serie'>

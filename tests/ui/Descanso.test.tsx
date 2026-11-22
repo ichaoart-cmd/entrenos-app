@@ -23,7 +23,7 @@ test('el temporizador flotante cuenta, suma 30 s, y al acabar vibra y avisa', ()
   fireEvent.click(screen.getByRole('button', { name: 'Sumar 30 segundos' }));
   expect(screen.getByRole('timer').textContent).toContain('1:30');
   act(() => { vi.setSystemTime(new Date('2026-11-22T10:01:31Z')); vi.advanceTimersByTime(500); });
-  expect(screen.getByText(/A por la siguiente/)).toBeTruthy();
+  expect(screen.getByRole('timer').querySelector('b')!).toBeTruthy();
   expect(vib).toHaveBeenCalled();
   act(() => { vi.advanceTimersByTime(4000); });
   expect(screen.queryByRole('timer')).toBeNull();

@@ -16,7 +16,8 @@ export function Historial() {
   return (
     <main class="pagina">
       <h1>Historial</h1>
-      {items.length === 0 && <p class="suave">Aún no hay entrenos.</p>}
+      <p class="subtitulo">Todo lo que has sudado.</p>
+      {items.length === 0 && <p class="suave">Aquí no hay nada aún. Ve a por la primera marca.</p>}
       <ul class="lista">
         {items.map((it) => {
           const id = it.x.id;
