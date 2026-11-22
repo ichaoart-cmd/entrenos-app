@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import type { Sesion } from '../domain/types';
+import type { Carrera, Sesion } from '../domain/types';
 import { rachaSemanas, semanasDelMes, sesionesPorDia } from '../domain/calendario';
 import { diasConRecord } from '../domain/records';
 import { nombreEjercicio } from './formato';
@@ -8,21 +8,25 @@ import { hoy } from './Registrar';
 const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
-function etiquetaDia(d: string, ses: Sesion[], record: boolean): string {
+function etiquetaDia(d: string, ses: Sesion[], record: boolean, cs: Carrera[] = []): string {
   const n = String(Number(d.slice(8)));
-  if (!ses.length) return n;
-  const cosas = ses.flatMap((s) => [...s.fuerza.map((f) => nombreEjercicio(f.ejercicio)), ...(s.metcon ? ['Metcon'] : [])]);
+  if (!ses.length && !cs.length) return n;
+  const cosas = [...ses.flatMap((s) => [...s.fuerza.map((f) => nombreEjercicio(f.ejercicio)), ...(s.metcon ? ['Metcon'] : [])]),
+    ...cs.map((c) => `carrera ${String(c.distanciaKm).replace('.', ',')} km`)];
   return `${n} · ${cosas.length ? cosas.join(', ') : 'entreno'}${record ? ', récord' : ''}`;
 }
 
-export function Calendario({ sesiones, minSemana }: { sesiones: Sesion[]; minSemana: number }) {
+export function Calendario({ sesiones, minSemana, carreras = [] }: { sesiones: Sesion[]; minSemana: number; carreras?: Carrera[] }) {
   const h = hoy();
   const [ym, setYm] = useState({ a: Number(h.slice(0, 4)), m: Number(h.slice(5, 7)) });
   const porDia = sesionesPorDia(sesiones);
   const records = diasConRecord(sesiones);
+  const corridos = new Map<string, Carrera[]>();
+  for (const c of carreras) if (!c.borrado) corridos.set(c.fecha, [...(corridos.get(c.fecha) ?? []), c]);
   const prefijo = `${ym.a}-${String(ym.m).padStart(2, '0')}`;
-  const delMes = [...porDia.keys()].filter((d) => d.startsWith(prefijo)).length;
-  const racha = rachaSemanas([...porDia.entries()].flatMap(([d, s]) => s.map(() => d)), minSemana, h);
+  const dias = new Set([...porDia.keys(), ...corridos.keys()]);
+  const delMes = [...dias].filter((d) => d.startsWith(prefijo)).length;
+  const racha = rachaSemanas([...porDia.entries(), ...corridos.entries()].flatMap(([d, s]) => s.map(() => d)), minSemana, h);
   const mover = (delta: number) => setYm(({ a, m }) => { const t = a * 12 + (m - 1) + delta; return { a: Math.floor(t / 12), m: (t % 12) + 1 }; });
 
   return (
@@ -41,11 +45,13 @@ export function Calendario({ sesiones, minSemana }: { sesiones: Sesion[]; minSem
         {semanasDelMes(ym.a, ym.m).flat().map((d) => {
           if (!d) return <span />;
           const ses = porDia.get(d) ?? [];
+          const cs = corridos.get(d) ?? [];
           const rec = records.has(d);
-          const href = ses.length ? `#/registrar?id=${encodeURIComponent(ses[0].id)}` : `#/registrar?fecha=${d}`;
+          const href = ses.length ? `#/registrar?id=${encodeURIComponent(ses[0].id)}`
+            : cs.length ? `#/carrera?id=${encodeURIComponent(cs[0].id)}` : `#/registrar?fecha=${d}`;
           return (
-            <a href={href} aria-label={etiquetaDia(d, ses, rec)}
-              class={`cal-dia${ses.length ? ' entrenado' : ''}${rec ? ' record' : ''}${d === h ? ' hoy' : ''}${d > h ? ' futuro' : ''}`}>
+            <a href={href} aria-label={etiquetaDia(d, ses, rec, cs)}
+              class={`cal-dia${ses.length ? ' entrenado' : ''}${cs.length ? ' corrido' : ''}${rec ? ' record' : ''}${d === h ? ' hoy' : ''}${d > h ? ' futuro' : ''}`}>
               {Number(d.slice(8))}
             </a>
           );
@@ -54,6 +60,7 @@ export function Calendario({ sesiones, minSemana }: { sesiones: Sesion[]; minSem
       <div class='cal-leyenda'>
         <span><i style='background:var(--bosque)' />Entreno</span>
         <span><i style='background:var(--bronce)' />Récord</span>
+        <span><i style='background:var(--rio)' />Carrera</span>
         <span>Racha: semanas con {minSemana} o más</span>
       </div>
     </section>

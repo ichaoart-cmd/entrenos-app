@@ -1,4 +1,5 @@
-import type { Sesion } from '../domain/types';
+import type { Carrera, Sesion } from '../domain/types';
+import { formatearRitmo, formatearTiempo } from '../domain/carrera';
 import type { ResultadoSync } from '../store/sync';
 import type { EstadoSync } from '../store/estado';
 import { EJERCICIOS_BASE } from '../store/local';
@@ -37,4 +38,11 @@ export function textoSync(estadoSync: EstadoSync, r: ResultadoSync | null): stri
     return estadoSync === 'ok' ? 'Sin conexión · todo está subido' : 'Pendiente de subir (sin conexión)';
   }
   return estadoSync === 'ok' ? 'Sincronizado ✓' : 'Pendiente de subir';
+}
+
+const TIPO_CARRERA: Record<string, string> = { rodaje: 'Rodaje', series: 'Series', 'tirada larga': 'Tirada larga', 'competición': 'Competición' };
+
+/** «Rodaje 8 km · 42:10 · 5:16 /km» */
+export function resumenCarrera(c: Carrera): string {
+  return `${TIPO_CARRERA[c.tipo ?? ''] ?? 'Carrera'} ${kg(c.distanciaKm)} km · ${formatearTiempo(c.tiempoSeg)} · ${formatearRitmo(c.tiempoSeg / c.distanciaKm)} /km`;
 }

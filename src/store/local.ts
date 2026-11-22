@@ -1,6 +1,6 @@
 import { CATALOGO } from '../domain/catalogo';
 import { get, set } from 'idb-keyval';
-import type { Datos, Ejercicio, Sesion } from '../domain/types';
+import type { Carrera, Datos, Ejercicio, Sesion } from '../domain/types';
 
 export interface Ajustes {
   token?: string; ultimoSha?: string; pendiente: boolean; ultimaSync?: string; minSesionesSemana: number;
@@ -61,5 +61,25 @@ export function borrarSesion(id: string): Promise<void> {
   const sesiones = d.sesiones.map((x) => (x.id === id ? { ...x, borrado: true, actualizado: ahora() } : x));
   await reemplazarDatos({ ...d, sesiones });
   await guardarAjustes({ pendiente: true });
+  });
+}
+
+export function guardarCarrera(c: Carrera): Promise<void> {
+  return conBloqueo(async () => {
+    const d = await cargarLocal();
+    const nueva = { ...c, actualizado: ahora() };
+    const i = d.carreras.findIndex((x) => x.id === c.id);
+    const carreras = i >= 0 ? d.carreras.map((x, j) => (j === i ? nueva : x)) : [...d.carreras, nueva];
+    await reemplazarDatos({ ...d, carreras });
+    await guardarAjustes({ pendiente: true });
+  });
+}
+
+export function borrarCarrera(id: string): Promise<void> {
+  return conBloqueo(async () => {
+    const d = await cargarLocal();
+    const carreras = d.carreras.map((x) => (x.id === id ? { ...x, borrado: true, actualizado: ahora() } : x));
+    await reemplazarDatos({ ...d, carreras });
+    await guardarAjustes({ pendiente: true });
   });
 }

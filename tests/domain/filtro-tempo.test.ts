@@ -1,0 +1,21 @@
+import { conTempo, filtrarPorTempo } from '../../src/domain/progreso';
+import type { Sesion } from '../../src/domain/types';
+
+const s = (id: string, tempo?: string): Sesion => ({
+  id, actualizado: '2024-01-01T00:00:00Z', fecha: '2026-01-0' + id, lugar: 'box',
+  fuerza: [{ ejercicio: 'back-squat', reps: 5, series: [90], tempo }, { ejercicio: 'press-banca', reps: 5, series: [60] }],
+});
+
+test('conTempo: sin tempo o vacío cuenta como sin tempo', () => {
+  expect(conTempo(undefined)).toBe(false);
+  expect(conTempo('sin tempo')).toBe(false);
+  expect(conTempo('4s+pausa')).toBe(true);
+  expect(conTempo('3s')).toBe(true);
+});
+test('filtrarPorTempo deja solo las fuerzas del ejercicio que cumplen el filtro', () => {
+  const ses = [s('1', '4s+pausa'), s('2', 'sin tempo'), s('3')];
+  expect(filtrarPorTempo(ses, 'back-squat', 'todas')).toBe(ses);
+  expect(filtrarPorTempo(ses, 'back-squat', 'con').map((x) => x.id)).toEqual(['1']);
+  expect(filtrarPorTempo(ses, 'back-squat', 'sin').map((x) => x.id)).toEqual(['2', '3']);
+  expect(filtrarPorTempo(ses, 'back-squat', 'con')[0].fuerza.map((f) => f.ejercicio)).toEqual(['back-squat']);
+});

@@ -1,0 +1,67 @@
+name: Carreras de Strava
+
+on:
+  schedule:
+    - cron: '23 */3 * * *'   # cada 3 horas
+  workflow_dispatch:
+    inputs:
+      codigo:
+        description: 'Solo la primera vez: pega aquí la dirección completa a la que te llevó Strava (o solo el código)'
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: strava
+  cancel-in-progress: false
+
+jobs:
+  importar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: datos
+      - uses: actions/checkout@v4
+        with:
+          repository: ichaoart-cmd/entrenos-app
+          path: app
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci --ignore-scripts
+        working-directory: app
+      - name: Descargar de Strava
+        working-directory: app
+        env:
+          DATOS: ${{ github.workspace }}/datos
+          TMP_ACTIVIDADES: ${{ runner.temp }}/actividades.json
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+          STRAVA_CODIGO: ${{ inputs.codigo }}
+        run: npx tsx scripts/strava.ts descargar
+      - name: Guardar en el repo
+        working-directory: datos
+        env:
+          DATOS: ${{ github.workspace }}/datos
+          TMP_ACTIVIDADES: ${{ runner.temp }}/actividades.json
+        run: |
+          [ -f strava/token.json ] || exit 0   # Strava aún sin conectar
+          git config user.name 'Entrenos (Strava)'
+          git config user.email 'actions@users.noreply.github.com'
+          cp strava/token.json "$RUNNER_TEMP/token.json"
+          for intento in 1 2 3 4; do
+            (cd ../app && npx tsx scripts/strava.ts incorporar)
+            git add data/entrenos.json strava/token.json
+            if git diff --cached --quiet; then echo 'Nada que guardar.'; exit 0; fi
+            git commit -q -m 'Carreras de Strava'
+            if git push -q; then exit 0; fi
+            # La app ha subido algo mientras tanto: partimos de lo último y volvemos a añadir.
+            git fetch -q origin main && git reset -q --hard FETCH_HEAD
+            cp "$RUNNER_TEMP/token.json" strava/token.json
+            sleep $((intento * 5))
+          done
+          echo '::error::No se pudo guardar tras varios intentos.'; exit 1

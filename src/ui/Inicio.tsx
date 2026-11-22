@@ -1,6 +1,6 @@
 import { estado } from '../store/estado';
 import { ROTACION, ejercicioSugerido, ultimaFuerza } from '../domain/records';
-import { fechaLarga, nombreEjercicio, resumenFuerza, resumenMetcon, textoSync } from './formato';
+import { fechaLarga, nombreEjercicio, resumenCarrera, resumenFuerza, resumenMetcon, textoSync } from './formato';
 import { Calendario } from './Calendario';
 import { IconoEjercicio, NOMBRE_CORTO } from './iconos';
 import { ultimoTop } from './FuerzaForm';
@@ -15,6 +15,7 @@ export function Inicio() {
   const toca = ejercicioSugerido(vivas, ROTACION);
   const ultToca = ultimaFuerza(vivas, toca);
   const fechaToca = vivas.filter((s) => s.fuerza.some((f) => f.ejercicio === toca)).reduce((a, s) => (s.fecha > a ? s.fecha : a), '');
+  const ultCarrera = estado.datos.value.carreras.filter((c) => !c.borrado).reduce<typeof estado.datos.value.carreras[number] | null>((a, c) => (!a || c.fecha > a.fecha ? c : a), null);
   const ahora = new Date();
   const error = estado.estadoSync.value === 'error';
 
@@ -38,6 +39,12 @@ export function Inicio() {
         </div>
       </section>
 
+      <a class='tarjeta acceso-carrera' href='#/carrera'>
+        <span class='disco'><IconoEjercicio id='correr' size={34} /></span>
+        <span><b>¿Has salido a correr?</b><small>{ultCarrera ? `Última: ${resumenCarrera(ultCarrera)}` : 'Apunta distancia y tiempo'}</small></span>
+        <span class='mas' aria-hidden='true'>＋</span>
+      </a>
+
       <h2>Tus ejercicios</h2>
       <div class='circulos'>
         {ROTACION.map((id) => {
@@ -53,7 +60,7 @@ export function Inicio() {
       </div>
 
       <h2>Constancia</h2>
-      <Calendario sesiones={vivas} minSemana={estado.ajustes.value.minSesionesSemana} />
+      <Calendario sesiones={vivas} carreras={estado.datos.value.carreras} minSemana={estado.ajustes.value.minSesionesSemana} />
 
       {ultima && (
         <a class='tarjeta ultima' href={`#/registrar?id=${encodeURIComponent(ultima.id)}`}>

@@ -1,7 +1,7 @@
 /* Bosque y arena: fondo cálido, un único color fuerte (verde bosque) y bronce solo para récords. */
 :root {
   --arena: #eee8dd; --papel: #f8f4ec; --bosque: #2f3d2e; --bosque-2: #445743; --tinta: #1e241d; --suave: #6f7266;
-  --linea: #ddd5c7; --bronce: #a57c45; --salvia: #cbd3c1; --error: #b23a2e;
+  --linea: #ddd5c7; --bronce: #a57c45; --rio: #3f6f92; --salvia: #cbd3c1; --error: #b23a2e;
   --serif: 'Fraunces Variable', Georgia, serif; --sans: 'Archivo Variable', system-ui, sans-serif;
   color-scheme: light; font-family: var(--sans); background: var(--arena); color: var(--tinta);
   -webkit-tap-highlight-color: transparent;
@@ -215,3 +215,27 @@ h3.bloque { font-family: var(--serif); font-weight: 500; font-size: 1.15rem; mar
 .serie.no-alcanzado .marca { color: var(--bronce); }
 .serie.superado .marca { color: var(--bosque-2); }
 .serie > .fila { margin-left: 0; }
+/* Carrera */
+.tiempo-carrera { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.tiempo-carrera .fila { background: var(--papel); border-radius: 20px; padding: 10px 6px 8px; margin: 0; flex-direction: column; gap: 4px; align-items: center; }
+.tiempo-carrera .etiqueta { font-size: 0.78rem; color: var(--suave); }
+.tiempo-carrera .stepper { gap: 0; width: 100%; justify-content: space-between; flex-wrap: nowrap; }
+.tiempo-carrera .stepper button { width: 30px; height: 36px; min-height: 36px; padding: 0; flex: 0 0 auto; }
+.tiempo-carrera .stepper input { width: 34px; min-width: 0; font-size: 1.3rem; padding: 0; }
+.ritmo { margin: 18px 0 14px; padding: 16px 18px; border-radius: 24px; background: var(--bosque); color: var(--papel); display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.ritmo b { font-family: var(--serif); font-weight: 500; font-size: 2.6rem; line-height: 1; }
+.ritmo span { font-size: 0.85rem; opacity: 0.85; }
+.ritmo .suave { color: var(--salvia); opacity: 1; }
+.origen-strava { margin: 4px 0 8px; font-size: 0.85rem; color: var(--suave); }
+.tabla-carrera > div { display: grid; grid-template-columns: 1fr auto; column-gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--linea); }
+.tabla-carrera > div:last-child { border-bottom: 0; }
+.tabla-carrera b { font-family: var(--serif); font-weight: 500; font-size: 1.3rem; text-align: right; }
+.tabla-carrera small { grid-column: 1 / -1; color: var(--suave); font-size: 0.78rem; }
+.cal-dia { position: relative; }
+.cal-dia.corrido::after { content: ''; position: absolute; bottom: 3px; left: 50%; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--rio); box-shadow: 0 0 0 1.5px var(--papel); }
+.cal-dia.corrido:not(.entrenado):not(.record) { background: #dbe5ec; color: var(--tinta); font-weight: 700; }
+.acceso-carrera { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; margin-top: 14px; padding: 12px 14px; }
+.acceso-carrera .disco { width: 46px; height: 46px; border-radius: 50%; background: #dbe5ec; color: var(--rio); display: flex; align-items: center; justify-content: center; flex: 0 0 auto; --halo: #dbe5ec; }
+.acceso-carrera > span:nth-child(2) { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.acceso-carrera small { color: var(--suave); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.acceso-carrera .mas { width: 40px; height: 40px; border-radius: 50%; background: var(--bosque); color: var(--papel); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
