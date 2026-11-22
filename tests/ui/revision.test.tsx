@@ -15,14 +15,15 @@ beforeEach(async () => {
   estado.datos.value = { version: 1, ejercicios: [], sesiones: [], carreras: [] };
 });
 
-test('quitar la fuerza visible al editar conserva los otros bloques', async () => {
+test('quitar un bloque de fuerza al editar conserva los otros', async () => {
   const s = { ...sesion('m', '2024-02-15', 'deadlift', 3, [89]), fuerza: [
     { ejercicio: 'deadlift', reps: 3, series: [89] }, { ejercicio: 'clean', reps: 3, series: [65] }, { ejercicio: 'snatch', reps: 3, series: [35] }] };
   await reemplazarDatos({ ...estado.datos.value, sesiones: [s] });
   estado.datos.value = { ...estado.datos.value, sesiones: [s] };
   render(<Registrar sesionInicial={s} />);
-  expect(screen.getByText(/Clean 3×65/)).toBeTruthy();
-  fireEvent.click(screen.getByRole('button', { name: 'Quitar fuerza' }));
+  // Ahora los tres bloques son editables.
+  expect(screen.getAllByRole('button', { name: 'Quitar fuerza' })).toHaveLength(3);
+  fireEvent.click(screen.getAllByRole('button', { name: 'Quitar fuerza' })[0]);
   fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
   await waitFor(async () => {
     const g = (await cargarLocal()).sesiones.find((x) => x.id === 'm')!;

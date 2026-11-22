@@ -15,10 +15,11 @@ import { FuerzaForm, fuerzaInicial } from './FuerzaForm';
 import { MetconForm } from './MetconForm';
 import { Chips } from './componentes/Chips';
 import { Aviso } from './componentes/Aviso';
-import { resumenFuerza } from './formato';
+import { nombreEjercicio } from './formato';
+import { Selector } from './Selector';
 
 const CLAVE_BORRADOR = 'borrador-registro';
-interface Borrador { fecha: string; lugar: Lugar; fuerza: Fuerza | null; metcon: Metcon | null; nota: string }
+interface Borrador { fecha: string; lugar: Lugar; fuerzas?: Fuerza[]; /** formato antiguo */ fuerza?: Fuerza | null; metcon: Metcon | null; nota: string }
 
 function leerBorrador(): Borrador | null {
   try { const t = localStorage.getItem(CLAVE_BORRADOR); return t ? JSON.parse(t) : null; } catch { return null; }
@@ -43,8 +44,8 @@ function mejoraBenchmark(s: Sesion, previas: Sesion[]): string | null {
   return `${BENCHMARKS.find((b) => b.id === m.benchmark)?.nombre ?? m.benchmark}: ${ahora.valor}. ${ahora.tipo === 'tiempo' ? 'Más rápido que nunca 🔥' : 'Tu mejor marca 🔥'}`;
 }
 
-export function textoPR(pr: PR): string {
-  const base = `${elegir(PREFIJO_PR)} ${pr.reps}RM: ${num(pr.kg)} kg`;
+export function textoPR(pr: PR, ejercicio?: string): string {
+  const base = `${elegir(PREFIJO_PR)}${ejercicio ? ` ${nombreEjercicio(ejercicio)}` : ''} ${pr.reps}RM: ${num(pr.kg)} kg`;
   return (pr.anteriorKg == null ? base : `${base} (+${num(Math.round((pr.kg - pr.anteriorKg) * 10) / 10)} kg)`) + elegir(CIERRE_PR);
 }
 
@@ -61,16 +62,25 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
   const datos = estado.datos.value;
   // Solo las sesiones nuevas usan borrador; al editar se parte de la sesión guardada.
   const [borrador] = useState(() => (sesionInicial || fechaInicial || ejercicioInicial || metconPedido ? null : leerBorrador()));
-  // Bloques de fuerza adicionales (p. ej. sesiones importadas con varios levantamientos): se conservan siempre.
-  const extras = sesionInicial?.fuerza.slice(1) ?? [];
   const ejercicios = [...EJERCICIOS_BASE, ...datos.ejercicios.filter((e) => !EJERCICIOS_BASE.some((b) => b.id === e.id))];
   const [fecha, setFecha] = useState(sesionInicial?.fecha ?? fechaInicial ?? borrador?.fecha ?? hoy());
   const [lugar, setLugar] = useState<Lugar>(sesionInicial?.lugar ?? borrador?.lugar ?? 'box');
-  const [fuerza, setFuerza] = useState<Fuerza | null>(() =>
-    sesionInicial ? sesionInicial.fuerza[0] ?? null
-      : borrador ? borrador.fuerza
-      : metconPedido ? null
-      : fuerzaInicial(ejercicioInicial ?? ejercicioSugerido(datos.sesiones, ROTACION), datos.sesiones));
+  const [fuerzas, setFuerzas] = useState<Fuerza[]>(() =>
+    sesionInicial ? sesionInicial.fuerza
+      : borrador ? borrador.fuerzas ?? (borrador.fuerza ? [borrador.fuerza] : [])
+      : metconPedido ? []
+      : [fuerzaInicial(ejercicioInicial ?? ejercicioSugerido(datos.sesiones, ROTACION), datos.sesiones)]);
+  // Clave estable por bloque, para que cada formulario conserve su estado al quitar otro.
+  const [claves, setClaves] = useState<number[]>(() => fuerzas.map((_, i) => i));
+  const [eligiendo, setEligiendo] = useState(false);
+  const sesionesPrevias = datos.sesiones.filter((x) => x.id !== sesionInicial?.id);
+  const cambiarBloque = (i: number) => (f: Fuerza) => setFuerzas((xs) => xs.map((x, j) => (j === i ? f : x)));
+  const quitarBloque = (i: number) => { setFuerzas((xs) => xs.filter((_, j) => j !== i)); setClaves((xs) => xs.filter((_, j) => j !== i)); };
+  const anadirBloque = (id: string) => {
+    setFuerzas((xs) => [...xs, fuerzaInicial(id, sesionesPrevias)]);
+    setClaves((xs) => [...xs, Math.max(-1, ...xs) + 1]);
+    setEligiendo(false);
+  };
   const [metcon, setMetcon] = useState<Metcon | null>(sesionInicial?.metcon ?? borrador?.metcon ?? metconPedido);
   const [nota, setNota] = useState(sesionInicial?.nota ?? borrador?.nota ?? '');
   const [molestias, setMolestias] = useState<string[]>(sesionInicial?.molestias ?? []);
@@ -81,15 +91,15 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
 
   useEffect(() => {
     // Antes de tener los datos no se guarda borrador: lo calculado aún no es fiable y la pantalla se rehará.
-    if (!sesionInicial && !guardando && estado.listo.value) escribirBorrador({ fecha, lugar, fuerza, metcon, nota });
-  }, [fecha, lugar, fuerza, metcon, nota]);
+    if (!sesionInicial && !guardando && estado.listo.value) escribirBorrador({ fecha, lugar, fuerzas, metcon, nota });
+  }, [fecha, lugar, fuerzas, metcon, nota]);
 
   const guardar = async () => {
     if (guardando) return;
     setGuardando(true);
     const s: Sesion = {
       id: sesionInicial?.id ?? nuevoId(), actualizado: new Date().toISOString(), fecha, lugar,
-      fuerza: [...(fuerza ? [fuerza] : []), ...extras],
+      fuerza: fuerzas,
       ...(metcon ? { metcon } : {}), ...(nota.trim() ? { nota: nota.trim() } : {}),
       ...(molestias.length ? { molestias } : {}),
     };
@@ -106,7 +116,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
     }
     if (!sesionInicial) escribirBorrador(null);
     const wod = mejoraBenchmark(s, previas);
-    setAviso(wod ?? (pr ? textoPR(pr) : elegir(GUARDADO)));
+    setAviso(wod ?? (pr ? textoPR(pr.pr, fuerzas.length > 1 ? pr.ejercicio : undefined) : elegir(GUARDADO)));
     setEsRecord(!!pr || !!wod);
     sonar(pr || wod ? 'record' : 'guardado');
     setTimeout(() => { void navegar('#/'); }, 1800);
@@ -121,21 +131,21 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
         <input type="date" aria-label="Fecha" value={fecha} onInput={(e) => setFecha((e.target as HTMLInputElement).value)} />
       </div>
       <Chips etiqueta="Lugar" opciones={[{ valor: 'box', texto: 'Box' }, { valor: 'casa', texto: 'Casa' }]} valor={lugar} onCambio={setLugar} />
-      {fuerza
-        ? <><AvisoMolestia ejercicio={fuerza.ejercicio} excluir={sesionInicial?.id} /><FuerzaForm fuerza={fuerza} onCambio={setFuerza} ejercicios={ejercicios} sesiones={datos.sesiones.filter((x) => x.id !== sesionInicial?.id)} onQuitar={() => setFuerza(null)} abrirSelector={abrirSelector} /></>
-        : <button type="button" class="boton" style="margin-top:12px" onClick={() => setFuerza(fuerzaInicial(ejercicioSugerido(datos.sesiones, ROTACION), datos.sesiones))}>＋ Fuerza</button>}
-      {extras.length > 0 && (
-        <section class="tarjeta">
-          <div class="suave">También en esta sesión</div>
-          <div>{resumenFuerza({ ...sesionInicial!, fuerza: extras })}</div>
-        </section>
-      )}
+      {fuerzas.map((f, i) => (
+        <div class={`bloque-fuerza${i > 0 ? ' siguiente' : ''}`} key={claves[i]}>
+          {fuerzas.length > 1 && <div class='num-bloque'>Ejercicio {i + 1}</div>}
+          <AvisoMolestia ejercicio={f.ejercicio} excluir={sesionInicial?.id} />
+          <FuerzaForm fuerza={f} onCambio={cambiarBloque(i)} ejercicios={ejercicios} sesiones={sesionesPrevias} onQuitar={() => quitarBloque(i)} abrirSelector={i === 0 && abrirSelector} />
+        </div>
+      ))}
+      <button type="button" class="boton" style="margin-top:12px" onClick={() => setEligiendo(true)}>{fuerzas.length ? '＋ Otro ejercicio de fuerza' : '＋ Fuerza'}</button>
+      {eligiendo && <Selector onCerrar={() => setEligiendo(false)} onElegir={anadirBloque} />}
       {metcon
         ? <MetconForm metcon={metcon} onCambio={setMetcon} onQuitar={() => setMetcon(null)} />
         : <button type="button" class="boton" style="margin:12px 0 0 8px" onClick={() => setMetcon({ formato: 'AMRAP', rx: true })}>＋ Metcon</button>}
       <SelectorMolestias valor={molestias} onCambio={setMolestias} />
       <textarea aria-label="Nota" placeholder="Nota (opcional)" style="margin-top:12px" value={nota} onInput={(e) => setNota((e.target as HTMLTextAreaElement).value)} />
-      <div class="fila"><button type="button" class="primario" disabled={guardando || (!fuerza && !metcon && extras.length === 0)} onClick={guardar}>Guardar sesión</button></div>
+      <div class="fila"><button type="button" class="primario" disabled={guardando || (!fuerzas.length && !metcon)} onClick={guardar}>Guardar sesión</button></div>
       {sesionInicial && <BotonBorrar texto='Borrar sesión' onBorrar={async () => { await borrar(sesionInicial.id); escribirBorrador(null); void navegar('#/historial'); }} />}
     </main>
   );

@@ -42,12 +42,15 @@ export async function iniciar(): Promise<void> {
   });
 }
 
-/** Guarda la sesión, lanza la sincronización sin esperarla y devuelve el PR de la primera fuerza, si lo hay. */
-export async function registrar(s: Sesion): Promise<PR | null> {
+/** Guarda la sesión, lanza la sincronización sin esperarla y devuelve el primer récord de sus ejercicios, si lo hay. */
+export async function registrar(s: Sesion): Promise<{ pr: PR; ejercicio: string } | null> {
   const historial = estado.datos.value.sesiones.filter((x) => x.id !== s.id);
-  const f = s.fuerza[0];
-  // El primer registro de un ejercicio no se anuncia como récord.
-  const pr = f && recordsPorReps(historial, f.ejercicio).size > 0 ? detectarPR(f, s.fecha, historial) : null;
+  let pr: { pr: PR; ejercicio: string } | null = null;
+  for (const f of s.fuerza) {
+    // El primer registro de un ejercicio no se anuncia como récord.
+    const r = recordsPorReps(historial, f.ejercicio).size > 0 ? detectarPR(f, s.fecha, historial) : null;
+    if (r) { pr = { pr: r, ejercicio: f.ejercicio }; break; }
+  }
   await guardarSesion(s);
   await recargar();
   estado.estadoSync.value = 'pendiente';

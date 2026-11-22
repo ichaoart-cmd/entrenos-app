@@ -251,3 +251,6 @@ img.ilustracion { display: block; object-fit: contain; }
 .tema-pop .hero-ej b { font-size: 0.82rem; font-stretch: 100%; overflow-wrap: anywhere; }
 .tema-pop .hero-ej small { line-height: 1.25; }
 .tema-pop .subtitulo { margin: -6px 0 14px; font-family: var(--mono); font-size: 0.82rem; color: var(--suave); }
+.tema-pop .bloque-fuerza.siguiente { margin-top: 22px; padding-top: 18px; border-top: 3px dashed var(--negro); }
+.tema-pop .num-bloque { display: inline-block; margin-bottom: 6px; font-family: var(--mono); font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  background: var(--lila); border: 2px solid var(--negro); border-radius: 999px; padding: 1px 10px; }
