@@ -1,24 +1,25 @@
 import { useState } from 'preact/hooks';
 import type { Sesion } from '../domain/types';
 import { rachaSemanas, semanasDelMes, sesionesPorDia } from '../domain/calendario';
-import { COLOR_CLARO, COLOR_METCON, colorDe } from './iconos';
+import { diasConRecord } from '../domain/records';
 import { nombreEjercicio } from './formato';
 import { hoy } from './Registrar';
 
 const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
-function etiquetaDia(d: string, ses: Sesion[]): string {
+function etiquetaDia(d: string, ses: Sesion[], record: boolean): string {
   const n = String(Number(d.slice(8)));
   if (!ses.length) return n;
   const cosas = ses.flatMap((s) => [...s.fuerza.map((f) => nombreEjercicio(f.ejercicio)), ...(s.metcon ? ['Metcon'] : [])]);
-  return `${n} · ${cosas.length ? cosas.join(', ') : 'entreno'}`;
+  return `${n} · ${cosas.length ? cosas.join(', ') : 'entreno'}${record ? ', récord' : ''}`;
 }
 
 export function Calendario({ sesiones, minSemana }: { sesiones: Sesion[]; minSemana: number }) {
   const h = hoy();
   const [ym, setYm] = useState({ a: Number(h.slice(0, 4)), m: Number(h.slice(5, 7)) });
   const porDia = sesionesPorDia(sesiones);
+  const records = diasConRecord(sesiones);
   const prefijo = `${ym.a}-${String(ym.m).padStart(2, '0')}`;
   const delMes = [...porDia.keys()].filter((d) => d.startsWith(prefijo)).length;
   const racha = rachaSemanas([...porDia.entries()].flatMap(([d, s]) => s.map(() => d)), minSemana, h);
@@ -33,24 +34,27 @@ export function Calendario({ sesiones, minSemana }: { sesiones: Sesion[]; minSem
       </div>
       <div class='cal-resumen'>
         <span><b>{delMes}</b>{delMes === 1 ? 'sesión' : 'sesiones'} este mes</span>
-        <span><b>{racha}</b>{racha === 1 ? 'semana' : 'semanas'} seguidas con {minSemana} o más</span>
+        <span><b>{racha}</b>{racha === 1 ? 'semana seguida' : 'semanas seguidas'}</span>
       </div>
       <div class='cal-rejilla'>
         {DIAS.map((d) => <span class='cal-dia-nombre'>{d}</span>)}
         {semanasDelMes(ym.a, ym.m).flat().map((d) => {
           if (!d) return <span />;
           const ses = porDia.get(d) ?? [];
+          const rec = records.has(d);
           const href = ses.length ? `#/registrar?id=${encodeURIComponent(ses[0].id)}` : `#/registrar?fecha=${d}`;
-          const colores = ses.flatMap((s) => [...s.fuerza.map((f) => colorDe(f.ejercicio)), ...(s.metcon ? [COLOR_METCON] : [])]);
           return (
-            <a href={href} aria-label={etiquetaDia(d, ses)}
-              class={`cal-dia${ses.length ? ' entrenado' : ''}${colores.length && COLOR_CLARO.has(colores[0]) ? ' claro' : ''}${d === h ? ' hoy' : ''}${d > h ? ' futuro' : ''}`}
-              style={colores.length ? { background: colores[0] } : undefined}>
-              <span>{Number(d.slice(8))}</span>
-              {colores.length > 1 && <span class='puntos'>{colores.slice(1, 4).map((c) => <i style={{ background: c }} />)}</span>}
+            <a href={href} aria-label={etiquetaDia(d, ses, rec)}
+              class={`cal-dia${ses.length ? ' entrenado' : ''}${rec ? ' record' : ''}${d === h ? ' hoy' : ''}${d > h ? ' futuro' : ''}`}>
+              {Number(d.slice(8))}
             </a>
           );
         })}
+      </div>
+      <div class='cal-leyenda'>
+        <span><i style='background:var(--bosque)' />Entreno</span>
+        <span><i style='background:var(--bronce)' />Récord</span>
+        <span>Racha: semanas con {minSemana} o más</span>
       </div>
     </section>
   );

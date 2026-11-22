@@ -38,7 +38,7 @@ test('borrar pide confirmación en la propia pantalla', async () => {
 test('editar conserva el id', async () => {
   render(<Registrar sesionInicial={s2} />);
   fireEvent.input(screen.getByLabelText('Serie top (kg)'), { target: { value: '95' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+  fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
   await waitFor(async () => {
     const d = await cargarLocal();
     expect(d.sesiones.filter((s) => s.id === 'b')).toHaveLength(1);

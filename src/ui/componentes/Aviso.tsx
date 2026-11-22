@@ -1,3 +1,3 @@
-export function Aviso({ texto }: { texto: string }) {
-  return <div class="aviso" role="status">{texto}</div>;
+export function Aviso({ texto, record = false }: { texto: string; record?: boolean }) {
+  return <div class={`aviso${record ? ' record' : ''}`} role="status">{texto}</div>;
 }

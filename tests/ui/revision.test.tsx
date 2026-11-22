@@ -22,7 +22,7 @@ test('quitar la fuerza visible al editar conserva los otros bloques', async () =
   render(<Registrar sesionInicial={s} />);
   expect(screen.getByText(/Clean 3×65/)).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: 'Quitar fuerza' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+  fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
   await waitFor(async () => {
     const g = (await cargarLocal()).sesiones.find((x) => x.id === 'm')!;
     expect(g.fuerza.map((f) => f.ejercicio)).toEqual(['clean', 'snatch']);
@@ -35,7 +35,7 @@ test('el borrador del registro sobrevive a salir de la pantalla y se borra al gu
   cleanup();
   render(<Registrar />);
   expect((screen.getByLabelText('Serie top (kg)') as HTMLInputElement).value).toBe('77');
-  fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+  fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
   await screen.findByText(/Guardado/);
   cleanup();
   render(<Registrar />);

@@ -29,7 +29,7 @@ test('con historial usa la última serie top, reps y tempo', () => {
   expect((screen.getByLabelText('Serie top (kg)') as HTMLInputElement).value).toBe('94');
   expect((screen.getByLabelText('Reps') as HTMLInputElement).value).toBe('5');
   expect(screen.getByRole('button', { name: 'Bajada 4 s' }).getAttribute('aria-pressed')).toBe('true');
-  expect(screen.getByRole('button', { name: 'Con pausa' }).getAttribute('aria-pressed')).toBe('true');
+  expect(screen.getByRole('switch', { name: 'Con pausa abajo' }).getAttribute('aria-checked')).toBe('true');
 });
 
 test('cambiar la serie top recalcula la rampa', () => {
@@ -55,7 +55,7 @@ test('AMRAP guarda resultado rondas+reps', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'AMRAP' }));
   fireEvent.input(screen.getByLabelText('Rondas'), { target: { value: '3' } });
   fireEvent.input(screen.getByLabelText('Reps extra'), { target: { value: '200' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+  fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
   await waitFor(async () => {
     const s = (await cargarLocal()).sesiones[0];
     expect(s.metcon?.resultado).toEqual({ tipo: 'rondas+reps', valor: '3+200' });
@@ -67,13 +67,13 @@ test('ForTime guarda tiempo', async () => {
   fireEvent.click(screen.getByRole('button', { name: '＋ Metcon' }));
   fireEvent.click(screen.getByRole('button', { name: 'For Time' }));
   fireEvent.input(screen.getByLabelText('Tiempo (mm:ss)'), { target: { value: '11:50' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+  fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
   await waitFor(async () => expect((await cargarLocal()).sesiones[0]?.metcon?.resultado).toEqual({ tipo: 'tiempo', valor: '11:50' }));
 });
 
 test('guardar sin red guarda en local y muestra Guardado', async () => {
   render(<Registrar />);
-  fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+  fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
   await screen.findByText(/Guardado/);
   const s = (await cargarLocal()).sesiones;
   expect(s).toHaveLength(1);
@@ -86,7 +86,7 @@ test('muestra aviso de PR', async () => {
   render(<Registrar />);
   fireEvent.click(screen.getByRole('button', { name: /Back Squat/ }));
   fireEvent.input(screen.getByLabelText('Serie top (kg)'), { target: { value: '96' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+  fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
   await screen.findByText('Nuevo 5RM: 96 kg (+2 kg)');
 });
 
@@ -94,7 +94,7 @@ test('se puede quitar la fuerza y guardar solo Metcon', async () => {
   render(<Registrar />);
   fireEvent.click(screen.getByRole('button', { name: 'Quitar fuerza' }));
   fireEvent.click(screen.getByRole('button', { name: '＋ Metcon' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+  fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
   await waitFor(async () => {
     const s = (await cargarLocal()).sesiones[0];
     expect(s.fuerza).toEqual([]);
@@ -107,5 +107,5 @@ test('un tempo previo sin pausa se marca como bajada + sin pausa', () => {
   render(<Registrar />);
   fireEvent.click(screen.getByRole('button', { name: /Front Squat/ }));
   expect(screen.getByRole('button', { name: 'Bajada 4 s' }).getAttribute('aria-pressed')).toBe('true');
-  expect(screen.getByRole('button', { name: 'Sin pausa' }).getAttribute('aria-pressed')).toBe('true');
+  expect(screen.getByRole('switch', { name: 'Con pausa abajo' }).getAttribute('aria-checked')).toBe('false');
 });

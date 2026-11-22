@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 import { borrar, estado } from '../store/estado';
 import { fechaLarga, resumenFuerza, resumenMetcon } from './formato';
+import { IconoEjercicio } from './iconos';
 
 export function Historial() {
   const [confirmar, setConfirmar] = useState<string | null>(null);
@@ -14,8 +15,9 @@ export function Historial() {
       <ul class="lista">
         {sesiones.map((s) => (
           <li key={s.id}>
-            <a href={`#/registrar?id=${encodeURIComponent(s.id)}`} style="color:inherit;text-decoration:none;display:block">
-              <div class="suave">{fechaLarga(s.fecha)}{s.lugar === 'casa' ? ' · Casa' : ''}</div>
+            <span class="disco"><IconoEjercicio id={s.fuerza[0]?.ejercicio ?? 'snatch'} size={30} /></span>
+            <div class="cuerpo"><a href={`#/registrar?id=${encodeURIComponent(s.id)}`}>
+              <div class="suave">{fechaLarga(s.fecha)}{s.lugar === 'casa' ? ', en casa' : ''}</div>
               {s.fuerza.length > 0 && <div>{resumenFuerza(s)}</div>}
               {s.metcon && <div>{resumenMetcon(s)}</div>}
             </a>
@@ -26,7 +28,7 @@ export function Historial() {
               </div>
             ) : (
               <div class="fila"><button type="button" onClick={() => setConfirmar(s.id)}>Borrar</button></div>
-            )}
+            )}</div>
           </li>
         ))}
       </ul>

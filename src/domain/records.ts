@@ -58,3 +58,18 @@ export function ultimaFuerza(sesiones: Sesion[], ejercicioId: string): Fuerza | 
   }
   return res ? res.f : null;
 }
+
+/** Días en que alguna fuerza superó la mejor marca previa del mismo ejercicio y número de reps. */
+export function diasConRecord(sesiones: Sesion[]): Set<string> {
+  const mejor = new Map<string, number>();
+  const dias = new Set<string>();
+  for (const s of vivas(sesiones).sort((a, b) => a.fecha.localeCompare(b.fecha))) {
+    for (const f of s.fuerza) {
+      if (f.reps == null || !f.series.length) continue;
+      const k = `${f.ejercicio}|${f.reps}`, kg = Math.max(...f.series), prev = mejor.get(k);
+      if (prev != null && kg > prev) dias.add(s.fecha);
+      if (prev == null || kg > prev) mejor.set(k, kg);
+    }
+  }
+  return dias;
+}

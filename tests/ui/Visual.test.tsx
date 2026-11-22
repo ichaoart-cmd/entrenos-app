@@ -27,7 +27,8 @@ test('elegir 3 series recalcula la rampa', () => {
   estado.datos.value = datosCon([sesion('b', '2026-06-18', 'back-squat', 5, [74, 79, 84, 89, 94])]);
   render(<Registrar />);
   fireEvent.click(screen.getByRole('button', { name: /Back Squat/ }));
-  fireEvent.click(screen.getByRole('button', { name: '3 series' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Bajar Series' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Bajar Series' }));
   expect(rampa()).toEqual(['84', '89', '94']);
 });
 
@@ -35,8 +36,8 @@ test('tempo: segundos de bajada y luego pausa', async () => {
   estado.datos.value = datosCon([]);
   render(<Registrar />);
   fireEvent.click(screen.getByRole('button', { name: 'Bajada 4 s' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Con pausa' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+  fireEvent.click(screen.getByRole('switch', { name: 'Con pausa abajo' }));
+  fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
   await waitFor(async () => expect((await cargarLocal()).sesiones[0]?.fuerza[0].tempo).toBe('4s+pausa'));
 });
 
@@ -44,7 +45,7 @@ test('sin tempo desactiva la pausa', () => {
   estado.datos.value = datosCon([]);
   render(<Registrar />);
   fireEvent.click(screen.getByRole('button', { name: 'Sin tempo' }));
-  expect((screen.getByRole('button', { name: 'Con pausa' }) as HTMLButtonElement).disabled).toBe(true);
+  expect((screen.getByRole('switch', { name: 'Con pausa abajo' }) as HTMLButtonElement).disabled).toBe(true);
 });
 
 test('inicio muestra el calendario del mes con los días entrenados', () => {
