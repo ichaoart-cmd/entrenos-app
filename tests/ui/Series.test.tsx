@@ -11,18 +11,6 @@ const datosCon = (sesiones: any[]) => ({ version: 1 as const, ejercicios: [], se
 const valores = () => screen.getAllByLabelText(/^Serie \d$/).map((i) => (i as HTMLInputElement).value);
 beforeEach(async () => { await clear(); localStorage.clear(); estado.datos.value = datosCon([sesion('b', '2026-06-18', 'back-squat', 5, [74, 79, 84, 89, 94])]); });
 
-test('cambiar una serie concreta respeta el valor y desactiva el cálculo automático', () => {
-  render(<Registrar ejercicioInicial='back-squat' />);
-  const auto = screen.getByRole('switch', { name: 'Calcular aproximación' });
-  expect(auto.getAttribute('aria-checked')).toBe('true');
-  fireEvent.click(screen.getByRole('button', { name: 'Subir Serie 2' }));
-  expect(valores()).toEqual(['74', '80', '84', '89', '94']);
-  expect(auto.getAttribute('aria-checked')).toBe('false');
-  // Con el cálculo apagado, subir la top solo cambia la última serie
-  fireEvent.click(screen.getByRole('button', { name: 'Subir Serie top (kg)' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Subir Serie top (kg)' }));
-  expect(valores()).toEqual(['74', '80', '84', '89', '95']);
-});
 
 test('se puede escribir el peso de cada serie con decimales', async () => {
   render(<Registrar ejercicioInicial='back-squat' />);
@@ -31,27 +19,8 @@ test('se puede escribir el peso de cada serie con decimales', async () => {
   await waitFor(async () => expect((await cargarLocal()).sesiones.find((s) => s.id !== 'b')?.fuerza[0].series[0]).toBe(72.5));
 });
 
-test('volver a encender el cálculo rehace la aproximación', () => {
-  render(<Registrar ejercicioInicial='back-squat' />);
-  fireEvent.click(screen.getByRole('button', { name: 'Subir Serie 2' }));
-  fireEvent.click(screen.getByRole('switch', { name: 'Calcular aproximación' }));
-  expect(valores()).toEqual(['74', '79', '84', '89', '94']);
-});
 
-test('en manual, añadir una serie la mete antes de la top y quitar elimina la más ligera', () => {
-  render(<Registrar ejercicioInicial='back-squat' />);
-  fireEvent.click(screen.getByRole('switch', { name: 'Calcular aproximación' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Subir Series' }));
-  expect(valores()).toEqual(['74', '79', '84', '89', '89', '94']);
-  fireEvent.click(screen.getByRole('button', { name: 'Bajar Series' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Bajar Series' }));
-  expect(valores()).toEqual(['84', '89', '89', '94']);
-});
 
-test('al editar una sesión guardada el cálculo empieza apagado', () => {
-  render(<Registrar sesionInicial={estado.datos.value.sesiones[0]} />);
-  expect(screen.getByRole('switch', { name: 'Calcular aproximación' }).getAttribute('aria-checked')).toBe('false');
-});
 
 test('Hoy toca ofrece elegir otro ejercicio', () => {
   render(<Inicio />);
@@ -76,9 +45,45 @@ test('cada serie puede llevar sus propias repeticiones', async () => {
   });
 });
 
-test('cambiar las reps generales las aplica a todas las series', () => {
+
+test('cada serie muestra su objetivo y lo real empieza igual', () => {
+  render(<Registrar ejercicioInicial='back-squat' />);
+  expect(screen.getByText('Objetivo 89 × 5')).toBeTruthy();
+  expect(valores()).toEqual(['74', '79', '84', '89', '94']);
+});
+
+test('quedarse corto en la última serie la marca y se guardan objetivo y real', async () => {
+  render(<Registrar ejercicioInicial='back-squat' />);
+  fireEvent.click(screen.getByRole('button', { name: 'Bajar Reps serie 5' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Bajar Reps serie 5' }));
+  expect(screen.getByText('No alcanzado')).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
+  await waitFor(async () => {
+    const f = (await cargarLocal()).sesiones.find((x) => x.id !== 'b')!.fuerza[0];
+    expect(f.repsSeries).toEqual([5, 5, 5, 5, 3]);
+    expect(f.reps).toBe(3);
+    expect(f.objetivo).toEqual({ series: [74, 79, 84, 89, 94], reps: [5, 5, 5, 5, 5] });
+  });
+});
+
+test('cambiar el objetivo no pisa las series ya ajustadas', () => {
+  render(<Registrar ejercicioInicial='back-squat' />);
+  fireEvent.click(screen.getByRole('button', { name: 'Bajar Serie 5' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Subir Serie top (kg)' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Subir Serie top (kg)' }));
+  expect(valores()).toEqual(['75', '80', '85', '90', '93']);
+  expect(screen.getByText('Objetivo 95 × 5')).toBeTruthy();
+});
+
+test('las reps generales cambian el objetivo de todas y lo real de las no tocadas', () => {
   render(<Registrar ejercicioInicial='back-squat' />);
   fireEvent.click(screen.getByRole('button', { name: 'Subir Reps serie 1' }));
   fireEvent.click(screen.getByRole('button', { name: 'Bajar Reps' }));
-  expect(screen.getAllByLabelText(/^Reps serie \d$/).map((i) => (i as HTMLInputElement).value)).toEqual(['4', '4', '4', '4', '4']);
+  expect(screen.getAllByLabelText(/^Reps serie \d$/).map((i) => (i as HTMLInputElement).value)).toEqual(['6', '4', '4', '4', '4']);
+});
+
+test('al editar una sesión antigua sin objetivo, el objetivo es lo que se hizo', () => {
+  render(<Registrar sesionInicial={estado.datos.value.sesiones[0]} />);
+  expect(screen.getByText('Objetivo 94 × 5')).toBeTruthy();
+  expect(screen.queryByText('No alcanzado')).toBeNull();
 });

@@ -206,3 +206,12 @@ table.datos th { color: var(--suave); font-weight: 600; }
 .serie .reps-serie .stepper input { width: 26px; font-size: 1.05rem; font-family: var(--sans); font-weight: 600; }
 .serie .stepper input { width: 58px; }
 .serie .stepper button { width: 34px; height: 34px; }
+h3.bloque { font-family: var(--serif); font-weight: 500; font-size: 1.15rem; margin: 26px 0 0; }
+.serie .nombre { width: auto; flex: 1; display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.serie .nombre b { font-size: 0.85rem; }
+.serie .nombre small { font-size: 0.68rem; color: var(--suave); white-space: nowrap; }
+.serie .nombre .marca { font-weight: 700; }
+.serie.no-alcanzado { box-shadow: inset 3px 0 0 var(--bronce); }
+.serie.no-alcanzado .marca { color: var(--bronce); }
+.serie.superado .marca { color: var(--bosque-2); }
+.serie > .fila { margin-left: 0; }
