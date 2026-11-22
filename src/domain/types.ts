@@ -22,12 +22,16 @@ export interface Metcon {
 }
 export interface Sesion extends Base {
   fecha: string; lugar: Lugar; fuerza: Fuerza[]; metcon?: Metcon; nota?: string;
+  /** Zonas con molestia (ids de ZONAS). */
+  molestias?: string[];
 }
 export interface Carrera extends Base {
   fecha: string; tipo?: string; distanciaKm: number; tiempoSeg: number; nota?: string; stravaId?: number;
   desnivelM?: number; fcMedia?: number;
   /** Sensación de esfuerzo: 1 suave … 5 al límite. */
   esfuerzo?: number;
+  /** Zonas con molestia (ids de ZONAS). */
+  molestias?: string[];
 }
 export interface PesoCorporal extends Base { fecha: string; kg: number }
 export interface Datos { version: 1; ejercicios: Ejercicio[]; sesiones: Sesion[]; carreras: Carrera[]; pesos?: PesoCorporal[] }

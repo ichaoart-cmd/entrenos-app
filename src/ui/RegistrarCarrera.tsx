@@ -5,6 +5,7 @@ import { formatearRitmo, formatearTiempo, partirTiempo } from '../domain/carrera
 import { estado, quitarCarrera, registrarCarrera } from '../store/estado';
 import { BotonBorrar } from './componentes/BotonBorrar';
 import { usarPantallaEncendida } from './pantalla';
+import { AvisoMolestia, SelectorMolestias } from './Molestias';
 import { Chips } from './componentes/Chips';
 import { Stepper } from './componentes/Stepper';
 import { Aviso } from './componentes/Aviso';
@@ -33,6 +34,7 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
   const [esfuerzo, setEsfuerzo] = useState<string | undefined>(carreraInicial?.esfuerzo != null ? String(carreraInicial.esfuerzo) : undefined);
   const [fc, setFc] = useState(carreraInicial?.fcMedia ?? 0);
   const [desnivel, setDesnivel] = useState(carreraInicial?.desnivelM ?? 0);
+  const [molestias, setMolestias] = useState<string[]>(carreraInicial?.molestias ?? []);
   const [aviso, setAviso] = useState<{ texto: string; record: boolean } | null>(null);
   const [guardando, setGuardando] = useState(false);
   usarPantallaEncendida();
@@ -51,6 +53,7 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
     if (esfuerzo) c.esfuerzo = Number(esfuerzo); else delete c.esfuerzo;
     if (fc > 0) c.fcMedia = Math.round(fc); else delete c.fcMedia;
     if (desnivel > 0) c.desnivelM = Math.round(desnivel); else delete c.desnivelM;
+    if (molestias.length) c.molestias = molestias; else delete c.molestias;
     let mejora;
     try {
       mejora = await registrarCarrera(c);
@@ -75,6 +78,7 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
       {carreraInicial?.stravaId != null && (
         <p class='origen-strava'>De Strava</p>
       )}
+      <AvisoMolestia ejercicio='correr' excluir={carreraInicial?.id} />
       <Chips etiqueta='Tipo de carrera' opciones={TIPOS_CARRERA} valor={tipo} onCambio={setTipo} />
 
       <div class='etiq'>Distancia (km)</div>
@@ -102,6 +106,7 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
       </div>
       <p class='pista-texto'>Pon 0 si no lo sabes. La FC media la tienes en Mi Fitness, en el detalle del entreno.</p>
 
+      <SelectorMolestias valor={molestias} onCambio={setMolestias} />
       <textarea aria-label='Nota' placeholder='Nota (opcional)' value={nota} onInput={(e) => setNota((e.target as HTMLTextAreaElement).value)} />
       <div class='fila'><button type='button' class='primario' disabled={guardando || !valida} onClick={guardar}>Guardar carrera</button></div>
       {carreraInicial && <BotonBorrar texto='Borrar carrera' onBorrar={async () => { await quitarCarrera(carreraInicial.id); location.hash = '#/historial'; }} />}

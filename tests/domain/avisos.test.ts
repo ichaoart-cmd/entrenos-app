@@ -67,3 +67,8 @@ test('mejor marca en un WOD de referencia reciente', () => {
   const m = (fecha: string, valor: string): Sesion => ({ id: fecha, actualizado: '', fecha, lugar: 'box', fuerza: [], metcon: { formato: 'ForTime', benchmark: 'fran', rx: true, resultado: { tipo: 'tiempo', valor } } });
   expect(textos(datos([m('2026-09-01', '6:00'), m('2026-11-20', '5:30')]))).toContain('logro: Mejor Fran: 5:30');
 });
+
+test('molestia reciente aparece como alerta', () => {
+  const s: Sesion = { id: 'm', actualizado: '', fecha: '2026-11-20', lugar: 'box', fuerza: [], molestias: ['hombro'] };
+  expect(textos(datos([s]))).toContain('alerta: Molestia en el hombro (20/11)');
+});

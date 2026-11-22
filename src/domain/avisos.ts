@@ -8,6 +8,7 @@ import { tiposDeSesion } from './tipos';
 import { entrada } from './catalogo';
 import { conTempo } from './progreso';
 import { BENCHMARKS, esMejor, historialBenchmark } from './benchmarks';
+import { molestiasRecientes, textoMolestia } from './molestias';
 
 export interface AvisoEntreno { tipo: 'logro' | 'alerta' | 'info'; titulo: string; texto?: string; href?: string }
 
@@ -108,6 +109,10 @@ export function generarAvisos(d: Datos, hoy: string, minSemana: number, max = 5)
   const sem = kmPorSemana(cs, 5, hoy), previas = sem.slice(0, 4), media = previas.reduce((a, s) => a + s.km, 0) / 4, esta = sem[4].km;
   if (previas.filter((s) => s.km > 0).length >= 2 && esta > media * 1.3 && esta - media >= 5)
     alertas.push({ tipo: 'alerta', titulo: 'Has subido mucho los km esta semana', texto: `${coma(esta)} km frente a ${coma(media)} de media. Subir más de un 10 % por semana aumenta el riesgo de lesión.`, href: '#/progreso?ej=carrera' });
+
+  // Molestias de las últimas 2 semanas.
+  for (const m of molestiasRecientes(d.sesiones, cs, hoy))
+    alertas.unshift({ tipo: 'alerta', titulo: `Molestia en ${textoMolestia(m)}`, texto: 'Calienta bien y baja la carga en lo que la cargue. Si no mejora, consulta con un fisio.' });
 
   // Desequilibrio pierna / torso en el último mes.
   const mes = d.sesiones.filter((s) => !s.borrado && s.fecha > menos(hoy, 30) && s.fecha <= hoy);

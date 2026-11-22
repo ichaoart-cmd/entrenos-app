@@ -7,6 +7,7 @@ import { borrar, estado, registrar } from '../store/estado';
 import { BotonBorrar } from './componentes/BotonBorrar';
 import { BENCHMARKS, esMejor, mejorBenchmark } from '../domain/benchmarks';
 import { usarPantallaEncendida } from './pantalla';
+import { AvisoMolestia, SelectorMolestias } from './Molestias';
 import { FuerzaForm, fuerzaInicial } from './FuerzaForm';
 import { MetconForm } from './MetconForm';
 import { Chips } from './componentes/Chips';
@@ -59,6 +60,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
       : fuerzaInicial(ejercicioInicial ?? ejercicioSugerido(datos.sesiones, ROTACION), datos.sesiones));
   const [metcon, setMetcon] = useState<Metcon | null>(sesionInicial?.metcon ?? borrador?.metcon ?? null);
   const [nota, setNota] = useState(sesionInicial?.nota ?? borrador?.nota ?? '');
+  const [molestias, setMolestias] = useState<string[]>(sesionInicial?.molestias ?? []);
   const [aviso, setAviso] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [esRecord, setEsRecord] = useState(false);
@@ -76,6 +78,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
       id: sesionInicial?.id ?? nuevoId(), actualizado: new Date().toISOString(), fecha, lugar,
       fuerza: [...(fuerza ? [fuerza] : []), ...extras],
       ...(metcon ? { metcon } : {}), ...(nota.trim() ? { nota: nota.trim() } : {}),
+      ...(molestias.length ? { molestias } : {}),
     };
     const previas = estado.datos.value.sesiones.filter((x) => x.id !== s.id);
     let pr;
@@ -105,7 +108,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
       </div>
       <Chips etiqueta="Lugar" opciones={[{ valor: 'box', texto: 'Box' }, { valor: 'casa', texto: 'Casa' }]} valor={lugar} onCambio={setLugar} />
       {fuerza
-        ? <FuerzaForm fuerza={fuerza} onCambio={setFuerza} ejercicios={ejercicios} sesiones={datos.sesiones.filter((x) => x.id !== sesionInicial?.id)} onQuitar={() => setFuerza(null)} abrirSelector={abrirSelector} />
+        ? <><AvisoMolestia ejercicio={fuerza.ejercicio} excluir={sesionInicial?.id} /><FuerzaForm fuerza={fuerza} onCambio={setFuerza} ejercicios={ejercicios} sesiones={datos.sesiones.filter((x) => x.id !== sesionInicial?.id)} onQuitar={() => setFuerza(null)} abrirSelector={abrirSelector} /></>
         : <button type="button" class="boton" style="margin-top:12px" onClick={() => setFuerza(fuerzaInicial(ejercicioSugerido(datos.sesiones, ROTACION), datos.sesiones))}>＋ Fuerza</button>}
       {extras.length > 0 && (
         <section class="tarjeta">
@@ -116,6 +119,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
       {metcon
         ? <MetconForm metcon={metcon} onCambio={setMetcon} onQuitar={() => setMetcon(null)} />
         : <button type="button" class="boton" style="margin:12px 0 0 8px" onClick={() => setMetcon({ formato: 'AMRAP', rx: true })}>＋ Metcon</button>}
+      <SelectorMolestias valor={molestias} onCambio={setMolestias} />
       <textarea aria-label="Nota" placeholder="Nota (opcional)" style="margin-top:12px" value={nota} onInput={(e) => setNota((e.target as HTMLTextAreaElement).value)} />
       <div class="fila"><button type="button" class="primario" disabled={guardando || (!fuerza && !metcon && extras.length === 0)} onClick={guardar}>Guardar sesión</button></div>
       {sesionInicial && <BotonBorrar texto='Borrar sesión' onBorrar={async () => { await borrar(sesionInicial.id); escribirBorrador(null); location.hash = '#/historial'; }} />}

@@ -215,3 +215,7 @@ img.ilustracion { display: block; object-fit: contain; }
 .tema-pop .mini-rejilla i.futuro { opacity: 0.4; }
 .tema-pop .mini-rejilla i.hoy { outline: 1.5px solid var(--negro); }
 .tema-pop .mini-rejilla i[style] { outline: 1px solid var(--negro); }
+.tema-pop .molestias { margin-top: 16px; }
+.tema-pop .molestias-zonas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.tema-pop .molestias-zonas .chip[aria-pressed='true'] { background: var(--rosa); }
+.tema-pop .aviso-molestia { margin: 10px 0; padding: 10px 12px; background: #fde3ec; border: var(--borde); border-radius: 12px; box-shadow: var(--sombra-p); font-size: 0.88rem; }
