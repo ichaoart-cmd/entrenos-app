@@ -27,11 +27,13 @@ export async function sincronizarAhora(): Promise<ResultadoSync> {
   await recargar();
   const pendiente = estado.ajustes.value.pendiente;
   estado.estadoSync.value =
-    !r.ok && (r.motivo === 'token' || r.motivo === 'sin-token') ? 'error' : pendiente ? 'pendiente' : 'ok';
+    !r.ok && r.motivo === 'token' ? 'error' : !r.ok && r.motivo === 'sin-token' ? 'ok' : pendiente ? 'pendiente' : 'ok';
   return r;
 }
 
 export async function iniciar(): Promise<void> {
+  // Pide al navegador que no borre los datos por falta de espacio (importante si no hay copia en GitHub).
+  try { void navigator.storage?.persist?.(); } catch { /* no soportado */ }
   await recargar();
   estado.listo.value = true;
   estado.estadoSync.value = estado.ajustes.value.pendiente ? 'pendiente' : 'ok';
@@ -91,4 +93,21 @@ export async function registrarPeso(p: PesoCorporal): Promise<void> {
 }
 export async function quitarPeso(id: string): Promise<void> {
   await borrarPeso(id); await recargar(); estado.estadoSync.value = 'pendiente'; void sincronizarAhora();
+}
+
+/** Importa una copia de seguridad (JSON) y la suma a lo que hay. */
+export async function importar(texto: string): Promise<number> {
+  const { importarCopia } = await import('../domain/exportar');
+  const { conBloqueo, reemplazarDatos, guardarAjustes } = await import('./local');
+  let nuevas = 0;
+  await conBloqueo(async () => {
+    const d = await cargarLocal();
+    const r = importarCopia(d, texto);
+    nuevas = r.sesiones.length + r.carreras.length - d.sesiones.length - d.carreras.length;
+    await reemplazarDatos(r);
+    await guardarAjustes({ pendiente: true });
+  });
+  await recargar();
+  void sincronizarAhora();
+  return nuevas;
 }

@@ -24,7 +24,8 @@ export function Inicio() {
 
   return (
     <main class='pagina'>
-      <div class='fecha-hoy'>{DIAS[ahora.getDay()]}, {ahora.getDate()} de {MESES[ahora.getMonth()]}</div>
+      <div class='fecha-hoy'>{DIAS[ahora.getDay()]}, {ahora.getDate()} de {MESES[ahora.getMonth()]}
+        <a class='beta' href='#/opinion' aria-label='Beta: cuéntame qué tal'>Beta · ¿qué tal?</a></div>
       <h1>¿Hoy qué cae?</h1>
 
       {deHoy.vacio ? (

@@ -254,3 +254,26 @@ img.ilustracion { display: block; object-fit: contain; }
 .tema-pop .bloque-fuerza.siguiente { margin-top: 22px; padding-top: 18px; border-top: 3px dashed var(--negro); }
 .tema-pop .num-bloque { display: inline-block; margin-bottom: 6px; font-family: var(--mono); font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
   background: var(--lila); border: 2px solid var(--negro); border-radius: 999px; padding: 1px 10px; }
+
+/* Beta, bienvenida y opinión */
+.tema-pop .fecha-hoy { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.tema-pop .beta { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; text-decoration: none; color: var(--negro);
+  background: var(--lila); border: 2px solid var(--negro); border-radius: 999px; padding: 2px 10px; box-shadow: 2px 2px 0 var(--negro); }
+.tema-pop .bienvenida { z-index: 60; overflow-y: auto; }
+.tema-pop .bienvenida-contenido { max-width: 520px; margin: 0 auto; padding: 24px 18px 40px; }
+.tema-pop .bienvenida h1 { margin: 10px 0 8px; font-size: 1.9rem; }
+.tema-pop .bienvenida section { margin: 14px 0; padding: 14px; background: var(--blanco); border: var(--borde); border-radius: 14px; box-shadow: var(--sombra-p); }
+.tema-pop .bienvenida section:nth-of-type(1) { background: var(--menta); }
+.tema-pop .bienvenida section:nth-of-type(2) { background: var(--cielo); }
+.tema-pop .bienvenida section:nth-of-type(3) { background: var(--rosa); }
+.tema-pop .bienvenida h2 { margin: 0 0 4px; font-size: 1rem; }
+.tema-pop .bienvenida p { margin: 4px 0; }
+.tema-pop .bienvenida .primario { width: 100%; margin-top: 8px; }
+.tema-pop .avanzado summary { font-family: var(--ancha); font-stretch: 112%; font-weight: 800; text-transform: uppercase; cursor: pointer; }
+.tema-pop .importar { display: inline-flex; align-items: center; cursor: pointer; padding: 0 14px; min-height: 44px; }
+.tema-pop .opinion h3 { margin: 14px 0 6px; font-size: 0.95rem; }
+.tema-pop .opinion h3:first-child { margin-top: 0; }
+.tema-pop .opinion textarea { width: 100%; min-height: 70px; }
+.tema-pop .opinion-opciones { display: flex; flex-wrap: wrap; gap: 6px; }
+.tema-pop .opinion-opciones .chip[aria-pressed='true'] { background: var(--amarillo); }
+.tema-pop .accion.envio { background: #25d366; color: var(--negro); border: var(--borde); border-radius: 12px; padding: 12px 16px; text-decoration: none; font-weight: 800; box-shadow: var(--sombra); }

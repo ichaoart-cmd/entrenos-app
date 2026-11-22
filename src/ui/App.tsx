@@ -8,6 +8,8 @@ import { Progreso } from './Progreso';
 import { IconoNav } from './iconos';
 import { RegistrarCarrera } from './RegistrarCarrera';
 import { Descanso } from './Descanso';
+import { Opinion } from './Opinion';
+import { Bienvenida, debeVerBienvenida } from './Bienvenida';
 
 function rutaActual(): string {
   return typeof location === 'undefined' || !location.hash ? '#/' : location.hash;
@@ -25,6 +27,7 @@ export function usarRuta(): string {
 
 export function App() {
   const ruta = usarRuta();
+  const [bienvenidaCerrada, setBienvenidaCerrada] = useState(false);
   const [base, query = ''] = ruta.split('?');
   let pagina;
   if (base === '#/registrar') {
@@ -41,11 +44,13 @@ export function App() {
     pagina = <RegistrarCarrera key={`${ruta}-${c?.id ?? 'nueva'}-${estado.listo.value}`} carreraInicial={c} fechaInicial={fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : undefined} />;
   } else if (base === '#/historial') pagina = <Historial />;
   else if (base === '#/ajustes') pagina = <Ajustes />;
+  else if (base === '#/opinion') pagina = <Opinion />;
   else if (base === '#/progreso') pagina = <Progreso key={query} ejercicio={new URLSearchParams(query).get('ej') ?? undefined} />;
   else pagina = <Inicio />;
   return (
     <>
       {pagina}
+      {estado.listo.value && !bienvenidaCerrada && debeVerBienvenida(estado.datos.value, estado.ajustes.value) && <Bienvenida onCerrar={() => setBienvenidaCerrada(true)} />}
       <Descanso />
       <nav class="barra">
         {([['#/', 'inicio', 'Inicio'], ['#/historial', 'historial', 'Historial'], ['#/progreso', 'progreso', 'Progreso'], ['#/ajustes', 'ajustes', 'Ajustes']] as const).map(([href, icono, texto]) => (

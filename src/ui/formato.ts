@@ -35,7 +35,7 @@ export function textoSync(estadoSync: EstadoSync, r: ResultadoSync | null): stri
   if (r && !r.ok) {
     if (r.motivo === 'token') return 'Sin subir: revisa el token en Ajustes';
     if (r.motivo === 'limite') return 'GitHub nos ha puesto en pausa un rato; se sube solo luego';
-    if (r.motivo === 'sin-token') return 'Sin subir: pon tu token en Ajustes';
+    if (r.motivo === 'sin-token') return 'Guardado en este móvil ✓';
     return estadoSync === 'ok' ? 'Sin cobertura, pero todo está a salvo' : 'Se sube en cuanto haya cobertura';
   }
   return estadoSync === 'ok' ? 'A salvo en GitHub ✓' : 'Subiendo…';

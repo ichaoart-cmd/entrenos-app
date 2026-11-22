@@ -1,8 +1,18 @@
 import type { Datos } from './types';
+import { fusionar } from './fusion';
 
 /** Copia de seguridad completa. Solo incluye los datos de entrenamiento (nunca ajustes ni token). */
 export function exportarJSON(d: Datos): string {
-  return JSON.stringify({ version: d.version, ejercicios: d.ejercicios, sesiones: d.sesiones, carreras: d.carreras }, null, 2);
+  return JSON.stringify({ version: d.version, ejercicios: d.ejercicios, sesiones: d.sesiones, carreras: d.carreras, ...(d.pesos?.length ? { pesos: d.pesos } : {}) }, null, 2);
+}
+
+/** Suma una copia (texto JSON exportado) a los datos actuales; si un registro está en los dos, gana el más reciente. */
+export function importarCopia(actual: Datos, texto: string): Datos {
+  let c: Partial<Datos>;
+  try { c = JSON.parse(texto); } catch { throw new Error('Ese archivo no es una copia de Entrenos.'); }
+  if (!c || !Array.isArray(c.sesiones) || !Array.isArray(c.carreras)) throw new Error('Ese archivo no es una copia de Entrenos.');
+  const copia: Datos = { version: 1, ejercicios: Array.isArray(c.ejercicios) ? c.ejercicios : [], sesiones: c.sesiones, carreras: c.carreras, ...(Array.isArray(c.pesos) ? { pesos: c.pesos } : {}) };
+  return fusionar(actual, copia);
 }
 
 const celda = (v: unknown) => {
