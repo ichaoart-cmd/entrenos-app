@@ -87,3 +87,14 @@ test('al editar una sesión antigua sin objetivo, el objetivo es lo que se hizo'
   expect(screen.getByText('Objetivo 94 × 5')).toBeTruthy();
   expect(screen.queryByText('No alcanzado')).toBeNull();
 });
+
+test('botón «Repetir la última vez» copia la última sesión de ese ejercicio', async () => {
+  const { render: r, screen: sc, fireEvent: fe } = await import('@testing-library/preact');
+  const { FuerzaForm } = await import('../../src/ui/FuerzaForm');
+  const { sesion } = await import('../fixtures/sesiones');
+  const ses = [sesion('a', '2026-11-01', 'press-banca', 6, [50, 55, 60, 65])];
+  const cambio = vi.fn();
+  r(<FuerzaForm fuerza={{ ejercicio: 'press-banca', reps: 5, series: [52, 57, 62, 67, 72] }} onCambio={cambio} ejercicios={[]} sesiones={ses} onQuitar={() => {}} />);
+  fe.click(sc.getByRole('button', { name: /Repetir la última vez/ }));
+  expect(cambio).toHaveBeenLastCalledWith(expect.objectContaining({ series: [50, 55, 60, 65], reps: 6, objetivo: { series: [50, 55, 60, 65], reps: [6, 6, 6, 6] } }));
+});

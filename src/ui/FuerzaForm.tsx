@@ -9,7 +9,7 @@ import { Stepper } from './componentes/Stepper';
 import { IconoEjercicio, NOMBRE_CORTO } from './iconos';
 import { variantesDe } from '../domain/catalogo';
 import { normalizarReps } from '../domain/reps';
-import { aplicarObjetivo, estadoSerie } from '../domain/objetivo';
+import { aplicarObjetivo, estadoSerie, repetirUltima } from '../domain/objetivo';
 import { descanso, duracionPreferida, iniciarDescanso } from '../store/descanso';
 import { Selector } from './Selector';
 
@@ -52,7 +52,8 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar, a
   fuerza: Fuerza; onCambio: (f: Fuerza) => void; ejercicios: Ejercicio[]; sesiones: Sesion[]; onQuitar: () => void;
   abrirSelector?: boolean;
 }) {
-  const anterior = ultimaFuerza(sesiones, fuerza.ejercicio)?.series;
+  const ultima = ultimaFuerza(sesiones, fuerza.ejercicio);
+  const anterior = ultima?.series;
   const [selector, setSelector] = useState(abrirSelector);
   const obj = objetivoDe(fuerza);
   const repsReales = fuerza.series.map((_, i) => fuerza.repsSeries?.[i] ?? fuerza.reps ?? 5);
@@ -111,6 +112,11 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar, a
       </>}
 
       <h3 class='bloque'>Objetivo</h3>
+      {ultima && (
+        <button type='button' class='repetir' onClick={() => { setTocadas(new Set()); onCambio(repetirUltima(ultima)); }}>
+          ↻ Repetir la última vez <small>{ultima.series.length} series, top {kg(Math.max(...ultima.series))} kg</small>
+        </button>
+      )}
       <div class='etiq'>Serie top (kg)</div>
       <div class='peso-grande'>
         <Stepper etiqueta='Serie top (kg)' valor={top} paso={0.5} onCambio={cambiarTop} />

@@ -164,3 +164,5 @@ img.ilustracion { display: block; object-fit: contain; }
 .tema-pop .descanso button { min-height: 40px; min-width: 44px; padding: 0 10px; font-family: var(--mono); font-weight: 700; }
 .tema-pop .descanso.acabado { background: var(--amarillo); padding: 12px 20px; }
 .tema-pop .descanso.acabado b { font-size: 1.15rem; text-transform: uppercase; }
+.tema-pop .repetir { display: flex; align-items: baseline; gap: 8px; margin: 8px 0 4px; background: var(--lila); font-weight: 700; padding: 8px 14px; }
+.tema-pop .repetir small { font-family: var(--mono); font-weight: 400; font-size: 0.75rem; }
