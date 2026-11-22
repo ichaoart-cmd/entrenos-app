@@ -4,6 +4,7 @@ import { nuevoId } from '../domain/ids';
 import { Stepper } from './componentes/Stepper';
 import { fechaLarga } from './formato';
 import { hoy } from './Registrar';
+import { sonar } from './sonido';
 
 const coma = (n: number) => String(n).replace('.', ',');
 
@@ -18,7 +19,7 @@ export function TarjetaPeso() {
     const h = hoy();
     const deHoy = pesos.find((p) => p.fecha === h);
     await registrarPeso({ id: deHoy?.id ?? nuevoId(), actualizado: '', fecha: h, kg: Math.round(kg * 10) / 10 });
-    setHecho(true); setTimeout(() => setHecho(false), 2000);
+    sonar('guardado'); setHecho(true); setTimeout(() => setHecho(false), 2000);
   };
   return (
     <section class='tarjeta peso-corporal' aria-label='Peso corporal'>

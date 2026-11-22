@@ -49,3 +49,13 @@ test('sonido al pulsar: se puede quitar en Ajustes', () => {
   expect(vib).toHaveBeenCalledTimes(1);
   activarSonido(true);
 });
+
+test('los 3 últimos segundos del descanso suenan', () => {
+  const vib = vi.fn(); Object.defineProperty(navigator, 'vibrate', { value: vib, configurable: true });
+  render(<Descanso />);
+  act(() => iniciarDescanso(10));
+  act(() => { vi.setSystemTime(new Date('2026-11-22T10:00:07.5Z')); vi.advanceTimersByTime(250); });
+  act(() => { vi.setSystemTime(new Date('2026-11-22T10:00:08.5Z')); vi.advanceTimersByTime(250); });
+  act(() => { vi.setSystemTime(new Date('2026-11-22T10:00:09.5Z')); vi.advanceTimersByTime(250); });
+  expect(vib.mock.calls.filter((c) => c[0] === 20)).toHaveLength(3);
+});

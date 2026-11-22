@@ -5,6 +5,7 @@ import { formatearRitmo, formatearTiempo, partirTiempo } from '../domain/carrera
 import { estado, quitarCarrera, registrarCarrera } from '../store/estado';
 import { BotonBorrar } from './componentes/BotonBorrar';
 import { usarPantallaEncendida } from './pantalla';
+import { sonar } from './sonido';
 import { AvisoMolestia, SelectorMolestias } from './Molestias';
 import { Chips } from './componentes/Chips';
 import { Stepper } from './componentes/Stepper';
@@ -63,6 +64,7 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
       setTimeout(() => setAviso(null), 4000);
       return;
     }
+    sonar(mejora ? 'record' : 'guardado');
     setAviso(mejora ? { texto: `Mejor ${mejora.nombre}: ${formatearTiempo(mejora.seg)}`, record: true } : { texto: 'Guardado ✓', record: false });
     setTimeout(() => { location.hash = '#/'; }, 1800);
   };

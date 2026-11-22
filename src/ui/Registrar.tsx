@@ -7,6 +7,7 @@ import { borrar, estado, registrar } from '../store/estado';
 import { BotonBorrar } from './componentes/BotonBorrar';
 import { BENCHMARKS, esMejor, mejorBenchmark } from '../domain/benchmarks';
 import { usarPantallaEncendida } from './pantalla';
+import { sonar } from './sonido';
 import { AvisoMolestia, SelectorMolestias } from './Molestias';
 import { FuerzaForm, fuerzaInicial } from './FuerzaForm';
 import { MetconForm } from './MetconForm';
@@ -95,6 +96,7 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
     const wod = mejoraBenchmark(s, previas);
     setAviso(wod ?? (pr ? textoPR(pr) : 'Guardado ✓'));
     setEsRecord(!!pr || !!wod);
+    sonar(pr || wod ? 'record' : 'guardado');
     setTimeout(() => { location.hash = '#/'; }, 1800);
   };
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import { descanso, pararDescanso, restanteSeg, sumarDescanso } from '../store/descanso';
-import { avisoFin } from './sonido';
+import { avisoFin, sonar } from './sonido';
 import { formatearTiempo } from '../domain/carrera';
 import { usarPantallaEncendida } from './pantalla';
 
@@ -13,9 +13,13 @@ export function Descanso() {
   useEffect(() => {
     if (fin == null) return;
     setAcabado(false);
-    let avisado = false;
+    let avisado = false, ultimo = -1;
     const id = setInterval(() => {
       setTic((x) => x + 1);
+      const r = restanteSeg();
+      // Cuenta atrás audible en los 3 últimos segundos.
+      if (r !== ultimo && r >= 1 && r <= 3) sonar('cuenta');
+      ultimo = r;
       if (!avisado && restanteSeg() === 0) {
         avisado = true; setAcabado(true); avisoFin();
         setTimeout(() => { pararDescanso(); setAcabado(false); }, 3500);
