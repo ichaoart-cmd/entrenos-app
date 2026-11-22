@@ -15,3 +15,10 @@ test('rampa con historial de una sola serie usa la regla del 80 %', () => {
 test('la última serie es exactamente la top aunque no sea múltiplo de 0,5', () => {
   expect(generarRampa(82.3).at(-1)).toBe(82.3);
 });
+
+test('rampa con número de series elegido conserva el salto anterior', () => {
+  expect(generarRampa(96, [74, 79, 84, 89, 94], 3)).toEqual([86, 91, 96]);
+});
+test('rampa sin historial con 3 series', () => {
+  expect(generarRampa(100, undefined, 3)).toEqual([80, 90, 100]);
+});
