@@ -30,6 +30,7 @@ test('quitar la fuerza visible al editar conserva los otros bloques', async () =
 });
 
 test('el borrador del registro sobrevive a salir de la pantalla y se borra al guardar', async () => {
+  estado.listo.value = true;
   render(<Registrar />);
   fireEvent.input(screen.getByLabelText('Serie top (kg)'), { target: { value: '77' } });
   cleanup();

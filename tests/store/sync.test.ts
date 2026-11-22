@@ -5,7 +5,7 @@ import type { Datos } from '../../src/domain/types';
 import { sesion } from '../fixtures/sesiones';
 import { codificar } from '../../src/store/github';
 
-type Resp = { status: number; body?: unknown };
+type Resp = { status: number; body?: unknown; headers?: Record<string, string> };
 let respuestas: Resp[] = [];
 let llamadas: { method: string; body?: any }[] = [];
 
@@ -21,7 +21,7 @@ beforeEach(async () => {
     const r = respuestas.shift();
     if (!r) throw new Error('sin respuesta preparada');
     if (r.status === -1) throw new TypeError('Failed to fetch');
-    return new Response(r.body === undefined ? null : JSON.stringify(r.body), { status: r.status });
+    return new Response(r.body === undefined ? null : JSON.stringify(r.body), { status: r.status, headers: r.headers });
   }));
 });
 afterEach(() => vi.unstubAllGlobals());
@@ -103,4 +103,12 @@ test('sin cambios no escribe', async () => {
   respuestas = [remoto({ ...vacio, sesiones: [s] })];
   expect(await sincronizar()).toEqual({ ok: true });
   expect(llamadas.map((l) => l.method)).toEqual(['GET']);
+});
+
+test('limite-de-github-no-es-problema-de-token', async () => {
+  await guardarAjustes({ token: 't' });
+  respuestas = [{ status: 403, headers: { 'x-ratelimit-remaining': '0' } }];
+  expect(await sincronizar()).toEqual({ ok: false, motivo: 'limite' });
+  respuestas = [{ status: 429 }];
+  expect(await sincronizar()).toEqual({ ok: false, motivo: 'limite' });
 });

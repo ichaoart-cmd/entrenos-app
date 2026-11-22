@@ -32,12 +32,12 @@ export function App() {
     const fecha = q.get('fecha');
     const ej = q.get('ej');
     const s = id ? estado.datos.value.sesiones.find((x) => x.id === id) : undefined;
-    pagina = <Registrar key={`${ruta}-${s?.id ?? 'nueva'}`} sesionInicial={s} fechaInicial={fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : undefined} ejercicioInicial={ej ?? undefined} abrirSelector={q.get('elegir') === '1'} />;
+    pagina = <Registrar key={`${ruta}-${s?.id ?? 'nueva'}-${estado.listo.value}`} sesionInicial={s} fechaInicial={fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : undefined} ejercicioInicial={ej ?? undefined} abrirSelector={q.get('elegir') === '1'} />;
   } else if (base === '#/carrera') {
     const q = new URLSearchParams(query);
     const id = q.get('id'), fecha = q.get('fecha');
     const c = id ? estado.datos.value.carreras.find((x) => x.id === id) : undefined;
-    pagina = <RegistrarCarrera key={`${ruta}-${c?.id ?? 'nueva'}`} carreraInicial={c} fechaInicial={fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : undefined} />;
+    pagina = <RegistrarCarrera key={`${ruta}-${c?.id ?? 'nueva'}-${estado.listo.value}`} carreraInicial={c} fechaInicial={fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : undefined} />;
   } else if (base === '#/historial') pagina = <Historial />;
   else if (base === '#/ajustes') pagina = <Ajustes />;
   else if (base === '#/progreso') pagina = <Progreso key={query} ejercicio={new URLSearchParams(query).get('ej') ?? undefined} />;

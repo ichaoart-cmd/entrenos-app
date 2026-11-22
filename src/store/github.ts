@@ -3,7 +3,13 @@ import type { Datos } from '../domain/types';
 export const URL_DATOS = 'https://api.github.com/repos/ichaoart-cmd/entrenos-data/contents/data/entrenos.json';
 
 export class ErrorGitHub extends Error {
-  constructor(public status: number) { super(`GitHub ${status}`); }
+  constructor(public status: number, public limite = false) { super(`GitHub ${status}`); }
+}
+
+/** 429, o 403 con el cupo agotado: GitHub nos frena un rato; no es culpa del token. */
+function error(r: Response): ErrorGitHub {
+  const limite = r.status === 429 || (r.status === 403 && r.headers.get('x-ratelimit-remaining') === '0');
+  return new ErrorGitHub(r.status, limite);
 }
 
 export function codificar(d: Datos): string {
@@ -25,7 +31,7 @@ function cabeceras(token: string): HeadersInit {
 export async function leerRemoto(token: string): Promise<{ datos: Datos; sha: string } | null> {
   const r = await fetch(URL_DATOS, { headers: cabeceras(token), cache: 'no-store' });
   if (r.status === 404) return null;
-  if (!r.ok) throw new ErrorGitHub(r.status);
+  if (!r.ok) throw error(r);
   const j = await r.json();
   return { datos: decodificar(j.content), sha: j.sha };
 }
@@ -36,7 +42,7 @@ export async function escribirRemoto(token: string, datos: Datos, sha: string | 
     headers: cabeceras(token),
     body: JSON.stringify({ message: mensaje, content: codificar(datos), ...(sha ? { sha } : {}) }),
   });
-  if (!r.ok) throw new ErrorGitHub(r.status);
+  if (!r.ok) throw error(r);
   const j = await r.json();
   return j.content.sha;
 }

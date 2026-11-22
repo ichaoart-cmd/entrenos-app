@@ -2,7 +2,7 @@ import { fusionar } from '../domain/fusion';
 import { ErrorGitHub, escribirRemoto, leerRemoto } from './github';
 import { cargarAjustes, cargarLocal, conBloqueo, guardarAjustes, reemplazarDatos } from './local';
 
-export type ResultadoSync = { ok: true } | { ok: false; motivo: 'sin-token' | 'token' | 'red' | 'conflicto' };
+export type ResultadoSync = { ok: true } | { ok: false; motivo: 'sin-token' | 'token' | 'limite' | 'red' | 'conflicto' };
 
 const canon = (x: unknown) => JSON.stringify(x);
 
@@ -37,6 +37,7 @@ export async function sincronizar(): Promise<ResultadoSync> {
       return { ok: true };
     } catch (e) {
       if (e instanceof ErrorGitHub) {
+        if (e.limite) return { ok: false, motivo: 'limite' };
         // 404 aquí = el token no tiene acceso al repo de datos (el GET 404 ya se trata como "archivo nuevo").
         if (e.status === 401 || e.status === 403 || e.status === 404) return { ok: false, motivo: 'token' };
         if (e.status === 409 || e.status === 422) continue;

@@ -49,7 +49,15 @@ export function RegistrarCarrera({ carreraInicial, fechaInicial }: { carreraInic
     if (esfuerzo) c.esfuerzo = Number(esfuerzo); else delete c.esfuerzo;
     if (fc > 0) c.fcMedia = Math.round(fc); else delete c.fcMedia;
     if (desnivel > 0) c.desnivelM = Math.round(desnivel); else delete c.desnivelM;
-    const mejora = await registrarCarrera(c);
+    let mejora;
+    try {
+      mejora = await registrarCarrera(c);
+    } catch {
+      setAviso({ texto: 'No se pudo guardar. Inténtalo otra vez.', record: false });
+      setGuardando(false);
+      setTimeout(() => setAviso(null), 4000);
+      return;
+    }
     setAviso(mejora ? { texto: `Mejor ${mejora.nombre}: ${formatearTiempo(mejora.seg)}`, record: true } : { texto: 'Guardado ✓', record: false });
     setTimeout(() => { location.hash = '#/'; }, 1800);
   };

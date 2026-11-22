@@ -12,6 +12,8 @@ export const estado = {
   ajustes: signal<Ajustes>({ pendiente: false, minSesionesSemana: 3 }),
   estadoSync: signal<EstadoSync>('ok'),
   ultimoResultado: signal<ResultadoSync | null>(null),
+  /** true cuando ya se han leído los datos guardados en el móvil. */
+  listo: signal(false),
 };
 
 async function recargar(): Promise<void> {
@@ -31,6 +33,7 @@ export async function sincronizarAhora(): Promise<ResultadoSync> {
 
 export async function iniciar(): Promise<void> {
   await recargar();
+  estado.listo.value = true;
   estado.estadoSync.value = estado.ajustes.value.pendiente ? 'pendiente' : 'ok';
   void sincronizarAhora();
   addEventListener('online', () => void sincronizarAhora());

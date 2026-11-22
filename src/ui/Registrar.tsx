@@ -53,7 +53,8 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
   const [esRecord, setEsRecord] = useState(false);
 
   useEffect(() => {
-    if (!sesionInicial && !guardando) escribirBorrador({ fecha, lugar, fuerza, metcon, nota });
+    // Antes de tener los datos no se guarda borrador: lo calculado aún no es fiable y la pantalla se rehará.
+    if (!sesionInicial && !guardando && estado.listo.value) escribirBorrador({ fecha, lugar, fuerza, metcon, nota });
   }, [fecha, lugar, fuerza, metcon, nota]);
 
   const guardar = async () => {
@@ -64,7 +65,16 @@ export function Registrar({ sesionInicial, fechaInicial, ejercicioInicial, abrir
       fuerza: [...(fuerza ? [fuerza] : []), ...extras],
       ...(metcon ? { metcon } : {}), ...(nota.trim() ? { nota: nota.trim() } : {}),
     };
-    const pr = await registrar(s);
+    let pr;
+    try {
+      pr = await registrar(s);
+    } catch {
+      setAviso('No se pudo guardar. Inténtalo otra vez; lo que has puesto sigue aquí.');
+      setEsRecord(false);
+      setGuardando(false);
+      setTimeout(() => setAviso(null), 4000);
+      return;
+    }
     if (!sesionInicial) escribirBorrador(null);
     setAviso(pr ? textoPR(pr) : 'Guardado ✓');
     setEsRecord(!!pr);

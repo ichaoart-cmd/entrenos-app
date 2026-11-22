@@ -259,3 +259,4 @@ h3.bloque { font-family: var(--serif); font-weight: 500; font-size: 1.15rem; mar
 .etiq small { font-size: 0.75rem; }
 .minis.datos-carrera { grid-template-columns: 1fr; }
 .datos-carrera .stepper input { width: 64px; }
+.stepper input.invalido { color: var(--error); text-decoration: underline wavy var(--error); }
