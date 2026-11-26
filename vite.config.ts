@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => mode === 'vista-previa' ? {
         icons: [
           { src: 'icono-pop-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icono-pop-512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'icono-pop-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: 'icono-pop-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
         // Accesos directos al mantener pulsado el icono (Android muestra hasta 4).
         shortcuts: [
