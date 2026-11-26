@@ -260,3 +260,61 @@ h3.bloque { font-family: var(--serif); font-weight: 500; font-size: 1.15rem; mar
 .minis.datos-carrera { grid-template-columns: 1fr; }
 .datos-carrera .stepper input { width: 64px; }
 .stepper input.invalido { color: var(--error); text-decoration: underline wavy var(--error); }
+.resumen-peso { flex-wrap: wrap; align-items: flex-start; }
+.resumen-peso .estimados { flex-wrap: wrap; width: 100%; gap: 8px; }
+.resumen-peso .estimados span { flex: 1 1 28%; }
+.peso-corporal input[type='date'] { flex: 1; min-height: 44px; }
+.barra-montada { width: 100%; height: auto; display: block; margin: 10px 0 4px; }
+.por-lado { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin: 4px 0 0; }
+.por-lado small { font-family: var(--mono); text-transform: uppercase; font-size: 0.72rem; color: var(--suave); }
+.por-lado b { font-size: 1.5rem; }
+.tabla-porcentajes { display: flex; flex-direction: column; }
+.fila-porcentaje { display: grid; grid-template-columns: 3.6rem auto 1fr; align-items: baseline; gap: 10px; text-align: left; background: none; border: 0; border-bottom: 1.5px dashed var(--linea, #0003); padding: 10px 4px; min-height: 44px; font: inherit; color: inherit; cursor: pointer; }
+.fila-porcentaje:last-child { border-bottom: 0; }
+.fila-porcentaje .p { font-family: var(--mono); font-weight: 700; }
+.fila-porcentaje b { font-size: 1.1rem; }
+.fila-porcentaje small { text-align: right; color: var(--suave); font-size: 0.78rem; }
+.fila-porcentaje[aria-pressed='true'] { background: var(--amarillo, #f4c430); border-radius: 8px; }
+.discos-series { margin: 6px 0 4px; }
+.discos-series ul { list-style: none; padding: 0; margin: 6px 0; }
+.discos-series li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1.5px dashed var(--linea, #0003); }
+.discos-series li span { font-family: var(--mono); font-size: 0.85rem; }
+.enlace-discos { display: inline-block; margin: 10px 0 0; font-weight: 700; color: inherit; }
+/* Logros */
+.medalla { position: relative; display: inline-grid; place-items: center; flex: none; border-radius: 50%; border: 3px solid #141414; box-shadow: 3px 3px 0 #141414; background: #f4c430; --halo: #f4c430; overflow: visible; }
+.medalla.bronce { background: #e8a978; --halo: #e8a978; }
+.medalla.plata { background: #dfe3ea; --halo: #dfe3ea; }
+.medalla.oro { background: #f4c430; --halo: #f4c430; }
+.medalla .ilustracion { border-radius: 50%; }
+.medalla.bloqueada { background: #e9e4d8; --halo: #e9e4d8; box-shadow: none; border-style: dashed; }
+.medalla.bloqueada > :first-child { filter: grayscale(1); opacity: 0.35; }
+.medalla .candado { position: absolute; right: -4px; bottom: -4px; background: #fffdf7; border: 2px solid #141414; border-radius: 50%; padding: 3px; width: 26px; height: 26px; box-sizing: border-box; }
+.tarjeta-logros .medalla { margin-right: 4px; }
+.marcador { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--mono); background: #141414; color: #f4c430; border-radius: 12px; padding: 10px 16px; margin: 4px 0 12px; }
+.marcador span { font-size: 0.8rem; letter-spacing: 0.15em; }
+.marcador b { font-size: 1.8rem; }
+.rejilla-logros { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.logro { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; padding: 14px 8px; border: 2.5px solid #141414; border-radius: 14px; background: #fffdf7; box-shadow: 3px 3px 0 #141414; }
+.logro.bloqueado { box-shadow: none; background: transparent; border-style: dashed; }
+.logro b { margin-top: 6px; line-height: 1.15; }
+.logro small { color: var(--suave); font-size: 0.75rem; line-height: 1.25; }
+.logro .cuando { font-family: var(--mono); color: #141414; }
+.progreso-logro { position: relative; display: block; width: 100%; height: 18px; border: 2px solid #141414; border-radius: 6px; background: #fffdf7; overflow: hidden; margin-top: 4px; }
+.progreso-logro i { position: absolute; inset: 0 auto 0 0; background: #a9dcb8; border-right: 2px solid #141414; }
+.progreso-logro small { position: relative; font-family: var(--mono); font-size: 0.68rem; color: #141414; line-height: 14px; }
+.celebracion-logro { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 20px; background: rgba(20, 20, 20, 0.75); }
+.celebracion-logro .caja { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; max-width: 340px; width: 100%; padding: 24px 18px; background: #fffdf7; border: 3px solid #141414; border-radius: 18px; box-shadow: 6px 6px 0 #f4c430; }
+.celebracion-logro .caja .medalla { animation: bote 0.8s steps(2) infinite; margin: 8px 0; }
+.celebracion-logro h2 { margin: 6px 0 0; }
+.celebracion-logro .acciones-logro { display: flex; flex-direction: column; gap: 12px; align-items: center; margin-top: 8px; }
+.celebracion-logro .boton { display: inline-flex; align-items: center; padding: 0 18px; min-height: 44px; text-decoration: none; }
+.parpadeo { font-family: var(--mono); font-weight: 700; letter-spacing: 0.08em; margin: 0; animation: parpadeo 1s steps(2) infinite; }
+@keyframes parpadeo { 50% { opacity: 0; } }
+@keyframes bote { 50% { transform: translateY(-6px) rotate(-4deg); } }
+/* Resumen del mes */
+.calendario-mini { display: grid; place-items: center; background: #f4c430; }
+.calendario-mini b { font-size: 1.3rem; font-family: var(--mono); }
+.selector-mes { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 12px; }
+.selector-mes b { text-transform: capitalize; font-size: 1.1rem; }
+.selector-mes button { min-width: 44px; min-height: 44px; font-size: 1.4rem; }
+.lienzo img { width: 100%; height: auto; display: block; border-radius: 12px; }

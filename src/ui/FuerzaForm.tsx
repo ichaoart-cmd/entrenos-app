@@ -1,5 +1,7 @@
 import { useState } from 'preact/hooks';
 import type { Ejercicio, Fuerza, Objetivo, Sesion } from '../domain/types';
+import { BARRAS, conBarra, discosPorLado } from '../domain/discos';
+import { barraPreferida, guardarBarra, textoLado } from './Discos';
 import { generarRampa } from '../domain/rampa';
 import { parsearKg } from '../domain/numeros';
 import { ROTACION, ultimaFuerza } from '../domain/records';
@@ -55,6 +57,8 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar, a
   const ultima = ultimaFuerza(sesiones, fuerza.ejercicio);
   const anterior = ultima?.series;
   const [selector, setSelector] = useState(abrirSelector);
+  const [verDiscos, setVerDiscos] = useState(false);
+  const [barra, setBarra] = useState(barraPreferida);
   const obj = objetivoDe(fuerza);
   const repsReales = fuerza.series.map((_, i) => fuerza.repsSeries?.[i] ?? fuerza.reps ?? 5);
   // Series ajustadas a mano: ya no siguen al objetivo. Al abrir, las que difieren del objetivo guardado.
@@ -125,6 +129,15 @@ export function FuerzaForm({ fuerza, onCambio, ejercicios, sesiones, onQuitar, a
         <Stepper etiqueta='Reps' valor={repsObj} paso={1} min={1} onCambio={cambiarRepsObjetivo} />
         <Stepper etiqueta='Series' valor={fuerza.series.length} paso={1} min={1} onCambio={cambiarNumero} />
       </div>
+      {conBarra(fuerza.ejercicio) && obj.series.length > 0 && (
+        <div class='discos-series'>
+          <button type='button' class='enlace' aria-expanded={verDiscos} onClick={() => setVerDiscos(!verDiscos)}>{verDiscos ? 'Ocultar discos' : 'Qué discos cargo'}</button>
+          {verDiscos && <ul>
+            {obj.series.map((v, i) => <li><span>{i === obj.series.length - 1 ? 'Top' : `${i + 1}ª`} · {kg(v)} kg</span><b>{textoLado(discosPorLado(v, barra).lado)}</b></li>)}
+          </ul>}
+          {verDiscos && <Chips etiqueta='Barra' opciones={BARRAS.map((b) => ({ valor: String(b), texto: `Barra ${b}` }))} valor={String(barra)} onCambio={(v) => { setBarra(Number(v)); guardarBarra(Number(v)); }} />}
+        </div>
+      )}
 
       <div class='etiq'>Tempo de bajada</div>
       <div class='chips' role='group' aria-label='Bajada'>

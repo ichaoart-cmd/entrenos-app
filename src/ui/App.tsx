@@ -10,6 +10,9 @@ import { RegistrarCarrera } from './RegistrarCarrera';
 import { Descanso } from './Descanso';
 import { Opinion } from './Opinion';
 import { Bienvenida, debeVerBienvenida } from './Bienvenida';
+import { Discos } from './Discos';
+import { CelebracionLogro, Vitrina } from './Logros';
+import { Resumen } from './Resumen';
 
 function rutaActual(): string {
   return typeof location === 'undefined' || !location.hash ? '#/' : location.hash;
@@ -45,6 +48,9 @@ export function App() {
   } else if (base === '#/historial') pagina = <Historial />;
   else if (base === '#/ajustes') pagina = <Ajustes />;
   else if (base === '#/opinion') pagina = <Opinion />;
+  else if (base === '#/logros') pagina = <Vitrina />;
+  else if (base === '#/resumen') pagina = <Resumen key={query} mes={new URLSearchParams(query).get('mes') ?? undefined} />;
+  else if (base === '#/discos') { const q = new URLSearchParams(query); pagina = <Discos key={query} ej={q.get('ej') ?? undefined} kg={Number(q.get('kg')) || undefined} />; }
   else if (base === '#/progreso') pagina = <Progreso key={query} ejercicio={new URLSearchParams(query).get('ej') ?? undefined} />;
   else pagina = <Inicio />;
   return (
@@ -52,6 +58,7 @@ export function App() {
       {pagina}
       {estado.listo.value && !bienvenidaCerrada && debeVerBienvenida(estado.datos.value, estado.ajustes.value) && <Bienvenida onCerrar={() => setBienvenidaCerrada(true)} />}
       <Descanso />
+      <CelebracionLogro />
       <nav class="barra">
         {([['#/', 'inicio', 'Inicio'], ['#/historial', 'historial', 'Historial'], ['#/progreso', 'progreso', 'Progreso'], ['#/ajustes', 'ajustes', 'Ajustes']] as const).map(([href, icono, texto]) => (
           <a href={href} aria-current={base === href || (href === '#/' && (base === '#/registrar' || base === '#/carrera')) ? 'page' : undefined}>
