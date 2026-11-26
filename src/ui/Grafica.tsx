@@ -13,7 +13,7 @@ const dia = (f: string) => Date.parse(f) / 864e5;
 const kg = (n: number) => String(Math.round(n * 2) / 2).replace('.', ',');
 const fechaCorta = (f: string) => `${Number(f.slice(8))} ${MESES[Number(f.slice(5, 7)) - 1]} ${f.slice(2, 4)}`;
 
-function pasoBonito(rango: number): number {
+export function pasoBonito(rango: number): number {
   const bruto = rango / 4, mag = 10 ** Math.floor(Math.log10(bruto));
   return [1, 2, 2.5, 5, 10].map((m) => m * mag).find((p) => p >= bruto) ?? 10 * mag;
 }

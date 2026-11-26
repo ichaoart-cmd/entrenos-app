@@ -27,6 +27,13 @@ export default defineConfig(({ mode }) => mode === 'vista-previa' ? {
           { src: 'icono-pop-512.png', sizes: '512x512', type: 'image/png' },
           { src: 'icono-pop-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
+        // Accesos directos al mantener pulsado el icono (Android muestra hasta 4).
+        shortcuts: [
+          { name: 'Registrar fuerza', short_name: 'Fuerza', url: '/entrenos-app/#/registrar', icons: [{ src: 'atajo-fuerza.png', sizes: '96x96', type: 'image/png' }] },
+          { name: 'Apuntar carrera', short_name: 'Carrera', url: '/entrenos-app/#/carrera', icons: [{ src: 'atajo-carrera.png', sizes: '96x96', type: 'image/png' }] },
+          { name: 'Apuntar peso', short_name: 'Peso', url: '/entrenos-app/#/progreso?ej=peso', icons: [{ src: 'atajo-peso.png', sizes: '96x96', type: 'image/png' }] },
+          { name: 'Calculadora de discos', short_name: 'Discos', url: '/entrenos-app/#/discos', icons: [{ src: 'atajo-discos.png', sizes: '96x96', type: 'image/png' }] },
+        ],
       },
     }),
   ],

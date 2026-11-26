@@ -8,6 +8,7 @@ const B = (y: number, x1 = 8, x2 = 40) => `<line x1="${x1}" y1="${y}" x2="${x2}"
 const SUELO = `<line x1="6" y1="44.5" x2="42" y2="44.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity=".3"/>`;
 
 export const ICONOS: Record<string, string> = {
+  'bascula': `<rect x="7" y="9" width="34" height="33" rx="8" fill="none" stroke="currentColor" stroke-width="4"/><path d="M15 23a9 9 0 0 1 18 0" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><line x1="24" y1="23" x2="28.5" y2="16.5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="23" r="2.6" fill="currentColor"/><line x1="16" y1="34" x2="32" y2="34" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".45"/>`,
   'correr': SUELO + H(29, 8) + L('28,14 22,26', 4) + L('27,16 33,21 37,17', 3.6) + L('26,17 19,20 15,16', 3.6) + L('22,26 30,32 28,43') + L('22,26 16,34 8,32'),
   'dominadas': `<line x1="6" y1="5" x2="42" y2="5" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>` + L('15,5 18,19', 3.8) + L('33,5 30,19', 3.8) + H(24, 14) + L('18,19 30,19', 4) + L('24,19 24,31') + L('24,31 22,43') + L('24,31 26,43'),
   'remo': SUELO + H(10, 17) + L('14,19 30,21') + L('30,21 33,31 31,43') + L('31,43 36,43', 4) + L('19,20 20,27', 3.6) + D(20, 34, 5.5),

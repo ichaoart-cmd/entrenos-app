@@ -1,30 +1,29 @@
 import { useState } from 'preact/hooks';
 import { estado } from '../store/estado';
 import { ROTACION, recordsPorReps } from '../domain/records';
-import { e1rm, esFiable, rmEstimado } from '../domain/rm';
+import { rmEstimado } from '../domain/rm';
 import { filtrarPorTempo, serieProgreso, type FiltroTempo } from '../domain/progreso';
 import { FichaCarrera, TarjetaCarrera } from './ProgresoCarrera';
 import { FichaMetcon, TarjetaMetcon } from './ProgresoMetcon';
-import { TarjetaPeso } from './PesoCorporal';
+import { FichaPeso, TarjetaPeso } from './PesoCorporal';
 import { Reparto } from './Reparto';
+import { TarjetaLogros } from './Logros';
+import { TarjetaResumen } from './Resumen';
 import { POOLS, delDia } from './frases';
-import { fuerzaRelativa, pesoEn } from '../domain/peso';
+import { fuerzaRelativa, mejor1RM, pesoEn } from '../domain/peso';
 import { CATALOGO, entrada } from '../domain/catalogo';
 import { fechaLarga } from './formato';
 import { IconoEjercicio } from './iconos';
 import { Grafica } from './Grafica';
 import { Chips } from './componentes/Chips';
+import { conBarra } from '../domain/discos';
 
 const kg = (n: number) => String(Math.round(n * 2) / 2).replace('.', ',');
 type Periodo = '6m' | '1a' | 'todo';
 
-function mejor1RM(sesiones: any, id: string) {
-  const r = [...recordsPorReps(sesiones, id).values()].filter((m) => esFiable(m.reps));
-  return r.reduce<number | null>((a, m) => Math.max(a ?? 0, e1rm(m.kg, m.reps)), null);
-}
-
 export function Progreso({ ejercicio }: { ejercicio?: string }) {
   if (ejercicio === 'carrera') return <FichaCarrera />;
+  if (ejercicio === 'peso') return <FichaPeso />;
   if (ejercicio === 'metcon') return <FichaMetcon />;
   return ejercicio ? <Ficha id={ejercicio} /> : <Lista />;
 }
@@ -40,6 +39,8 @@ function Lista() {
     <main class='pagina'>
       <h1>Progreso</h1>
       <p class='subtitulo'>{delDia('subProgreso', POOLS.subProgreso)}</p>
+      <TarjetaResumen />
+      <TarjetaLogros />
       <Reparto />
       <TarjetaCarrera />
       <TarjetaMetcon />
@@ -104,6 +105,7 @@ function Ficha({ id }: { id: string }) {
           </table>
         )}
       </div>
+      {conBarra(id) && rm != null && <a class='enlace-discos' href={`#/discos?ej=${id}`}>Porcentajes y discos →</a>}
       <h2>Récords por repeticiones</h2>
       <div class='marcas'>
         {records.map((m) => <span title={fechaLarga(m.fecha)}>{m.reps}RM {kg(m.kg)} kg</span>)}
