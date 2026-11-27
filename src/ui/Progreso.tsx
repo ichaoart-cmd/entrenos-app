@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks';
 import { estado } from '../store/estado';
 import { ROTACION, recordsPorReps } from '../domain/records';
 import { rmEstimado } from '../domain/rm';
-import { filtrarPorTempo, serieProgreso, type FiltroTempo } from '../domain/progreso';
+import { filtrarPorTempo, serieProgreso, temposUsados, textoTempo, type FiltroTempo } from '../domain/progreso';
 import { FichaCarrera, TarjetaCarrera } from './ProgresoCarrera';
 import { FichaMetcon, TarjetaMetcon } from './ProgresoMetcon';
 import { FichaPeso, TarjetaPeso } from './PesoCorporal';
@@ -66,6 +66,11 @@ function Ficha({ id }: { id: string }) {
   const peso = pesoEn(estado.datos.value.pesos ?? [], new Date().toISOString().slice(0, 10));
   const todas = estado.datos.value.sesiones;
   const sesiones = filtrarPorTempo(todas, id, tempo);
+  const tempos = temposUsados(todas, id);
+  const haySin = serieProgreso(filtrarPorTempo(todas, id, 'sin'), id).length > 0;
+  const opcionesTempo = [{ valor: 'todas', texto: 'Todas' }, ...(haySin ? [{ valor: 'sin', texto: 'Sin tempo' }] : []),
+    ...(tempos.length > 1 ? [{ valor: 'con', texto: 'Con tempo' }] : []), ...tempos.map((t) => ({ valor: t, texto: textoTempo(t) }))];
+  const sufijoTempo = tempo === 'todas' ? '' : tempo === 'sin' ? ' sin tempo' : tempo === 'con' ? ' con tempo' : ` a ${textoTempo(tempo)}`;
   const nombre = entrada(id)?.nombre ?? id;
   const todos = serieProgreso(sesiones, id);
   const corte = periodo === 'todo' ? '' : new Date(Date.now() - (periodo === '6m' ? 183 : 365) * 864e5).toISOString().slice(0, 10);
@@ -81,16 +86,15 @@ function Ficha({ id }: { id: string }) {
       </div>
       {rm != null && (
         <div class='tarjeta resumen-rm'>
-          <div><b>{Math.round(rm)} kg</b><span>1RM estimado{tempo === 'sin' ? ' sin tempo' : tempo === 'con' ? ' con tempo' : ''}</span>
+          <div><b>{Math.round(rm)} kg</b><span>1RM estimado{sufijoTempo}</span>
             {peso != null && <span class='relativa'>{String(fuerzaRelativa(rm, peso)).replace('.', ',')} × tu peso</span>}</div>
           <div class='estimados'>
             {[3, 5, 8, 10].map((r) => <span><small>{r}RM</small>{kg(rmEstimado(rm, r))}</span>)}
           </div>
         </div>
       )}
-      {serieProgreso(filtrarPorTempo(todas, id, 'con'), id).length > 0 && (
-        <Chips etiqueta='Tempo' opciones={[{ valor: 'todas', texto: 'Todas' }, { valor: 'sin', texto: 'Sin tempo' }, { valor: 'con', texto: 'Con tempo' }]}
-          valor={tempo} onCambio={(v) => setTempo(v as FiltroTempo)} />
+      {tempos.length > 0 && (
+        <Chips etiqueta='Tempo' opciones={opcionesTempo} valor={tempo} onCambio={(v) => setTempo(v as FiltroTempo)} />
       )}
       <Chips etiqueta='Periodo' opciones={[{ valor: '6m', texto: '6 meses' }, { valor: '1a', texto: '1 año' }, { valor: 'todo', texto: 'Todo' }]}
         valor={periodo} onCambio={(v) => setPeriodo(v as Periodo)} />
