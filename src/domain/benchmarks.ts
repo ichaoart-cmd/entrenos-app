@@ -40,6 +40,14 @@ export const MOVIMIENTOS: { id: string; nombre: string; ilustracion: string }[] 
   { id: 'cuerda', nombre: 'Cuerda', ilustracion: 'cuerda' },
   { id: 'fondos-anillas', nombre: 'Anillas', ilustracion: 'anillas' },
   { id: 'abdominales', nombre: 'Abdominales', ilustracion: 'burpee' },
+  { id: 'press-banca-manc', nombre: 'Press banca manc.', ilustracion: 'press-banca' },
+  { id: 'goblet-squat', nombre: 'Goblet squat', ilustracion: 'sentadilla' },
+  { id: 'zancadas', nombre: 'Zancadas', ilustracion: 'zancada' },
+  { id: 'db-snatch', nombre: 'DB snatch', ilustracion: 'overhead' },
+  { id: 'push-press', nombre: 'Push press / jerk', ilustracion: 'press-hombro' },
+  { id: 'devil-press', nombre: 'Devil press', ilustracion: 'burpee' },
+  { id: 'toes-to-bar', nombre: 'Toes to bar', ilustracion: 'dominadas' },
+  { id: 'bici-ski', nombre: 'Bici / ski', ilustracion: 'remo-ergo' },
 ];
 
 /** Número para comparar: segundos (tiempo) o rondas×1000+reps. null si no se entiende. */
