@@ -23,3 +23,9 @@ test('mejor marca: prefiere RX; historial ordenado', () => {
   expect(historialBenchmark(s, 'fran').map((h) => h.valor)).toEqual(['6:12', '5:40', '4:50']);
   expect(mejorBenchmark(s, 'grace')).toBeNull();
 });
+
+test('hay press banca con mancuernas y goblet squat para el Metcon, sin ids repetidos', () => {
+  expect(MOVIMIENTOS.find((m) => m.id === 'press-banca-manc')?.ilustracion).toBe('press-banca');
+  expect(MOVIMIENTOS.find((m) => m.id === 'goblet-squat')).toBeTruthy();
+  expect(new Set(MOVIMIENTOS.map((m) => m.id)).size).toBe(MOVIMIENTOS.length);
+});
