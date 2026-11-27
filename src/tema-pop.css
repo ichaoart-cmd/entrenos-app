@@ -89,6 +89,7 @@ html.tema-pop {
 .tema-pop .cal-dia.con-tipo span { border-radius: 6px; inset: 5px; border: 2px solid var(--negro); font-weight: 800; }
 .tema-pop .cal-dia.hoy { box-shadow: 0 0 0 2px var(--negro), 3px 3px 0 2px var(--negro); background: var(--amarillo); }
 .tema-pop .cal-dia.hoy.con-tipo { background: var(--anillo); } /* hoy no tapa los colores del tipo de entreno */
+.tema-pop .cal-dia.hoy.con-tipo span { background: var(--amarillo); } /* hoy: centro amarillo, anillo por fuera */
 .tema-pop .cal-dia.record::after { color: var(--amarillo); text-shadow: -1px -1px 0 var(--negro), 1px -1px 0 var(--negro), -1px 1px 0 var(--negro), 1px 1px 0 var(--negro); font-size: 15px; }
 .tema-pop .cal-leyenda { color: var(--negro); }
 .tema-pop .cal-leyenda i { border-radius: 3px; border: 1.5px solid var(--negro); }
