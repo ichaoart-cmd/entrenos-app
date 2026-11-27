@@ -164,7 +164,7 @@ export function FichaPeso() {
           <p class='suave' style='margin:0 0 6px'>Tu 1RM estimado dividido entre lo que pesas. Si sube, eres más fuerte para tu tamaño, aunque cambie la báscula.</p>
           {relativas.map((x) => (
             <div><span>{entrada(x.id)?.nombre ?? x.id}</span><b>{coma2(x.ahora)} ×</b>
-              <small>{x.antes != null ? `hace 6 meses ${coma2(x.antes)} × (${x.ahora >= x.antes ? '+' : '−'}${coma2(Math.abs(x.ahora - x.antes))})` : 'sin dato de hace 6 meses'}</small></div>
+              {x.antes != null && <small>{`hace 6 meses ${coma2(x.antes)} × (${x.ahora >= x.antes ? '+' : '−'}${coma2(Math.abs(x.ahora - x.antes))})`}</small>}</div>
           ))}
         </div>
       </>}
