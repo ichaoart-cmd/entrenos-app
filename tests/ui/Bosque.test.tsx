@@ -46,8 +46,8 @@ test('reto de referencia de la semana enlaza a registrarlo ya rellenado', () => 
 test('el calendario marca en bronce los días de récord', () => {
   estado.datos.value = datosCon([sesion('a', `${ym()}-02`, 'back-squat', 5, [90]), sesion('b', `${ym()}-03`, 'back-squat', 5, [92])]);
   render(<Inicio />);
-  expect(screen.getByRole('link', { name: /^3 .*récord/ }).className).toContain('record');
-  expect(screen.getByRole('link', { name: /^2 / }).className).not.toContain('record');
+  expect(screen.getByRole('button', { name: /^3 .*récord/ }).className).toContain('record');
+  expect(screen.getByRole('button', { name: /^2 / }).className).not.toContain('record');
 });
 
 test('registrar abre con el ejercicio pedido', () => {
