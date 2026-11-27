@@ -318,3 +318,20 @@ h3.bloque { font-family: var(--serif); font-weight: 500; font-size: 1.15rem; mar
 .selector-mes b { text-transform: capitalize; font-size: 1.1rem; }
 .selector-mes button { min-width: 44px; min-height: 44px; font-size: 1.4rem; }
 .lienzo img { width: 100%; height: auto; display: block; border-radius: 12px; }
+
+/* Detalle del día tocado en el calendario */
+button.cal-dia { border: 0; padding: 0; font-family: inherit; cursor: pointer; }
+.cal-dia.elegido { outline: 3px solid var(--tinta); outline-offset: 2px; }
+.cal-pista { font-size: 0.8rem; color: var(--suave); margin: 10px 0 0; text-align: center; }
+.cal-detalle { margin-top: 14px; padding: 12px; border-radius: 16px; background: var(--arena); display: grid; gap: 10px; }
+.cal-detalle-cab { display: flex; justify-content: space-between; align-items: center; }
+.cal-detalle-cab .estrella { font-size: 0.8rem; font-weight: 700; }
+.cal-item { display: flex; gap: 10px; align-items: flex-start; }
+.cal-item > i { flex: none; width: 12px; height: 12px; border-radius: 3px; margin-top: 4px; background: var(--suave); }
+.cal-item b { display: block; }
+.cal-item span { display: block; font-size: 0.85rem; }
+.cal-item .desc { white-space: pre-line; color: var(--suave); margin-top: 2px; }
+.cal-detalle .enlace { justify-self: start; }
+.tema-pop .cal-detalle { background: var(--crema); border: 2px solid var(--negro); border-radius: 12px; }
+.tema-pop .cal-item > i { border: 1.5px solid var(--negro); }
+.tema-pop .cal-dia.elegido { outline-color: var(--negro); }

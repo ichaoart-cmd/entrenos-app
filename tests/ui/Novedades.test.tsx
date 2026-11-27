@@ -61,7 +61,7 @@ test('borrar una sesión desde su pantalla', async () => {
 test('el calendario dice el tipo de entreno de cada día y tiene leyenda', () => {
   const h = hoy();
   render(<Calendario sesiones={[sesion('a', h, 'snatch', 3, [60], { metcon: { formato: 'AMRAP' } })]} carreras={[run('c', h)]} minSemana={3} />);
-  expect(screen.getByRole('link', { name: new RegExp(`^${Number(h.slice(8))} · .*Halterofilia, Metcon, Carrera`) })).toBeTruthy();
+  expect(screen.getByRole('button', { name: new RegExp(`^${Number(h.slice(8))} · .*Halterofilia, Metcon, Carrera`) })).toBeTruthy();
   for (const t of ['Pierna', 'Torso', 'Halterofilia', 'Calistenia', 'Metcon', 'Carrera']) expect(screen.getByText(t, { selector: '.cal-leyenda *' })).toBeTruthy();
 });
 
