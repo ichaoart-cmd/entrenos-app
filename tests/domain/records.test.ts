@@ -7,10 +7,10 @@ test('récord por reps', () => {
   expect(r.get(8)?.kg).toBe(96);
 });
 test('PR nuevo', () =>
-  expect(detectarPR({ ejercicio: 'back-squat', reps: 5, series: [76, 81, 86, 91, 96] }, '2026-11-21', fx))
-    .toEqual({ reps: 5, kg: 96, anteriorKg: 94 }));
+  expect(detectarPR({ ejercicio: 'back-squat', reps: 5, series: [76, 81, 86, 91, 96], tempo: '4s+pausa' }, '2026-11-21', fx))
+    .toEqual({ reps: 5, kg: 96, anteriorKg: 94, tempo: '4s+pausa' }));
 test('igualar no es PR', () =>
-  expect(detectarPR({ ejercicio: 'back-squat', reps: 5, series: [94] }, '2026-11-21', fx)).toBeNull());
+  expect(detectarPR({ ejercicio: 'back-squat', reps: 5, series: [94], tempo: '4s+pausa' }, '2026-11-21', fx)).toBeNull());
 test('primer registro a unas reps es PR con anterior null', () =>
   expect(detectarPR({ ejercicio: 'back-squat', reps: 3, series: [100] }, '2026-11-21', fx)?.anteriorKg).toBeNull());
 test('sin reps o sin series no hay PR', () => {
@@ -26,3 +26,12 @@ test('ignora sesiones borradas', () => {
 });
 test('ultimaFuerza devuelve la más reciente', () =>
   expect(ultimaFuerza(fx, 'back-squat')?.series).toEqual([74, 79, 84, 89, 94]));
+
+test('detectarPR y días de récord van por tempo', async () => {
+  const { diasConRecord } = await import('../../src/domain/records');
+  const h = (id: string, fecha: string, kg: number, tempo: string) => ({ id, actualizado: '', fecha, lugar: 'box' as const, fuerza: [{ ejercicio: 'press-banca', reps: 5, series: [kg], tempo }] });
+  const hist = [h('a', '2026-09-01', 70, 'sin tempo'), h('b', '2026-10-01', 60, '5s')];
+  expect(detectarPR({ ejercicio: 'press-banca', reps: 5, series: [63], tempo: '5s' }, '2026-11-27', hist)).toEqual({ reps: 5, kg: 63, anteriorKg: 60, tempo: '5s' });
+  expect(detectarPR({ ejercicio: 'press-banca', reps: 5, series: [65], tempo: 'sin tempo' }, '2026-11-27', hist)).toBeNull();
+  expect([...diasConRecord([...hist, h('c', '2026-11-27', 63, '5s')])]).toEqual(['2026-11-27']);
+});

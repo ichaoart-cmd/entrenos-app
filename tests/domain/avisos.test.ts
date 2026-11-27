@@ -72,3 +72,13 @@ test('molestia reciente aparece como alerta', () => {
   const s: Sesion = { id: 'm', actualizado: '', fecha: '2026-11-20', lugar: 'box', fuerza: [], molestias: ['hombro'] };
   expect(textos(datos([s]))).toContain('alerta: Ojo con el hombro (20/11)');
 });
+
+test('los récords se comparan solo con el mismo tempo', () => {
+  const ft = (fecha: string, kg: number, tempo?: string) => ses(fecha, f('press-banca', kg, 5, { tempo }));
+  // 63 kg a 5 s no es récord frente a 70 sin tempo, pero sí frente a 60 a 5 s.
+  const t = textos(datos([ft('2026-09-01', 70, 'sin tempo'), ft('2026-10-01', 60, '5s'), ft('2026-11-20', 63, '5s')]));
+  expect(t).toContain('logro: ¡PR! 5RM en Press Banca a 5 s: 63 kg');
+  // El primer registro a un tempo nuevo no es récord aunque pese más que los de otro tempo.
+  const t2 = textos(datos([ft('2026-09-01', 60, '5s'), ft('2026-11-20', 65, '3s')]));
+  expect(t2.some((x) => x.includes('¡PR!'))).toBe(false);
+});

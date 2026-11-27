@@ -1,8 +1,16 @@
 import type { Fuerza, Sesion } from './types';
 import { repsDeTop } from './reps';
+import { conTempo, filtrarPorTempo } from './progreso';
 
 export interface Marca { reps: number; kg: number; fecha: string }
-export interface PR { reps: number; kg: number; anteriorKg: number | null }
+export interface PR { reps: number; kg: number; anteriorKg: number | null; tempo?: string }
+
+/** Tempo con el que se comparan récords: el exacto ('5s', '4s+pausa') o 'sin' si no hubo tempo.
+ * Con más segundos de bajada se mueve menos peso, así que cada tempo lleva sus propios récords. */
+export const claveTempo = (t?: string) => (conTempo(t) ? t! : 'sin');
+
+/** Sesiones del historial con solo las fuerzas de ese ejercicio hechas al mismo tempo que `f`. */
+export const mismoTempo = (historial: Sesion[], f: Fuerza) => filtrarPorTempo(historial, f.ejercicio, claveTempo(f.tempo));
 
 export const ROTACION = ['back-squat', 'press-banca', 'shoulder-press', 'deadlift', 'front-squat'];
 
@@ -28,9 +36,9 @@ export function detectarPR(f: Fuerza, _fecha: string, historial: Sesion[]): PR |
   const reps = repsDeTop(f);
   if (reps == null || f.series.length === 0) return null;
   const kg = Math.max(...f.series);
-  const prev = recordsPorReps(historial, f.ejercicio).get(reps);
+  const prev = recordsPorReps(mismoTempo(historial, f), f.ejercicio).get(reps);
   if (prev && kg <= prev.kg) return null;
-  return { reps, kg, anteriorKg: prev ? prev.kg : null };
+  return { reps, kg, anteriorKg: prev ? prev.kg : null, ...(conTempo(f.tempo) ? { tempo: f.tempo } : {}) };
 }
 
 function ultimaFecha(sesiones: Sesion[], ejercicioId: string): string | null {
@@ -62,7 +70,7 @@ export function ultimaFuerza(sesiones: Sesion[], ejercicioId: string): Fuerza | 
   return res ? res.f : null;
 }
 
-/** Días en que alguna fuerza superó la mejor marca previa del mismo ejercicio y número de reps. */
+/** Días en que alguna fuerza superó la mejor marca previa del mismo ejercicio, número de reps y tempo. */
 export function diasConRecord(sesiones: Sesion[]): Set<string> {
   const mejor = new Map<string, number>();
   const dias = new Set<string>();
@@ -70,7 +78,7 @@ export function diasConRecord(sesiones: Sesion[]): Set<string> {
     for (const f of s.fuerza) {
       const r = repsDeTop(f);
       if (r == null || !f.series.length) continue;
-      const k = `${f.ejercicio}|${r}`, kg = Math.max(...f.series), prev = mejor.get(k);
+      const k = `${f.ejercicio}|${r}|${claveTempo(f.tempo)}`, kg = Math.max(...f.series), prev = mejor.get(k);
       if (prev != null && kg > prev) dias.add(s.fecha);
       if (prev == null || kg > prev) mejor.set(k, kg);
     }

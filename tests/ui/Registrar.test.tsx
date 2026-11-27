@@ -88,7 +88,7 @@ test('muestra aviso de PR', async () => {
   fireEvent.click(screen.getByRole('button', { name: /Back Squat/ }));
   fireEvent.input(screen.getByLabelText('Serie top (kg)'), { target: { value: '96' } });
   fireEvent.click(screen.getByRole('button', { name: /Guardar/ }));
-  await screen.findByText(/5RM: 96 kg \(\+2 kg\)/);
+  await screen.findByText(/5RM a 4 s \+ pausa: 96 kg \(\+2 kg\)/);
 });
 
 test('se puede quitar la fuerza y guardar solo Metcon', async () => {

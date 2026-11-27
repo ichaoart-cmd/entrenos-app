@@ -41,5 +41,5 @@ test('el récord se detecta en cualquiera de los ejercicios y dice cuál', async
   const tops = screen.getAllByLabelText('Serie top (kg)');
   fireEvent.input(tops[1], { target: { value: '65' } });
   fireEvent.click(screen.getByRole('button', { name: 'Guardar sesión' }));
-  expect(await screen.findByText(/Press Banca.*5RM: 65 kg/)).toBeTruthy();
+  expect(await screen.findByText(/Press Banca.*5RM a 4 s \+ pausa: 65 kg/)).toBeTruthy();
 });

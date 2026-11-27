@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
+import { textoTempo } from '../domain/progreso';
 import type { Fuerza, Lugar, Metcon, Sesion } from '../domain/types';
 import { ejercicioSugerido, ROTACION, type PR } from '../domain/records';
 import { nuevoId } from '../domain/ids';
@@ -45,7 +46,7 @@ function mejoraBenchmark(s: Sesion, previas: Sesion[]): string | null {
 }
 
 export function textoPR(pr: PR, ejercicio?: string): string {
-  const base = `${sinRepetir('prefijoPR', POOLS.prefijoPR)}${ejercicio ? ` ${nombreEjercicio(ejercicio)}` : ''} ${pr.reps}RM: ${num(pr.kg)} kg`;
+  const base = `${sinRepetir('prefijoPR', POOLS.prefijoPR)}${ejercicio ? ` ${nombreEjercicio(ejercicio)}` : ''} ${pr.reps}RM${pr.tempo ? ` a ${textoTempo(pr.tempo)}` : ''}: ${num(pr.kg)} kg`;
   return (pr.anteriorKg == null ? base : `${base} (+${num(Math.round((pr.kg - pr.anteriorKg) * 10) / 10)} kg)`) + sinRepetir('cierrePR', POOLS.cierrePR);
 }
 

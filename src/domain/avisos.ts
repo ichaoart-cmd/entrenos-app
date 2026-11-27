@@ -6,7 +6,8 @@ import { estadoSerie } from './objetivo';
 import { DISTANCIAS, formatearTiempo, kmPorSemana, mejoresTiempos } from './carrera';
 import { tiposDeSesion } from './tipos';
 import { entrada } from './catalogo';
-import { conTempo } from './progreso';
+import { conTempo, textoTempo } from './progreso';
+import { claveTempo } from './records';
 import { BENCHMARKS, esMejor, historialBenchmark } from './benchmarks';
 import { molestiasRecientes, textoMolestia } from './molestias';
 
@@ -30,13 +31,14 @@ export function generarAvisos(d: Datos, hoy: string, minSemana: number, max = 5)
   const hist = historico(d.sesiones);
   const hace14 = menos(hoy, 14);
 
-  // Récords de fuerza de las últimas 2 semanas (el primer registro de un ejercicio no cuenta).
+  // Récords de fuerza de las últimas 2 semanas, por ejercicio, reps y tempo (el primer registro no cuenta).
   const mejor = new Map<string, number>();
   for (const { fecha, f } of hist) {
     const r = repsDeTop(f); if (r == null) continue;
-    const k = `${f.ejercicio}|${r}`, kg = Math.max(...f.series), prev = mejor.get(k);
+    const k = `${f.ejercicio}|${r}|${claveTempo(f.tempo)}`, kg = Math.max(...f.series), prev = mejor.get(k);
+    const aTempo = conTempo(f.tempo) ? ` a ${textoTempo(f.tempo!)}` : '';
     if (prev != null && kg > prev && fecha >= hace14)
-      logros.push({ tipo: 'logro', titulo: `¡PR! ${r}RM en ${nombre(f.ejercicio)}: ${coma(kg)} kg`, texto: `${coma(kg - prev)} kg más que tu marca anterior. Máquina.`, href: `#/progreso?ej=${f.ejercicio}` });
+      logros.push({ tipo: 'logro', titulo: `¡PR! ${r}RM en ${nombre(f.ejercicio)}${aTempo}: ${coma(kg)} kg`, texto: `${coma(kg - prev)} kg más que tu marca anterior. Máquina.`, href: `#/progreso?ej=${f.ejercicio}` });
     if (prev == null || kg > prev) mejor.set(k, kg);
   }
 

@@ -1,7 +1,7 @@
 import { signal } from '@preact/signals';
 import type { Carrera, Datos, PesoCorporal, Sesion } from '../domain/types';
 import { DISTANCIAS, mejoresTiempos } from '../domain/carrera';
-import { detectarPR, recordsPorReps, type PR } from '../domain/records';
+import { detectarPR, mismoTempo, recordsPorReps, type PR } from '../domain/records';
 import { borrarPeso, guardarPeso, borrarCarrera, guardarCarrera, borrarSesion, cargarAjustes, cargarLocal, datosVacios, guardarSesion, type Ajustes } from './local';
 import { sincronizar, type ResultadoSync } from './sync';
 
@@ -49,8 +49,8 @@ export async function registrar(s: Sesion): Promise<{ pr: PR; ejercicio: string 
   const historial = estado.datos.value.sesiones.filter((x) => x.id !== s.id);
   let pr: { pr: PR; ejercicio: string } | null = null;
   for (const f of s.fuerza) {
-    // El primer registro de un ejercicio no se anuncia como récord.
-    const r = recordsPorReps(historial, f.ejercicio).size > 0 ? detectarPR(f, s.fecha, historial) : null;
+    // El primer registro de un ejercicio (a ese tempo) no se anuncia como récord.
+    const r = recordsPorReps(mismoTempo(historial, f), f.ejercicio).size > 0 ? detectarPR(f, s.fecha, historial) : null;
     if (r) { pr = { pr: r, ejercicio: f.ejercicio }; break; }
   }
   await guardarSesion(s);
