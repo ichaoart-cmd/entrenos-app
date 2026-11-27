@@ -77,9 +77,26 @@ test('progreso de fuerza: filtro con / sin tempo', async () => {
   render(<Progreso ejercicio='back-squat' />);
   fireEvent.click(screen.getByRole('button', { name: 'Ver datos' }));
   expect(screen.getAllByRole('row')).toHaveLength(3);
-  fireEvent.click(screen.getByRole('button', { name: 'Con tempo' }));
+  fireEvent.click(screen.getByRole('button', { name: '4 s + pausa' }));
   expect(screen.getAllByRole('row')).toHaveLength(2);
   expect(screen.getByRole('row', { name: /80 kg/ })).toBeTruthy();
+});
+
+test('progreso de fuerza: filtro por tempo exacto', async () => {
+  const f = (series: number[], tempo: string) => ({ fuerza: [{ ejercicio: 'press-banca', reps: 5, series, tempo }] });
+  await con({ sesiones: [
+    sesion('1', '2026-09-01', 'press-banca', 5, [60], f([60], '3s')),
+    sesion('2', '2026-10-01', 'press-banca', 5, [55], f([55], '5s')),
+    sesion('3', '2026-11-01', 'press-banca', 5, [63], f([63], '5s')),
+  ] });
+  render(<Progreso ejercicio='press-banca' />);
+  expect(screen.queryByRole('button', { name: 'Sin tempo' })).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Ver datos' }));
+  fireEvent.click(screen.getByRole('button', { name: '5 s' }));
+  expect(screen.getAllByRole('row')).toHaveLength(3);
+  expect(screen.getByText(/1RM estimado a 5 s/)).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'Con tempo' }));
+  expect(screen.getAllByRole('row')).toHaveLength(4);
 });
 
 test('progreso de carrera: km por semana, mejores marcas y predicción', async () => {

@@ -4,10 +4,11 @@ import { entrada } from './catalogo';
 export type TipoEntreno = 'pierna' | 'torso' | 'halterofilia' | 'calistenia' | 'metcon' | 'carrera';
 
 /** Orden fijo de la leyenda y colores validados (dataviz, todos los pares: CVD ΔE ≥ 8,9; normal ≥ 16,7).
+ * Torso en rojo (no naranja) para que no se confunda con el amarillo de halterofilia en el anillo del calendario (ΔE 26).
  * Amarillo y rosa quedan por debajo de 3:1 sobre el fondo: van siempre con leyenda y con el detalle del día. */
 export const TIPOS: { id: TipoEntreno; nombre: string; color: string }[] = [
   { id: 'pierna', nombre: 'Pierna', color: '#14a37a' },
-  { id: 'torso', nombre: 'Torso', color: '#e0581f' },
+  { id: 'torso', nombre: 'Torso', color: '#c62f3a' },
   { id: 'halterofilia', nombre: 'Halterofilia', color: '#e0a100' },
   { id: 'calistenia', nombre: 'Calistenia', color: '#7d3fb8' },
   { id: 'metcon', nombre: 'Metcon', color: '#ec8fc0' },
